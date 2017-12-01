@@ -1,0 +1,12 @@
+#\#CIF_2.0
+# This file has been updated
+data_changed
+
+loop_
+  _atom_site_label
+  _atom_site_type_symbol
+  _atom_site_fract_x
+  _atom_site_fract_y
+  _atom_site_fract_z
+         Ge1       Ge        0.44769(7)          0.92488(4)          0.20378(2)         
+         Ge2       Ge        0.55025(7)          1.22809(4)          0.17280(2)

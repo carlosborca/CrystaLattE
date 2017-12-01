@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="markdown4.css" type="text/css" />
+</head>
+<body>
+<h1 id="using-drel-in-pycifrw">Using dREL in PyCIFRW</h1>
+<h2 id="introduction">Introduction</h2>
+<p>dREL is a language for manipulating tabular data described in <a href="http://dx.doi.org/10.1021/ci300076w">1</a>. A CIF dictionary (DDL2/DDLm) definition can contain a piece of dREL code describing how the defined data item can be calculated from other dataitem values. PyCIFRW includes a dREL parser that executes these calculations to provide missing values</p>
+<h2 id="using-drel-methods">Using dREL methods</h2>
+<p>Once a dictionary containing methods is assigned to a <code>CifBlock</code> using <code>CifBlock.assign_dictionary</code>, any attempts to retrieve a missing dataname will trigger execution of the dREL method for that dataname, if available. Note that the value returned will not necessarily be a string type.</p>
+<pre class="sourceCode python"><code class="sourceCode python">&gt;&gt;&gt; <span class="ch">import</span> CifFile
+&gt;&gt;&gt; p = CifFile.CifDic(<span class="st">&#39;pycifrw/drel/testing/cif_core.dic&#39;</span>,grammar=<span class="st">&#39;STAR2&#39;</span>)
+&gt;&gt;&gt; r = CifFile.CifFile(<span class="st">&#39;pycifrw/drel/testing/data/nick.cif&#39;</span>,grammar=<span class="st">&#39;STAR2&#39;</span>)
+&gt;&gt;&gt; r = r.first_block()    <span class="co">#only care about the first block</span>
+&gt;&gt;&gt; r[<span class="st">&#39;_cell.volume&#39;</span>]      <span class="co">#should be in the file already</span>
+<span class="co">u&#39;635.3&#39;</span>                   <span class="co"># Note this is a string value</span>
+&gt;&gt;&gt; <span class="kw">del</span> r[<span class="st">&#39;_cell.volume&#39;</span>]  <span class="co"># remove from the CifBlock</span>
+&gt;&gt;&gt; r[<span class="st">&#39;_cell.volume&#39;</span>]      <span class="co"># check that it is gone</span>
+<span class="ot">KeyError</span>: <span class="st">&#39;No such item: _cell.volume&#39;</span>
+&gt;&gt;&gt; r.assign_dictionary(p) <span class="co"># Use this dictionary for calculations</span>
+&gt;&gt;&gt; r[<span class="st">&#39;_cell.volume&#39;</span>]      <span class="co"># Is it there now?</span>
+<span class="fl">635.2977003095574</span>          <span class="co"># Note this is a floating-point number</span></code></pre>
+<h3 id="limitations-on-drel-methods">Limitations on dREL methods</h3>
+<p>dREL is a rich specification and, while the PyCIFRW implementation is relatively comprehensive, a number of functionalities are not yet implemented, and testing is not complete.</p>
+<ol style="list-style-type: decimal">
+<li><p>No standard uncertainty (su) propagation. The CIF standards provide for su, which would allow propagation. To be implemented.</p></li>
+<li><p>Category methods. If an entire loop ('category') is missing, PyCIFRW will not attempt to create the category, even though the methods to do so are provided in the dictionary (see for example 'geom_bond')</p></li>
+<li><p>Values that have been calculated are stored as their native type (not necessarily strings). These values may be formatted unusually (e.g. too many decimal places) when output to a file. A method will be introduced in later versions to properly format native values.</p></li>
+<li><p>The Python numpy package is required for dREL-based calculations.</p></li>
+<li><p>Multi-line strings in dREL are not correctly converted to Python.</p></li>
+</ol>
+</body>
+</html>

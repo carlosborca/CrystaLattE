@@ -1,0 +1,53 @@
+data_global
+_chemical_name_mineral 'Ice Ih'
+loop_
+_publ_author_name
+'Bernal J'
+'Fowler R'
+_journal_name_full 'Journal of Chemical Physics'
+_journal_volume 1 
+_journal_year 1933
+_journal_page_first 515
+_journal_page_last 548
+_publ_section_title
+;
+ A Theory of Water and Ionic Solution, with Particular Reference to
+ Hydrogen and Hydroxyl Ions
+ _cod_database_code 1011023
+;
+_database_code_amcsd 0017930
+_chemical_formula_sum 'O H2'
+_cell_length_a 7.82
+_cell_length_b 7.82
+_cell_length_c 7.36
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 120
+_cell_volume 389.782
+_exptl_crystal_density_diffrn      0.921
+_symmetry_space_group_name_H-M 'P 63 c m'
+loop_
+_space_group_symop_operation_xyz
+  'x,y,z'
+  '-x,-x+y,z'
+  'x-y,x,1/2+z'
+  '-y,-x,1/2+z'
+  '-y,x-y,z'
+  'x-y,-y,z'
+  '-x,-y,1/2+z'
+  'x,x-y,1/2+z'
+  '-x+y,-x,z'
+  'y,x,z'
+  'y,-x+y,1/2+z'
+  '-x+y,y,1/2+z'
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+O1   0.33333   0.00000   0.06250
+O2   0.66667   0.00000   0.93750
+H1   0.33333   0.00000   0.17400
+H2   0.43800   0.00000   0.02600
+H3   0.77200   0.10500   0.97500
+

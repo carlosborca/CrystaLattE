@@ -1,0 +1,328 @@
+<!-- this file was generated automatically by noweave; better not edit it-->
+<html><head><title>cif-lex.nw</title></head><body>
+
+A Noweb literate programming file for Star grammar and parser 
+specification, replacing the long-serving Yapps2 parser.
+<p>
+<a name="NWDl9cUW-1">Several standards are available, of which four are implemented: 1.0,</a>
+1.1, CIF2 and STAR2.  CIF2 differs from STAR2 in that lists have comma
+separators and no nested save frames are allowed.  Note that 1.0,1.1
+and CIF2/STAR2 differ in their treatment of unquoted data values beginning
+with brackets.  Because of the large commonality, we express each of
+the standards as slight deviations from a general standard using
+Noweb chunks.
+<p>
+<a name="NWDl9cUW-2">Old CIF 1.0 standard.  This differs from 1.1 in allowing square brackets</a>
+to begin an undelimited text string.
+<p>
+<pre><a name="NWl9cUW-4aiWE2-1" href="#NWDl9cUW-2"><dfn>&lt;Lexer 1.0&gt;=</dfn></a>
+<a name="NWl9cUW-4aiWE2-1-u1" href="#NWl9cUW-Qa9fr-1"><i>&lt;Common v1 lexer code&gt;</i></a>
+<a name="NWl9cUW-4aiWE2-1-u2" href="#NWDl9cUW-3"><i>&lt;CIF1.0 data value&gt;</i></a>
+<a name="NWl9cUW-4aiWE2-1-u3" href="#NWl9cUW-2aGupB-1"><i>&lt;Common postamble&gt;</i></a>
+
+</pre><pre><a name="NWl9cUW-2aGupB-1" href="#NWl9cUW-2aGupB-1"><dfn>&lt;Common postamble&gt;=</dfn></a> <b>(<a href="#NWDl9cUW-2">&lt;-U</a> <a href="#NWl9cUW-HtZxO-1">U-&gt;</a> <a href="#NWl9cUW-4aieiU-1">U-&gt;</a> <a href="#NWl9cUW-KiUoC-1">U-&gt;</a>)</b>
+lexer = lex.lex(debug=1)
+if __name__ == &quot;__main__&quot;:
+    lex.runmain(lexer)
+
+</pre><p><a name="NWDl9cUW-3">A CIF1.0 data value allows naked square brackets at the front of undelimited data values.</a>
+<p><pre><a name="NWl9cUW-3dClRa-1" href="#NWDl9cUW-3"><dfn>&lt;CIF1.0 data value&gt;=</dfn></a> <b>(<a href="#NWDl9cUW-2">&lt;-U</a>)</b>
+def t_DATA_VALUE_1(t):
+     r&quot;((?!(((S|s)(A|a)(V|v)(E|e)_[^\s]*)|((G|g)(L|l)(O|o)(B|b)(A|a)(L|l)_[^\s]*)|((S|s)(T|t)(O|o)(P|p)_[^\s]*)|((D|d)(A|a)(T|t)(A|a)_[^\s]*)))[^\s\&quot;#$'_][^\s]*)|'(('(?=\S))|([^\n\r\f']))*'+|\&quot;((\&quot;(?=\S))|([^\n\r\&quot;]))*\&quot;+&quot;
+     if len(t.value)&gt;1:
+        if t.value[0]== '\'' and t.value[-1]=='\'':
+           t.value = t.value[1:-1]
+        elif t.value[0]=='&quot;' and t.value[-1]=='&quot;':
+           t.value = t.value[1:-1]
+     return t
+     
+</pre><pre><a name="NWl9cUW-HtZxO-1" href="#NWl9cUW-HtZxO-1"><dfn>&lt;Lexer 1.1&gt;=</dfn></a>
+<a name="NWl9cUW-HtZxO-1-u1" href="#NWl9cUW-Qa9fr-1"><i>&lt;Common v1 lexer code&gt;</i></a>
+<a name="NWl9cUW-HtZxO-1-u2" href="#NWl9cUW-3qqkxW-1"><i>&lt;CIF1.1 data value&gt;</i></a>
+<a name="NWl9cUW-HtZxO-1-u3" href="#NWl9cUW-2aGupB-1"><i>&lt;Common postamble&gt;</i></a>
+
+</pre><pre><a name="NWl9cUW-3qqkxW-1" href="#NWl9cUW-3qqkxW-1"><dfn>&lt;CIF1.1 data value&gt;=</dfn></a> <b>(<a href="#NWl9cUW-HtZxO-1">&lt;-U</a>)</b>
+def t_DATA_VALUE_1(t):
+     r&quot;((?!(((S|s)(A|a)(V|v)(E|e)_[^\s]*)|((G|g)(L|l)(O|o)(B|b)(A|a)(L|l)_[^\s]*)|((S|s)(T|t)(O|o)(P|p)_[^\s]*)|((D|d)(A|a)(T|t)(A|a)_[^\s]*)))[^\s\&quot;#$'_][^\s]*)|'(('(?=\S))|([^\n\r\f']))*'+|\&quot;((\&quot;(?=\S))|([^\n\r\&quot;]))*\&quot;+&quot;
+     if len(t.value)&gt;1:
+        if t.value[0]== '\'' and t.value[-1]=='\'':
+           t.value = t.value[1:-1]
+        elif t.value[0]=='&quot;' and t.value[-1]=='&quot;':
+           t.value = t.value[1:-1]
+     return t
+
+</pre><pre><a name="NWl9cUW-Qa9fr-1" href="#NWl9cUW-Qa9fr-1"><dfn>&lt;Common v1 lexer code&gt;=</dfn></a> <b>(<a href="#NWDl9cUW-2">&lt;-U</a> <a href="#NWl9cUW-HtZxO-1">&lt;-U</a>)</b>
+# An new lexer for CIF using PLY
+#
+import ply.lex as lex
+import re
+from StarFile import remove_line_folding,remove_line_prefix
+
+
+states = (
+    ('semicolon','exclusive'),
+)
+
+tokens  = (
+    'COMMENT',
+    'WHITESPACE',
+    'LBLOCK',
+    'GLOBAL',
+    'STOP',
+    'SAVE_HEADING',
+    'SAVE_END',
+    'DATA_NAME',
+    'DATA_HEADING',
+    'START_SC_LINE',
+    'SC_LINE_OF_TEXT',
+    'END_SC_LINE',
+    'DATA_VALUE_1'
+    )
+
+t_ignore_WHITESPACE = r&quot;([ \t\n\r](?!;))|[ \t]&quot;
+
+t_ignore_COMMENT = r&quot;(\#.*[\n\r](?!;))|(\#.*)&quot;
+
+def t_error(t):
+    print 'Illegal character %s' % repr(t.value[0])
+
+def t_LBLOCK(t):
+     r&quot;(L|l)(O|o)(O|o)(P|p)_&quot;
+     return t
+
+def t_GLOBAL(t):
+     r&quot;(G|g)(L|l)(O|o)(B|b)(A|a)(L|l)_&quot;
+     return t
+
+def t_STOP(t):
+     r&quot;(S|s)(T|t)(O|o)(P|p)_&quot;
+     return t
+
+def t_SAVE_HEADING(t):
+    r&quot;(S|s)(A|a)(V|v)(E|e)_[][!%&amp;\(\)*+,./:&lt;=&gt;?@0-9A-Za-z\\\\^`{}\|~\&quot;#$';_-]+&quot;
+    return t
+
+def t_SAVE_END(t):
+    r&quot;(S|s)(A|a)(V|v)(E|e)_&quot;
+    return t
+
+def t_DATA_NAME(t):
+    r&quot;_[][!%&amp;\(\)*+,./:&lt;=&gt;?@0-9A-Za-z\\\\^`{}\|~\&quot;#$';_-]+&quot; #_followed by stuff
+    return t
+
+def t_DATA_HEADING(t):
+    r&quot;(D|d)(A|a)(T|t)(A|a)_[][!%&amp;\(\)*+,./:&lt;=&gt;?@0-9A-Za-z\\\\^`{}\|~\&quot;#$';_-]+&quot;
+    return t
+
+def t_START_SC_LINE(t):
+    r&quot;(\n|\r\n);([^\n\r])*(\r\n|\r|\n)+&quot;
+    t.lexer.begin('semicolon')
+    t.lexer.sctext = t.value[t.value.find(';')+1:]
+
+def t_semicolon_SC_LINE_OF_TEXT(t):
+    r&quot;[^;\r\n]([^\r\n])*(\r\n|\r|\n)+&quot;
+    t.lexer.sctext += t.value
+
+def t_semicolon_END_SC_LINE(t):
+    r';'
+    t.lexer.begin('INITIAL')
+    t.value = t.lexer.sctext[:-1]  #drop eol
+    if len(t.value)&gt;0 and t.value[-1] == '\r': t.value = t.value[:-1]
+    t.value = remove_line_folding(t.value)
+    return t
+
+</pre><pre><a name="NWl9cUW-4aieiU-1" href="#NWl9cUW-4aieiU-1"><dfn>&lt;Lexer 2.0&gt;=</dfn></a>
+<a name="NWl9cUW-4aieiU-1-u1" href="#NWDl9cUW-6"><i>&lt;Common v2 lexer code&gt;</i></a>
+<a name="NWl9cUW-4aieiU-1-u2" href="#NWDl9cUW-4"><i>&lt;CIF2.0 data value&gt;</i></a>
+<a name="NWl9cUW-4aieiU-1-u3" href="#NWl9cUW-2aGupB-1"><i>&lt;Common postamble&gt;</i></a>
+
+</pre><p><a name="NWDl9cUW-4">Commas are allowed in non-delimited data values in CIF2.0 but not STAR2.0. Semicolons are allowed in CIF2.0</a>
+non-delimited values as long as it is not the beginning of a line - this case should be picked up by the
+start_sc_line check *before* the data value check.
+<p>
+<pre><a name="NWl9cUW-494Wph-1" href="#NWDl9cUW-4"><dfn>&lt;CIF2.0 data value&gt;=</dfn></a> <b>(<a href="#NWl9cUW-4aieiU-1">&lt;-U</a>)</b>
+def t_DATA_VALUE_1(t):
+     r&quot;((?!(((S|s)(A|a)(V|v)(E|e)_[^\s]*)|((G|g)(L|l)(O|o)(B|b)(A|a)(L|l)_[^\s]*)|((S|s)(T|t)(O|o)(P|p)_[^\s]*)|((D|d)(A|a)(T|t)(A|a)_[^\s]*)))[^\s\&quot;#$'_\{\}\[\]][^\s\{\}\[\]]*)&quot;
+     return t
+
+</pre><pre><a name="NWl9cUW-KiUoC-1" href="#NWl9cUW-KiUoC-1"><dfn>&lt;Lexer STAR2&gt;=</dfn></a>
+<a name="NWl9cUW-KiUoC-1-u1" href="#NWDl9cUW-6"><i>&lt;Common v2 lexer code&gt;</i></a>
+<a name="NWl9cUW-KiUoC-1-u2" href="#NWDl9cUW-5"><i>&lt;STAR2.0 data value&gt;</i></a>
+<a name="NWl9cUW-KiUoC-1-u3" href="#NWl9cUW-2aGupB-1"><i>&lt;Common postamble&gt;</i></a>
+
+</pre><p><a name="NWDl9cUW-5">STAR2.0 uses commas to separate list and table items so commas are not allowed in</a>
+non-delimited values.
+<p>
+<pre><a name="NWl9cUW-4PNfQw-1" href="#NWDl9cUW-5"><dfn>&lt;STAR2.0 data value&gt;=</dfn></a> <b>(<a href="#NWl9cUW-KiUoC-1">&lt;-U</a>)</b>
+def t_DATA_VALUE_1(t):
+     r&quot;((?!(((S|s)(A|a)(V|v)(E|e)_[^\s]*)|((G|g)(L|l)(O|o)(B|b)(A|a)(L|l)_[^\s]*)|((S|s)(T|t)(O|o)(P|p)_[^\s]*)|((D|d)(A|a)(T|t)(A|a)_[^\s]*)))[^\s\&quot;#$',_\{\}\[\]][^\s,\{\}\[\]]*)&quot;
+     return t
+
+</pre><p>
+<a name="NWDl9cUW-6">The reason for switching to PLY from Yapps is that some Python builds cannot handle the wide</a>
+characters allowed by our Unicode standard, and Yapps does not have any simple way to construct
+regular expressions conditionally.
+<p>
+<pre><a name="NWl9cUW-1rGvkD-1" href="#NWDl9cUW-6"><dfn>&lt;Common v2 lexer code&gt;=</dfn></a> <b>(<a href="#NWl9cUW-4aieiU-1">&lt;-U</a> <a href="#NWl9cUW-KiUoC-1">&lt;-U</a>)</b>
+# An new lexer for CIF using PLY
+#
+import ply.lex as lex
+from ply.lex import TOKEN
+import re,sys
+from StarFile import remove_line_folding,remove_line_prefix
+
+# Following unicode fix based on suggestion of Pavol Juhas
+# Check our Unicode status
+if sys.maxunicode &lt; 111411:
+     print 'Warning: Narrow Python build detected. Unicode characters outside the Basic Multilingual Plane are not supported'
+     rewidechars = &quot;&quot;
+else:
+     rewidechars = u&quot;\U00010000-\U0010FFFD&quot;
+
+# Define some unicode ranges to save space - not currently used
+non_blank_chars = u&quot;[\u0021-\u007E\u00A0-\uD7FF\uE000-\uFDCF\uFDF0-\uFFFD&quot; + rewidechars + &quot;]&quot; 
+# everything that is allowed
+all_chars = u&quot;[\u0009\u000A\u000D\u00A0-\uD7FF\uE000-\uFDCF\uFDF0-\uFFFD&quot; + rewidechars + &quot;]&quot; 
+# Construct the regular expressions accordingly
+dname_regexp = &quot;_&quot; + non_blank_chars + &quot;+&quot;
+save_regexp = ur&quot;(S|s)(A|a)(V|v)(E|e)_&quot; + non_blank_chars + &quot;+&quot;
+dheading_regexp = ur&quot;(D|d)(A|a)(T|t)(A|a)_&quot;+ non_blank_chars + &quot;+&quot;
+
+states = (
+    ('semicolon','exclusive'),
+    ('tripleq','exclusive'),
+    ('triplea','exclusive')
+)
+
+tokens  = (
+    'COMMENT',
+    'WHITESPACE',
+    'LBLOCK',
+    'GLOBAL',
+    'STOP',
+    'SAVE_HEADING',
+    'SAVE_END',
+    'DATA_NAME',
+    'DATA_HEADING',
+    'START_SC_LINE',
+    'SC_LINE_OF_TEXT',
+    'END_SC_LINE',
+    'DAT_VAL_NOCOMMA_NOSQ',
+    'DAT_VAL_INTERNAL_SQ',
+    'TRIPLE_QUOTE_START',
+    'TRIPLE_QUOTE_DATA_VALUE',
+    'TRIPLE_APOST_START',
+    'TRIPLE_APOST_DATA_VALUE',
+    'LINE_OF_TEXT',
+    'SINGLE_QUOTE_DATA_VALUE',
+    'DATA_VALUE_1'
+    )
+
+t_ignore_WHITESPACE = r&quot;([ \t\n\r](?!;))|[ \t]&quot;
+
+t_ignore_COMMENT = r&quot;(\#.*[\n\r](?!;))|(\#.*)&quot;
+
+literals = ['{','}','[',']',':']
+
+def t_error(t):
+    print 'Illegal character %s' % repr(t.value[0])
+
+def t_LBLOCK(t):
+     r&quot;(L|l)(O|o)(O|o)(P|p)_&quot;
+     return t
+
+def t_GLOBAL(t):
+     r&quot;(G|g)(L|l)(O|o)(B|b)(A|a)(L|l)_&quot;
+     return t
+
+def t_STOP(t):
+     r&quot;(S|s)(T|t)(O|o)(P|p)_&quot;
+     return t
+
+@TOKEN(save_regexp)
+def t_SAVE_HEADING(t):
+    return t
+
+def t_SAVE_END(t):
+    r&quot;(S|s)(A|a)(V|v)(E|e)_&quot;
+    return t
+
+@TOKEN(dname_regexp)
+def t_DATA_NAME(t):    
+    return t
+
+@TOKEN(dheading_regexp)
+def t_DATA_HEADING(t):
+    return t
+
+def t_START_SC_LINE(t):
+    r&quot;(\n|\r\n);([^\n\r])*(\r\n|\r|\n)+&quot;
+    t.lexer.begin('semicolon')
+    t.lexer.sctext = t.value[t.value.find(';')+1:]
+
+def t_semicolon_SC_LINE_OF_TEXT(t):
+    r&quot;[^;\r\n]([^\r\n])*(\r\n|\r|\n)+&quot;
+    t.lexer.sctext += t.value
+
+def t_semicolon_END_SC_LINE(t):
+    r';'
+    t.lexer.begin('INITIAL')
+    t.value = t.lexer.sctext[:-1]  #drop eol
+    if t.value[-1] == '\r': t.value = t.value[:-1]
+    t.value = remove_line_prefix(t.value)
+    t.value = remove_line_folding(t.value)
+    return t
+
+def t_DAT_VAL_INTERNAL_SQ(t):
+    r&quot;\[([^\s\[\]]*)\]&quot;
+    return t
+
+def t_TRIPLE_QUOTE_START(t):
+    r&quot;\&quot;\&quot;\&quot;&quot;
+    t.lexer.begin('tripleq')
+    t.lexer.tqval = &quot;&quot;
+
+def t_tripleq_TRIPLE_QUOTE_DATA_VALUE(t):
+    r&quot;([^\r\n]*)\&quot;\&quot;\&quot;&quot;
+    t.lexer.begin('INITIAL')
+    t.value = t.lexer.tqval + t.value[:-3]
+    return t
+
+def t_tripleq_triplea_LINE_OF_TEXT(t):
+    r&quot;([^\r\n])*(\r\n|\r|\n)+&quot;
+    t.lexer.tqval += t.value
+
+def t_TRIPLE_APOST_START(t):
+    r&quot;'''&quot;
+    t.lexer.begin('triplea')
+    t.lexer.tqval = &quot;&quot;
+
+def t_triplea_TRIPLE_APOST_DATA_VALUE(t):
+    r&quot;([^\r\n]*)'''&quot;
+    t.lexer.begin('INITIAL')
+    t.value = t.lexer.tqval + t.value[:-3]
+    return t
+
+def t_SINGLE_QUOTE_DATA_VALUE(t):
+    r&quot;'([^\n\r\f'])*'+|\&quot;([^\n\r\&quot;])*\&quot;+&quot;
+    t.value = t.value[1:-1]
+    return t
+</pre>
+
+<ul>
+<li><a href="#NWDl9cUW-3"><i>&lt;CIF1.0 data value&gt;</i></a>: <a href="#NWDl9cUW-2">U1</a>, <a href="#NWDl9cUW-3">D2</a>
+<li><a href="#NWl9cUW-3qqkxW-1"><i>&lt;CIF1.1 data value&gt;</i></a>: <a href="#NWl9cUW-HtZxO-1">U1</a>, <a href="#NWl9cUW-3qqkxW-1">D2</a>
+<li><a href="#NWDl9cUW-4"><i>&lt;CIF2.0 data value&gt;</i></a>: <a href="#NWl9cUW-4aieiU-1">U1</a>, <a href="#NWDl9cUW-4">D2</a>
+<li><a href="#NWl9cUW-2aGupB-1"><i>&lt;Common postamble&gt;</i></a>: <a href="#NWDl9cUW-2">U1</a>, <a href="#NWl9cUW-2aGupB-1">D2</a>, <a href="#NWl9cUW-HtZxO-1">U3</a>, <a href="#NWl9cUW-4aieiU-1">U4</a>, <a href="#NWl9cUW-KiUoC-1">U5</a>
+<li><a href="#NWl9cUW-Qa9fr-1"><i>&lt;Common v1 lexer code&gt;</i></a>: <a href="#NWDl9cUW-2">U1</a>, <a href="#NWl9cUW-HtZxO-1">U2</a>, <a href="#NWl9cUW-Qa9fr-1">D3</a>
+<li><a href="#NWDl9cUW-6"><i>&lt;Common v2 lexer code&gt;</i></a>: <a href="#NWl9cUW-4aieiU-1">U1</a>, <a href="#NWl9cUW-KiUoC-1">U2</a>, <a href="#NWDl9cUW-6">D3</a>
+<li><a href="#NWDl9cUW-2"><i>&lt;Lexer 1.0&gt;</i></a>: <a href="#NWDl9cUW-2">D1</a>
+<li><a href="#NWl9cUW-HtZxO-1"><i>&lt;Lexer 1.1&gt;</i></a>: <a href="#NWl9cUW-HtZxO-1">D1</a>
+<li><a href="#NWl9cUW-4aieiU-1"><i>&lt;Lexer 2.0&gt;</i></a>: <a href="#NWl9cUW-4aieiU-1">D1</a>
+<li><a href="#NWl9cUW-KiUoC-1"><i>&lt;Lexer STAR2&gt;</i></a>: <a href="#NWl9cUW-KiUoC-1">D1</a>
+<li><a href="#NWDl9cUW-5"><i>&lt;STAR2.0 data value&gt;</i></a>: <a href="#NWl9cUW-KiUoC-1">U1</a>, <a href="#NWDl9cUW-5">D2</a>
+</ul>
+<ul>
+</ul>
+</body></html>
+

@@ -1,0 +1,215 @@
+<!-- this file was generated automatically by noweave; better not edit it-->
+<html><head><title>cif-yacc.nw</title></head><body><a name="NWD4K20MV-1">Common parser for CIF/STAR grammar</a>
+<p>
+<pre><a name="NW4K20MV-2FmGjA-1" href="#NWD4K20MV-1"><dfn>&lt;CIF2 grammar&gt;=</dfn></a>
+import ply.yacc as yacc
+from cif_lex_2_0 import tokens
+from StarFile import StarFile,StarBlock
+<a name="NW4K20MV-2FmGjA-1-u1" href="#NWD4K20MV-5"><i>&lt;Helper functions&gt;</i></a>
+<a name="NW4K20MV-2FmGjA-1-u2" href="#NWD4K20MV-2"><i>&lt;CIF grammar common features&gt;</i></a>
+<a name="NW4K20MV-2FmGjA-1-u3" href="#NWD4K20MV-4"><i>&lt;CIF2 additions&gt;</i></a>
+<a name="NW4K20MV-2FmGjA-1-u4" href="#NW4K20MV-3FTsut-1"><i>&lt;Postamble&gt;</i></a>
+
+</pre><pre><a name="NW4K20MV-4aeoZW-1" href="#NW4K20MV-4aeoZW-1"><dfn>&lt;CIF1.1 grammar&gt;=</dfn></a>
+import ply.yacc as yacc
+from cif_lex_1_1 import tokens
+from StarFile import StarFile,StarBlock
+<a name="NW4K20MV-4aeoZW-1-u1" href="#NWD4K20MV-5"><i>&lt;Helper functions&gt;</i></a>
+<a name="NW4K20MV-4aeoZW-1-u2" href="#NWD4K20MV-2"><i>&lt;CIF grammar common features&gt;</i></a>
+<a name="NW4K20MV-4aeoZW-1-u3" href="#NWD4K20MV-3"><i>&lt;CIF1 specific productions&gt;</i></a>
+<a name="NW4K20MV-4aeoZW-1-u4" href="#NW4K20MV-3FTsut-1"><i>&lt;Postamble&gt;</i></a>
+
+
+</pre><pre><a name="NW4K20MV-3FTsut-1" href="#NW4K20MV-3FTsut-1"><dfn>&lt;Postamble&gt;=</dfn></a> <b>(<a href="#NWD4K20MV-1">&lt;-U</a> <a href="#NW4K20MV-4aeoZW-1">&lt;-U</a>)</b>
+parser = yacc.yacc()
+
+</pre><p><a name="NWD4K20MV-2">Copied from our Yapps parser</a>
+<p>
+<pre><a name="NW4K20MV-3ia1Tc-1" href="#NWD4K20MV-2"><dfn>&lt;CIF grammar common features&gt;=</dfn></a> <b>(<a href="#NWD4K20MV-1">&lt;-U</a> <a href="#NW4K20MV-4aeoZW-1">&lt;-U</a>)</b>
+
+def p_input(p):
+    ''' input : dblock
+              | input dblock
+              | '''
+    if len(p) == 1:
+        p[0] = StarFile()
+    elif len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[1].merge_fast(p[2])
+        p[0] = p[1]
+
+def p_dblock(p):
+    ''' dblock : DATA_HEADING data_contents
+               | DATA_HEADING '''
+    heading = p[1][5:]
+    p[0] = StarFile(characterset='unicode')
+    p[0].NewBlock(heading,StarBlock(overwrite=False))
+    if len(p) == 3:
+        # Traverse our mini AST
+        for dc in p[2]:
+            if dc[0] == 'SAVE':
+                p[0].merge_fast(dc[1],parent=heading)
+            elif dc[0] == 'KVPAIR':
+                p[0][heading].AddItem(dc[1],dc[2],precheck=False)
+            elif dc[0] == 'LOOP':
+                makeloop(p[0][heading],dc[1:])
+            else:
+                raise SyntaxError, 'Programming error, what is ' + `dc[0]`
+
+def p_data_contents(p):
+    ''' data_contents : dataseq 
+                     | save_frame
+                     | data_contents dataseq 
+                     | data_contents save_frame '''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = p[1] + p[2]
+
+def p_dataseq(p):
+    ''' dataseq : data
+                | dataseq data '''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[2]]
+
+def p_data(p):
+    ''' data : top_loop
+             | datakvpair '''
+    p[0] = p[1]
+
+def p_datakvpair(p):
+    ''' datakvpair : DATA_NAME data_value '''
+    p[0] = ['KVPAIR',p[1],p[2]]
+
+def p_top_loop(p):
+    ''' top_loop : LBLOCK loopfield loopvalues '''
+    p[0] = ['LOOP',p[2],p[3]]
+
+def p_loopfield(p):
+    ''' loopfield : DATA_NAME
+                  | loopfield DATA_NAME '''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[2]]
+
+def p_loopvalues(p):
+    ''' loopvalues : data_value
+                   | loopvalues data_value '''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[2]]
+
+def p_save_frame(p):
+    ''' save_frame : SAVE_HEADING data_contents SAVE_END
+                   | SAVE_HEADING SAVE_END '''
+    heading = p[1][5:]
+    myframe = StarFile(characterset='unicode')
+    myframe.NewBlock(heading,StarBlock(overwrite=False))
+    if len(p) == 4:
+        # Traverse our mini AST
+        for dc in p[2]:
+            if dc[0] == 'SAVE':
+                myframe.merge_fast(dc[1],parent=heading)
+            elif dc[0] == 'KVPAIR':
+                myframe[heading].AddItem(dc[1],dc[2],precheck=False)
+            elif dc[0] == 'LOOP':
+                makeloop(myframe[heading],dc[1:])
+    p[0] = [['SAVE',myframe]]
+
+</pre><p><a name="NWD4K20MV-3">These productions for CIF1 do not include the bracket</a>
+expressions or separate delimited expressions.
+<p>
+<pre><a name="NW4K20MV-4RM6Kk-1" href="#NWD4K20MV-3"><dfn>&lt;CIF1 specific productions&gt;=</dfn></a> <b>(<a href="#NW4K20MV-4aeoZW-1">&lt;-U</a>)</b>
+def p_data_value(p):
+    ''' data_value : DATA_VALUE_1
+                   | END_SC_LINE '''
+    p[0] = p[1]
+
+</pre><p><a name="NWD4K20MV-4">CIF2 most notably adds lists and tables.</a>
+<p>
+<pre><a name="NW4K20MV-28MHVZ-1" href="#NWD4K20MV-4"><dfn>&lt;CIF2 additions&gt;=</dfn></a> <b>(<a href="#NWD4K20MV-1">&lt;-U</a>)</b>
+def p_data_value(p):
+    ''' data_value : DATA_VALUE_1
+                   | delimited_data_value
+                   | END_SC_LINE
+                   | square_bracket_expr
+                   | curly_bracket_expr '''
+    p[0] = p[1]
+
+def p_delimited_data_value(p):
+    ''' delimited_data_value : TRIPLE_QUOTE_DATA_VALUE
+                             | TRIPLE_APOST_DATA_VALUE
+                             | SINGLE_QUOTE_DATA_VALUE '''
+    p[0] = p[1]
+
+def p_square_bracket_expr(p):
+    ''' square_bracket_expr : '[' list_builder ']' '''
+    p[0] = StarList(p[2])
+
+def p_list_builder(p):
+    ''' list_builder : data_value
+                     | list_builder data_value
+                     | '''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    elif len(p) == 3:
+        p[0] = p[1] + [p[2]]
+    else:
+        p[0] = []
+
+def p_curly_bracket_expr(p):
+    ''' curly_bracket_expr : '{' table_builder '}' '''
+    p[0] = StarDict(pairwise(p[2]))
+
+def p_table_builder(p):
+    ''' table_builder : delimited_data_value ':' data_value
+                      | table_builder delimited_data_value ':' data_value '''
+    if len(p) == 4:
+        p[0] = [p[1],p[3]]
+    elif len(p) == 5:
+        p[0] = p[1] + [p[2],p[4]] 
+
+</pre><p>
+<a name="NWD4K20MV-5">Some convenience functions</a>
+<p>
+<pre><a name="NW4K20MV-2tivfn-1" href="#NWD4K20MV-5"><dfn>&lt;Helper functions&gt;=</dfn></a> <b>(<a href="#NWD4K20MV-1">&lt;-U</a> <a href="#NW4K20MV-4aeoZW-1">&lt;-U</a>)</b>
+def pairwise(iterable):
+    itnext = iter(p[2]).next
+    while 1:
+            yield itnext(),itnext()
+
+def makeloop(target_block,loopdata):
+    loop_seq,itemlists = loopdata
+    if itemlists[-1] == []: itemlists.pop(-1)
+    # print 'Making loop with %s' % `itemlists`
+    step_size = len(loop_seq)
+    for col_no in range(step_size):
+       target_block.AddItem(loop_seq[col_no], itemlists[col_no::step_size],precheck=True)
+    # print 'Makeloop constructed %s' % `loopstructure`
+    # now construct the loop
+    try:
+        target_block.CreateLoop(loop_seq)  #will raise ValueError on problem
+    except ValueError:
+        error_string =  'Incorrect number of loop values for loop containing %s' % `loop_seq`
+        print &gt;&gt;sys.stderr, error_string
+        raise ValueError, error_string
+</pre>
+
+<ul>
+<li><a href="#NWD4K20MV-2"><i>&lt;CIF grammar common features&gt;</i></a>: <a href="#NWD4K20MV-1">U1</a>, <a href="#NW4K20MV-4aeoZW-1">U2</a>, <a href="#NWD4K20MV-2">D3</a>
+<li><a href="#NWD4K20MV-3"><i>&lt;CIF1 specific productions&gt;</i></a>: <a href="#NW4K20MV-4aeoZW-1">U1</a>, <a href="#NWD4K20MV-3">D2</a>
+<li><a href="#NW4K20MV-4aeoZW-1"><i>&lt;CIF1.1 grammar&gt;</i></a>: <a href="#NW4K20MV-4aeoZW-1">D1</a>
+<li><a href="#NWD4K20MV-4"><i>&lt;CIF2 additions&gt;</i></a>: <a href="#NWD4K20MV-1">U1</a>, <a href="#NWD4K20MV-4">D2</a>
+<li><a href="#NWD4K20MV-1"><i>&lt;CIF2 grammar&gt;</i></a>: <a href="#NWD4K20MV-1">D1</a>
+<li><a href="#NWD4K20MV-5"><i>&lt;Helper functions&gt;</i></a>: <a href="#NWD4K20MV-1">U1</a>, <a href="#NW4K20MV-4aeoZW-1">U2</a>, <a href="#NWD4K20MV-5">D3</a>
+<li><a href="#NW4K20MV-3FTsut-1"><i>&lt;Postamble&gt;</i></a>: <a href="#NWD4K20MV-1">U1</a>, <a href="#NW4K20MV-4aeoZW-1">U2</a>, <a href="#NW4K20MV-3FTsut-1">D3</a>
+</ul>
+<ul>
+</ul>
+</body></html>
+

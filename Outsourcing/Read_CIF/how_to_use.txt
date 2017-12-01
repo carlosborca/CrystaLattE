@@ -1,0 +1,17 @@
+
+No installation is necessary, just make sure that the "pycifrw-4.1.1-min"
+directory and the "read_cif.py" file are in the same directory.
+
+As a test, you could run:
+
+    ./read_cif.py -i quartz-alpha.cif -o quartz-222.cif -b 2 2 2
+
+and then look at the resulting CIF file with JMol:
+
+    jmol quartz-222.cif
+
+In a similar way the script can generate GROMACS and LAMMPS files that can be
+used to start a Molecular Dynamics simulation.
+
+    Erik Lascaris, 24 July 2016
+

@@ -1,0 +1,12 @@
+1. Miniconda (or Psi4conda):
+
+a. Go to: https://conda.io/miniconda.html (or http://vergil.chemistry.gatech.edu/psicode-download/1.1.html)
+
+b. Download the version that best fits your interests.
+
+c. Go to the directory where you downloaded the installer and execute it: bash Miniconda3-latest-Linux-x86_64.sh (or bash Psi4conda-latest-py36-Linux-x86_64.sh)
+
+
+2. PyCIFRW
+
+Install using: conda install -c conda-forge pycifrw
