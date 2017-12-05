@@ -2,7 +2,7 @@
 
 # Read a CIF file and generates a supercell.
 import Read_CIF
-args = ['', '-i', 'Crystal_Benzene-138K.cif', '-o',  'Crystal_Benzene-138K.xyz', '-b', '5', '5', '5']
+args = ['', '-i', 'Benzene-138K.cif', '-o',  'Benzene-138K.xyz', '-b', '5', '5', '5']
 Read_CIF.main(args)
 
 # Take the supercell .xyz file
