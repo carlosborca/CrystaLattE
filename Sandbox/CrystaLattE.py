@@ -12,11 +12,11 @@ print (" STEP 1. GENERATION OF A SUPERCELL FROM A CIF FILE.")
 print ("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ")
 print ("")
 
-ReadCifIn = 'Benzene-138K.cif'  # CIF input file.
-ReadCifOut = 'Benzene-138K.xyz' # XYZ output file.
-ReadCifA = '2'                  # Number of replicas on x.
-ReadCifB = '2'                  # Number of replicas on y.
-ReadCifC = '2'                  # Number of replicas on z.
+ReadCifIn = 'Benzene-138K.cif'  # CIF input file. # WARNING: Hardcoded for now!
+ReadCifOut = 'Benzene-138K.xyz' # XYZ output file. # WARNING: Hardcoded for now!
+ReadCifA = '2'                  # Number of replicas on x. # WARNING: Hardcoded for now!
+ReadCifB = '2'                  # Number of replicas on y. # WARNING: Hardcoded for now!
+ReadCifC = '2'                  # Number of replicas on z. # WARNING: Hardcoded for now!
 
 args = ['', '-i', ReadCifIn, '-o', ReadCifOut, '-b', ReadCifA, ReadCifB, ReadCifC]
 
