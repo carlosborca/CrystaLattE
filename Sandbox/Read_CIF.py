@@ -644,6 +644,7 @@ def main(args):
 	
 	# Update the user.
 	print('Loaded a CIF file with %d atom coordinates and %d symmetry operations.' % (len(atoms), len(ops))) # Carlos Borca (2017-09-19-1429)
+	print('') # Carlos Borca (2017-12-06-1554)
 	
 	# Just for reference, here is a typical example of a CIF file:
 	"""
@@ -734,12 +735,13 @@ def main(args):
 	
 	# Done with creating the unit cell.  Update the user.
 	print('Created a unit cell consisting of %d atoms.' % len(atoms))
-	
+	print('') # Carlos Borca (2017-12-06-1554)	
+
 	print('Fractional coordinates:')
 	for atom in atoms:
 	    print('%10s  %.3f  %.3f  %.3f' % atom)
 	
-	
+	print ('') # Carlos Borca (2017-12-06-1554)	
 	
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# Create a larger box made of several unit cells: the super cell.
@@ -828,7 +830,10 @@ def main(args):
 	print('   a = [%6.4f, %6.4f, %6.4f]' % (ax,0,0))
 	print('   b = [%6.4f, %6.4f, %6.4f]' % (bx,by,0))
 	print('   c = [%6.4f, %6.4f, %6.4f]' % (cx,cy,cz))
-	print('This gives a volume of %f A^3 (CIF file indicates it is %f A^3)' % (V,volume))
+	print('') # Carlos Borca (2017-12-06-1558)
+	print('This gives a volume of %f A^3.' % V) # Carlos Borca (2017-12-06-1558)
+	print('CIF file indicates it is %f A^3.' % volume) # Carlos Borca (2017-12-06-1558)
+	print('') # Carlos Borca (2017-12-06-1559)
 	
 	
 	# Determine the box size.
