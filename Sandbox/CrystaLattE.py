@@ -6,7 +6,7 @@ from psi4.driver.wrapper_autofrag import auto_fragments
 
 def main():
 
-    # ======================================================================
+    # ==================================================================
     # Read a CIF file and generates a supercell.
     print ("")
     print ("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ")
@@ -29,9 +29,9 @@ def main():
     print ("--------------------------------------------------------------------- ")
     Read_CIF.main(args)
     print ("--------------------------------------------------------------------- ")
-    # ======================================================================
+    # ==================================================================
     
-    # ======================================================================
+    # ==================================================================
     # Take the supercell .xyz file
     # And generate .xyz files with all possible monomers.
     print ("")
@@ -56,25 +56,64 @@ def main():
     #print (CellFrags.nfragments())
     
     # Read the output of the automatic fragmentation.
-    # Generate .xyz files for each fragment (a monomer).
-    # ======================================================================
+    p4frag = "bzfrag.p4" # WARNING: Name of the fragmented super cell
+                         # file is temporarily hardcoded.
+
+    with open(p4frag) as cellfrags:
+            frags = cellfrags.readlines()
+
+    # Generate .xyz files for each fragment.
+    numfrags = 664 # WARNING: Number of fragments temporarily hardcoded!
+    numfatoms = 12 # WARNING: Number of atoms per fragment hardcoded!
+                   # WARNING: What if there are two types of molecules?
+    frg_separator = "--" # Fragment separator string.
+    fcounter = 1 # Counter of processed fragments.
+    lcounter = 0 # Counter of lines.
+    HeaderLine = True # Flag for first line of a fragment .xyz file.
     
-    # ======================================================================
-    # Loop through all monomers and generate dimers with all other monomers.
+    for line in frags:
+        lcounter += 1
+        
+        if line.startswith(frg_separator):
+            fcounter += 1
+            HeaderLine = True
+        
+        else:
+            ffnidx = "f" + str(fcounter).zfill(len(str(numfrags))) \
+                     + ".xyz"
+            with open(ffnidx, "a") as frgxyz: # WARNING: File exists?
+                
+                if HeaderLine == True:
+                    frgxyz.write(str(numfatoms) + "\n"+ "Fragment " 
+                    + str(fcounter) + "\n")
+                    HeaderLine = False
+                
+                if HeaderLine == False:
+                    frgxyz.write(line)
+    
+    # Discard fragments that are not a complete molecule.
+    
+    # ==================================================================
+    
+    # ==================================================================
+    # Loop through all monomers and generate dimers with all other
+    # monomers.
     #
     # Filter dimers that are too distant apart.
     #
-    # Filter out and keep count of all non-unique dimers, using the nuclear
-    # repulsion energy criteria.
-    # ======================================================================
+    # Filter out and keep count of all non-unique dimers, using the
+    # nuclear repulsion energy criteria.
+    # ==================================================================
     
-    # ======================================================================
-    # Loop through all dimers and generate trimers with all other monomers.
+    # ==================================================================
+    # Loop through all dimers and generate trimers with all other
+    # monomers.
     #
     # Filter trimers that are too distant apart.
     #
-    # Filter out and keep count of all non-unique trimers, using ArbAlign.
-    # ======================================================================
+    # Filter out and keep count of all non-unique trimers, using 
+    # ArbAlign.
+    # ==================================================================
     
     # .
     # .
