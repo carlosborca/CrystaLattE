@@ -18,9 +18,9 @@ def main():
     
     ReadCifIn = 'Benzene-138K.cif'  # CIF input file. # WARNING: Hardcoded for now!
     ReadCifOut = 'Benzene-138K.xyz' # XYZ output file. # WARNING: Hardcoded for now!
-    ReadCifA = '2'                  # Number of replicas on x. # WARNING: Hardcoded for now!
-    ReadCifB = '2'                  # Number of replicas on y. # WARNING: Hardcoded for now!
-    ReadCifC = '2'                  # Number of replicas on z. # WARNING: Hardcoded for now!
+    ReadCifA = '2'                  # X replicas. # WARNING: Hardcoded for now!
+    ReadCifB = '2'                  # Y replicas. # WARNING: Hardcoded for now!
+    ReadCifC = '2'                  # Z replicas. # WARNING: Hardcoded for now!
     
     args = ['', '-i', ReadCifIn, '-o', ReadCifOut, '-b', ReadCifA, ReadCifB, ReadCifC]
     
@@ -115,6 +115,9 @@ def main():
                     incmolcounter += 1
     
     print ("Removed %s fragments." % incmolcounter)
+    
+    # Generate monomers out of fragments
+
     # ==================================================================
     
     # ==================================================================
