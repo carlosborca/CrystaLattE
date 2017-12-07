@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import os, re
+import os
+import re
 
 numfatoms = 12 # WARNING: Number of atoms per fragment hardcoded!
                # WARNING: What if there are two types of molecules?
