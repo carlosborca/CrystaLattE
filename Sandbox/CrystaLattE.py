@@ -6,6 +6,35 @@ import re
 import os
 from psi4.driver.wrapper_autofrag import auto_fragments
 
+def frags_filter(n_atm_frg):
+    
+    # Remove files that match a filename pattern 
+    # and have an unexpected number of atoms.
+
+    directory = os.getcwd()
+    files = os.listdir(directory)
+    incmolcounter = 0
+    
+    for file in files:
+
+        if re.match('^f[0-9]+.xyz$', file): # Match filenames f???.xyz
+
+            with open(file, 'r') as f:
+                lines = f.readlines()
+
+                if len(lines) != n_atm_frg + 2: # Match files with unexpected atoms.
+                    print("Expected " + str(n_atm_frg)\
+                          + " atoms. Found only " + str(len(lines) - 2)\
+                          + ". Removing: " + file)
+
+                    os.remove(os.path.join(directory,file))
+
+                    incmolcounter += 1
+    
+    print ("Removed %s fragments." % incmolcounter)
+    
+    return
+
 def main():
 
     # ==================================================================
@@ -94,27 +123,30 @@ def main():
                     frgxyz.write(line)
     
     # Discard fragments that are not a complete molecule.
-    directory = os.getcwd()
-    files = os.listdir(directory)
-
+    
     print("")
     print("Detecting fragments with incomplete molecules:")
     print("")
 
-    incmolcounter = 0
+    frags_filter(numfatoms)
 
-    for file in files:
-        if re.match('^f[0-9]+.xyz$', file): # Match filenames f???.xyz
-            with open(file, 'r') as f:
-                lines = f.readlines()
-                if len(lines) != numfatoms + 2:
-                    print("Expected " + str(numfatoms)\
-                          + " atoms. Found only " + str(len(lines) - 2)\
-                          + ". Removing: " + file)
-                    os.remove(os.path.join(directory,file))
-                    incmolcounter += 1
-    
-    print ("Removed %s fragments." % incmolcounter)
+    # directory = os.getcwd()
+    # files = os.listdir(directory)
+
+    # incmolcounter = 0
+
+    # for file in files:
+    #     if re.match('^f[0-9]+.xyz$', file): # Match filenames f???.xyz
+    #         with open(file, 'r') as f:
+    #             lines = f.readlines()
+    #             if len(lines) != numfatoms + 2:
+    #                 print("Expected " + str(numfatoms)\
+    #                       + " atoms. Found only " + str(len(lines) - 2)\
+    #                       + ". Removing: " + file)
+    #                 os.remove(os.path.join(directory,file))
+    #                 incmolcounter += 1
+    # 
+    # print ("Removed %s fragments." % incmolcounter)
     
     # Generate monomers out of fragments
 
