@@ -6,6 +6,14 @@ import re
 import os
 from psi4.driver.wrapper_autofrag import auto_fragments
 
+# ==================================================================
+# Discard incomplete molecules from the list of fragments.
+# requires the expecte number of atoms as input.
+
+# WARNING: What if there are more than two types of molecules in the
+#          unit cell? n_atom_frg should be passed as a list with
+#          possible numbers of atoms in a fragment.
+
 def frags_filter(n_atm_frg):
     
     # Remove files that match a filename pattern 
@@ -34,10 +42,12 @@ def frags_filter(n_atm_frg):
     print ("Removed %s fragments." % incmolcounter)
     
     return
+# ==================================================================
 
+# ==================================================================
 def main():
 
-    # ==================================================================
+    # ------------------------------------------------------------------
     # Read a CIF file and generates a supercell.
     print ("")
     print ("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ")
@@ -60,9 +70,9 @@ def main():
     print ("--------------------------------------------------------------------- ")
     Read_CIF.main(args)
     print ("--------------------------------------------------------------------- ")
-    # ==================================================================
+    # ------------------------------------------------------------------
     
-    # ==================================================================
+    # ------------------------------------------------------------------
     # Take the supercell .xyz file
     # And generate .xyz files with all possible monomers.
     print ("")
@@ -130,29 +140,11 @@ def main():
 
     frags_filter(numfatoms)
 
-    # directory = os.getcwd()
-    # files = os.listdir(directory)
-
-    # incmolcounter = 0
-
-    # for file in files:
-    #     if re.match('^f[0-9]+.xyz$', file): # Match filenames f???.xyz
-    #         with open(file, 'r') as f:
-    #             lines = f.readlines()
-    #             if len(lines) != numfatoms + 2:
-    #                 print("Expected " + str(numfatoms)\
-    #                       + " atoms. Found only " + str(len(lines) - 2)\
-    #                       + ". Removing: " + file)
-    #                 os.remove(os.path.join(directory,file))
-    #                 incmolcounter += 1
-    # 
-    # print ("Removed %s fragments." % incmolcounter)
-    
     # Generate monomers out of fragments
 
-    # ==================================================================
+    # ------------------------------------------------------------------
     
-    # ==================================================================
+    # ------------------------------------------------------------------
     # Loop through all monomers and generate dimers with all other
     # monomers.
     #
@@ -160,9 +152,9 @@ def main():
     #
     # Filter out and keep count of all non-unique dimers, using the
     # nuclear repulsion energy criteria.
-    # ==================================================================
+    # ------------------------------------------------------------------
     
-    # ==================================================================
+    # ------------------------------------------------------------------
     # Loop through all dimers and generate trimers with all other
     # monomers.
     #
@@ -170,20 +162,21 @@ def main():
     #
     # Filter out and keep count of all non-unique trimers, using 
     # ArbAlign.
-    # ==================================================================
+    # ------------------------------------------------------------------
     
     # .
     # .
     # .
     
-    # ======================================================================
+    # ------------------------------------------------------------------
     # Run plesantly parallel PSI4 computations on all the final list of 
     # monomers, dimers, trimers, etc.
     #
     # Multiply the resulting energy of each one by the degeneracy factor.
     #
     # Sum results to get a lattice energy.
-    # ======================================================================
+    # ------------------------------------------------------------------
+# ==================================================================
 
 if __name__ == "__main__":
     main()
