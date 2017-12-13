@@ -8,20 +8,6 @@ import os
 from psi4.driver.wrapper_autofrag import auto_fragments
 
 # ==================================================================
-def readmatchf(pattern, file):
-    """If the name of a file matches a pattern read the lines contained in it, and return the contents as a list of lines."""
-
-    contents = []
-
-    if re.match(pattern, file):  # Match filenames with pattern
-
-        with open(file, 'r') as f:
-            contents = f.readlines()
-
-    return contents
-# ==================================================================
-
-# ==================================================================
 def scellcntr():
     """Compute the center of coordinates of a series of .xyz files with a matching pattern in the filename.
     Returns a list with fragment names, x, y, and z coordinates in lists of floats and the coordinates of the center."""
@@ -35,20 +21,24 @@ def scellcntr():
     files = os.listdir(directory)
 
     for file in files:
-        lines = readmatchf('^f[0-9]+.xyz$', file)
 
-        i = 0
-        for i in range(len(lines)):
+        if re.match('^f[0-9]+.xyz$', file): # Match filenames with pattern
+            
+            with open(file, 'r') as f:
+                lines = f.readlines()
 
-            if i < 2:
-                continue
+                i = 0
+                for i in range(len(lines)):
 
-            else:
-                info = lines[i].split()
-                frg.append(file)
-                x.append(float(info[1]))
-                y.append(float(info[2]))
-                z.append(float(info[3]))
+                    if i < 2:
+                        continue
+
+                    else:
+                        info = lines[i].split()
+                        frg.append(file)
+                        x.append(float(info[1]))
+                        y.append(float(info[2]))
+                        z.append(float(info[3]))
 
     cntr_x = (max(x) - min(x))/2.0
     cntr_y = (max(y) - min(y))/2.0
@@ -156,19 +146,19 @@ def frags_filter(n_atm_frg):
     for file in files:
 
         if re.match('^f[0-9]+.xyz$', file): # Match filenames f???.xyz
-
+        
             with open(file, 'r') as f: # WARNING: Obsolete. Use readmatchf function.
                 lines = f.readlines()
-
+        
                 if len(lines) != n_atm_frg + 2: # Match files with unexpected atoms.
                     print("Expected " + str(n_atm_frg)\
                           + " atoms. Found only " + str(len(lines) - 2)\
                           + ". Removing: " + file)
-
+        
                     os.remove(os.path.join(directory,file))
-
+        
                     incmolcounter += 1
-    
+
     print ("Removed %s fragments." % incmolcounter)
     
     return
