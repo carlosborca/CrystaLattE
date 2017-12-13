@@ -8,6 +8,39 @@ import os
 from psi4.driver.wrapper_autofrag import auto_fragments
 
 # ==================================================================
+def frags_filter(n_atm_frg): # WARNING: The number of atoms in a fragment probabley should be passed as a list.
+    """It takes the possible numbers of atoms in a fragment and discards all fragments files that contain a smaller number of atoms."""
+
+    # WARNING: What if there are more than two types of molecules in the
+    #          unit cell? n_atom_frg should be passed as a list with
+    #          possible numbers of atoms in a fragment.
+
+    directory = os.getcwd()
+    files = os.listdir(directory)
+    incmolcounter = 0
+
+    for file in files:
+
+        if re.match('^f[0-9]+.xyz$', file): # Match filenames f???.xyz
+
+            with open(file, 'r') as f:
+                lines = f.readlines()
+
+                if len(lines) != n_atm_frg + 2: # Match files with unexpected atoms.
+                    print("Expected " + str(n_atm_frg)\
+                          + " atoms. Found only " + str(len(lines) - 2)\
+                          + ". Removing: " + file)
+
+                    os.remove(os.path.join(directory,file))
+
+                    incmolcounter += 1
+
+    print ("Removed %s fragments." % incmolcounter)
+
+    return
+# ==================================================================
+
+# ==================================================================
 def scellcntr():
     """Compute the center of coordinates of a series of .xyz files with a matching pattern in the filename.
     Returns a list with fragment names, x, y, and z coordinates in lists of floats and the coordinates of the center."""
@@ -127,48 +160,20 @@ def frgs2mols():
 # ==================================================================
 
 # ==================================================================
-# Discard incomplete molecules from the list of fragments.
-# requires the expecte number of atoms as input.
-
-# WARNING: What if there are more than two types of molecules in the
-#          unit cell? n_atom_frg should be passed as a list with
-#          possible numbers of atoms in a fragment.
-
-def frags_filter(n_atm_frg):
-    
-    # Remove files that match a filename pattern 
-    # and have an unexpected number of atoms.
-
-    directory = os.getcwd()
-    files = os.listdir(directory)
-    incmolcounter = 0
-    
-    for file in files:
-
-        if re.match('^f[0-9]+.xyz$', file): # Match filenames f???.xyz
-        
-            with open(file, 'r') as f: # WARNING: Obsolete. Use readmatchf function.
-                lines = f.readlines()
-        
-                if len(lines) != n_atm_frg + 2: # Match files with unexpected atoms.
-                    print("Expected " + str(n_atm_frg)\
-                          + " atoms. Found only " + str(len(lines) - 2)\
-                          + ". Removing: " + file)
-        
-                    os.remove(os.path.join(directory,file))
-        
-                    incmolcounter += 1
-
-    print ("Removed %s fragments." % incmolcounter)
-    
-    return
-# ==================================================================
-
-
-# ==================================================================
 # Main program.
 
 def main():
+    "Takes a CIF file and computes the crystal lattice energy using a manybody expansion approach."
+    
+    # ------------------------------------------------------------------
+    # Read a CIF file and generate the unit cell.
+    # ------------------------------------------------------------------
+
+    # ------------------------------------------------------------------
+    # Run the unit cell through auto_fragments() to extract the number
+    # of molecules in the central unit cell.
+    # UnitCFrags = auto_fragments(molecule = UnitCell)
+    # ------------------------------------------------------------------
 
     # ------------------------------------------------------------------
     # Read a CIF file and generates a supercell.
