@@ -6,6 +6,7 @@ import os
 
 # Read the coordinates of all fragments and find the origin.
 
+# ==================================================================
 def readmatchf(pattern, file):
     """If the name of a file matches a pattern read the lines contained in it, and return the contents as a list of lines."""
 
@@ -17,8 +18,9 @@ def readmatchf(pattern, file):
             contents = f.readlines()
 
     return contents
+# ==================================================================
 
-
+# ==================================================================
 def scellcntr():
     """Compute the center of coordinates of a series of .xyz files with a matching pattern in the filename.
     Returns a list with fragment names, x, y, and z coordinates in lists of floats and the coordinates of the center."""
@@ -52,7 +54,9 @@ def scellcntr():
     cntr_z = (max(z) - min(z))/2.0
 
     return frg, x, y, z, cntr_x, cntr_y, cntr_z
+# ==================================================================
 
+# ==================================================================
 def posvecmag():
     """Using the scellcntr() function it computes the magnitude of the position vector of the atoms read by the scellcntr() function.
     Returns the fragment filename and the magnitude of the position vector."""
@@ -65,7 +69,9 @@ def posvecmag():
         r.append(math.sqrt((x[j] - cntr_x)**2.0 + (y[j] - cntr_y)**2.0 + (z[j] - cntr_z)**2.0))
 
     return frg, r
+# ==================================================================
 
+# ==================================================================
 def proximity():
     """Using position vector magnitude, computed in posvecmag(). This function returns a list of fragments filenames
     with fragments containing atoms closest to the center of the supercell first."""
@@ -81,7 +87,9 @@ def proximity():
             frgprox.append(frg[pair[0]])
 
     return frgprox
+# ==================================================================
 
+# ==================================================================
 def main():
     """Main program."""
     
@@ -107,6 +115,7 @@ def main():
         os.remove(os.path.join(directory,file))
 
     return
+# ==================================================================
 
 if __name__ == "__main__":
     main()
