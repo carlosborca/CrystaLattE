@@ -53,7 +53,9 @@ def scellcntr():
 
     return frg, x, y, z, cntr_x, cntr_y, cntr_z
 
-def main():
+def posvecmag():
+    """Using the scellcntr() function it computes the magnitude of the position vector of the atoms read by the scellcntr() function.
+    Returns the fragment filename and the magnitude of the position vector."""
 
     frg, x, y, z, cntr_x, cntr_y, cntr_z = scellcntr()
 
@@ -62,9 +64,47 @@ def main():
     for j in range(len(x)):
         r.append(math.sqrt((x[j] - cntr_x)**2.0 + (y[j] - cntr_y)**2.0 + (z[j] - cntr_z)**2.0))
 
-    print(min(r))
-    print(r.index(min(r))) # Index of the atom closest to the origin.
-    print(frg[r.index(min(r))]) # Name of the file with the atom closests to the origin.
+    return frg, r
+
+def proximity():
+    """Using position vector magnitude, computed in posvecmag(). This function returns a list of fragments filenames
+    with fragments containing atoms closest to the center of the supercell first."""
+
+    frg, r = posvecmag()
+    
+    frgprox = []
+
+    for pair in sorted(enumerate(r), key=lambda item:item[1]):
+        if frg[pair[0]] in frgprox:  
+            continue
+        else:
+            frgprox.append(frg[pair[0]])
+
+    return frgprox
+
+def main():
+    """Main program."""
+    
+    directory = os.getcwd()
+    proxlist = proximity()
+    molecule = 0
+
+    for file in proxlist:
+        molecule += 1
+        molfname = "m" + str(molecule).zfill(len(proxlist[-1]) - 5) + ".xyz"
+
+        with open(file, 'r') as f, open(molfname, 'w') as m:
+            
+            for line in file:
+
+                if line.startswith("Fragment"):
+                    newline = "Molecule " + str(molecule) + " (" + line[:-1] + ")"
+                    m.write(newline)
+
+                else:
+                    m.write(line)
+        
+        os.remove(os.path.join(directory,file))
 
     return
 
