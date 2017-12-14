@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
 import math
-import Read_CIF
 import psi4
 import re
 import os
+import sys
 from psi4.driver.wrapper_autofrag import auto_fragments
+
+# Imports of outsourced code.
+sys.path.insert(0, "Read_CIF")
+import Read_CIF
 
 # ==================================================================
 def frags_filter(n_atm_frg): # WARNING: The number of atoms in a fragment probabley should be passed as a list.
@@ -169,8 +173,9 @@ def mols2mons():
     monidx = 0
 
     for file in molfiles:
-
-        if re.match('^m[0-9]+.xyz$', file): # Match filenames with pattern
+        
+        if re.match('^m[0-9]+.xyz$', file):
+        #if re.match('^m00[0-9]+.xyz$', file): # For testing
             monidx += 1
             monfname = "1-" + str(file)[1:]
 
