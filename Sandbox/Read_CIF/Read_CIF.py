@@ -23,13 +23,6 @@
 #
 # NOTE: this script uses the PyCifRW code from  https://bitbucket.org/jamesrhester/pycifrw/
 #
-#
-# TODO:
-# - Double-check that it produces a good Gromacs file, and indicate on
-#   website how to use it in a Gromacs simulation.
-# - Double-check that it produces a good LAMMPS file, and indicate on
-#   website how to use it in a LAMMPS simulation.
-#
 # =============================================================================
 
 import sys
@@ -76,7 +69,6 @@ def print_usage():
     print('*  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *')
 
     exit(1)
-
 
 # =============================================================================
 
@@ -147,242 +139,6 @@ def write_xyz(atoms, box, f):
 
 
 # =============================================================================
-
-
-# LAMMPS *.lammpstrj format.  Can be displayed in VMD, or used to start a new
-# simulation in LAMMPS using read_dump().
-def write_lammpstrj(atoms, box, f):
-
-
-    # Triclinic crystal structures are often defined using three lattice constants a,
-    # b, and c, and three angles alpha, beta and gamma.  Note that in this
-    # nomenclature, the a, b, and c lattice constants are the scalar lengths of the
-    # edge vectors a, b, and c defined above.  The relationship between these 6
-    # quantities (a,b,c,alpha,beta,gamma) and the LAMMPS box sizes (lx,ly,lz) =
-    # (xhi-xlo,yhi-ylo,zhi-zlo) and tilt factors (xy,xz,yz) is as follows: 
-    #
-    #   a = lx
-    #   b^2 = ly^2 + xy^2
-    #   c^2 = lz^2 + xz^2 + yz^2
-    #   cos(alpha) = (xy*xz +ly*yz) / (b*c)
-    #   cos(beta) = xz / c
-    #   cos(gamma) = xy / b
-    #
-    # The inverse relationship can be written as follows: 
-    #
-    #   lx = a
-    #   xy = b*cos(gamma)
-    #   xz = c*cos(beta)
-    #   ly^2 = b^2 - xy^2
-    #   yz = (b*c*cos(alpha) - xy*xz) / ly
-    #   lz^2 = c^2 - xz^2 - yz^2
-    #
-    #   ****  Info for lammpstrj file:
-    #
-    # ITEM: BOX BOUNDS xy xz yz
-    # xlo_bound xhi_bound xy
-    # ylo_bound yhi_bound xz
-    # zlo_bound zhi_bound yz 
-    #
-    # This bounding box is convenient for many visualization programs and is
-    # calculated from the 9 triclinic box parameters
-    # (xlo,xhi,ylo,yhi,zlo,zhi,xy,xz,yz) as follows:
-    #
-    #   xlo_bound = xlo + MIN(0.0,xy,xz,xy+xz)
-    #   xhi_bound = xhi + MAX(0.0,xy,xz,xy+xz)
-    #   ylo_bound = ylo + MIN(0.0,yz)
-    #   yhi_bound = yhi + MAX(0.0,yz)
-    #   zlo_bound = zlo
-    #   zhi_bound = zhi 
-    
-
-    # Write timestep (always zero).
-    f.write('ITEM: TIMESTEP\n')
-    f.write('0\n')
-
-    # Write the number of atoms.
-    N = len(atoms)
-    f.write('ITEM: NUMBER OF ATOMS\n')
-    f.write('%d\n' % N)
-
-
-    # Write the box size.  See
-    #    lammps.sandia.gov/doc/Section_howto.html#howto_12
-    # for more information about the box size in *.lammpstrj files.
-    if (len(box) == 6):
-        # box = (ax,bx,by,cx,cy,cz)
-        # For triclinic boxes LAMMPS uses the format
-        #   ITEM: BOX BOUNDS xy xz yz
-        #   xlo_bound xhi_bound xy
-        #   ylo_bound yhi_bound xz
-        #   zlo_bound zhi_bound yz 
-        # This bounding box is convenient for many visualization programs and
-        # is calculated from the 9 triclinic box parameters
-        # (xlo,xhi,ylo,yhi,zlo,zhi,xy,xz,yz) as follows:
-        #   xlo_bound = xlo + MIN(0.0,xy,xz,xy+xz)
-        #   xhi_bound = xhi + MAX(0.0,xy,xz,xy+xz)
-        #   ylo_bound = ylo + MIN(0.0,yz)
-        #   yhi_bound = yhi + MAX(0.0,yz)
-        #   zlo_bound = zlo
-        #   zhi_bound = zhi 
-        # where the "tilt factors" (xy,xz,yz) are given by
-        #   lx = a                 = ax
-        #   xy = b*cos(gamma)      = bx
-        #   xz = c*cos(beta)       = cx
-        #   ly^2 = b^2 - xy^2      = by^2
-        #   yz = (b*c*cos(alpha) - xy*xz) / ly   = cy
-        #   lz^2 = c^2 - xz^2 - yz^2             = cz^2
-        # and
-        #   xlo = 0,  xhi = lx,  etc.
-        lx = box[0]  # ax
-        xy = box[1]  # bx
-        ly = box[2]  # by
-        xz = box[3]  # cx
-        yz = box[4]  # cy
-        lz = box[5]  # cz
-        f.write('ITEM: BOX BOUNDS xy xz yz\n')
-        f.write('%f %f %f\n' % (min(0.0,xy,xz,xy+xz), lx + max(0.0,xy,xz,xy+xz), xy))
-        f.write('%f %f %f\n' % (min(0.0,yz), max(0.0,yz), xz))
-        f.write('%f %f %f\n' % (0.0, lz, yz))
-
-    else:
-        # box = (ax,by,cz)
-        f.write('ITEM: BOX BOUNDS pp pp pp\n')
-        f.write('0.0 %f\n' % box[0])  # Format:  "xlo xhi"
-        f.write('0.0 %f\n' % box[1])  # Format:  "ylo yhi"
-        f.write('0.0 %f\n' % box[2])  # Format:  "zlo zhi"
-
-    # Write atom data.
-    f.write('ITEM: ATOMS element id x y z\n')
-    for i in range(N):
-        (name,x,y,z) = atoms[i]  # = ('Si', x, y, z) for example
-        f.write('%-5s %5d %10.6f %10.6f %10.6f\n' % (name, i+1, x, y, z))
-
-    f.close()
-
-
-# =============================================================================
-
-
-# Gromacs *.gro format.
-def write_gro(atoms, box, f):
-
-    # Write the header.
-    f.write('Crystal created from CIF file, t= 0\n')
-
-    # Write the number of atoms.
-    N = len(atoms)
-    f.write('%d\n' % N)
-
-    # Write atom data.  Note that Gromacs uses nm, while CIF uses Angstrom.
-    for i in range(N):
-        (name,x,y,z) = atoms[i]  # = ('Si', x, y, z) for example
-        f.write('%5d%-5s%5s%5d%8.3f%8.3f%8.3f\n'
-               % (i+1, name, name, i+1, 0.1*x, 0.1*y, 0.1*z))
-
-    # Write the box size.  In a *.gro file it has the (free) format
-    #    ax  by  cz  0  0  bx  0  cx  cy
-    # and the last 6 columns are optional.  Here ax actually represents the
-    # x-component of the unit cell a-vector times the number of unit cells in
-    # the x-direction, i.e. ax = a[x] * Nx.
-    if (len(box) == 6):
-        # box = (ax,bx,by,cx,cy,cz)
-        ax = 0.1*box[0]
-        bx = 0.1*box[1]
-        by = 0.1*box[2]
-        cx = 0.1*box[3]
-        cy = 0.1*box[4]
-        cz = 0.1*box[5]
-        f.write('%10.5f%10.5f%10.5f%10.5f%10.5f%10.5f%10.5f%10.5f%10.5f\n'
-                                    % (ax,by,cz, 0.0,0.0,bx, 0.0,cx,cy))
-    else:
-        # box = (ax,by,cz)
-        f.write('%10.5f%10.5f%10.5f\n' % (0.1*box[0], 0.1*box[1], 0.1*box[2]))
-
-
-# =============================================================================
-
-
-# Writes an extended CIF file.  It basically makes a copy of the original file,
-# but adds additional atoms to complete the unit cell.
-# Note that the "atoms" are in fact the fractional coordinates of the atoms,
-# not the actual positions.
-def write_cif(fNameIn, atoms, fNameOut):
-
-    # Simply copy each line of the input file "fIn" to the output file "fOut",
-    # except for the few lines we want to replace.  Those lines is the info
-    # such ashere:
-    #
-    #       'x-y,-y,-z'
-    # loop_
-    # _atom_site_label
-    # _atom_site_fract_x
-    # _atom_site_fract_y
-    # _atom_site_fract_z
-    # Si   0.46970   0.00000   0.00000     <-- REPLACE THIS
-    # O   0.41350   0.26690   0.11910      <-- REPLACE THIS
-    # loop_
-    # _atom_site_aniso_label
-    #    etc.
-    try:
-
-        fIn = open(fNameIn, 'r')
-        fOut = open(fNameOut, 'w')
-
-        # Keep track of where we are: inside the loop with "_atom_site_" and
-        # its data, or outside of this loop.
-        inside_atom_site_loop = False
-
-        # Check each line of the input file.
-        for line in fIn:
-
-            # Split line into columns.
-            cols = line.split()
-
-            # Search for the keyword "_atom_site_label".  We expect this to be
-            # the start of the atom_site data.  Instead of writing this key,
-            # write the 4 keys and all the data right here and now.
-            if (len(cols)>0  and  cols[0] == '_atom_site_label'):
-
-                fOut.write('_atom_site_label\n')
-                fOut.write('_atom_site_fract_x\n')
-                fOut.write('_atom_site_fract_y\n')
-                fOut.write('_atom_site_fract_z\n')
-
-                # Remember that atom[i] = (label_i, x_i, y_i, z_i).
-                for atom in atoms:
-                    fOut.write('%s   %.5f   %.5f   %.5f\n' % atom)
-
-                # Clearly, we are inside the loop with the atom_site data.
-                inside_atom_site_loop = True
-
-
-            # Else, if we are inside the atom_site loop...
-            elif (inside_atom_site_loop):
-
-                # ... then ignore all lines with 4 or more columns, and ignore
-                # all lines that start with "_atom_site_".  But any other line
-                # is an indication that we've reached the end of the loop.
-                if (len(cols) < 4  and  (len(line) < 11  or  line[:11] != '_atom_site_')):
-
-                    inside_atom_site_loop = False
-                    fOut.write(line)
-
-
-            # In all other cases, just write the line to the output file.
-            else:
-                fOut.write(line)
-
-
-        fIn.close()
-        fOut.close()
-
-    except:
-        print_error('Failed to write to output file')
-
-
-# =============================================================================
-
 
 # Read CIF file, and extract the necessary info in the form of a dictionary.
 # E.g., the value of "_cell_volume" can be found with data['_cell_volume'].
@@ -489,7 +245,6 @@ def read_cif(fNameIn):
 
     # Return the extracted data.
     return data
-
 
 # =============================================================================
 # =============================================================================
