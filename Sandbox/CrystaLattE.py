@@ -12,6 +12,13 @@ sys.path.insert(0, "Read_CIF")
 import Read_CIF
 
 # ==================================================================
+def print_error(msg):
+    print("")
+    print(" ERROR:  %s" % msg)
+    print("")
+# ==================================================================
+
+# ==================================================================
 def psifrg2xyz(p4frag, numfrags, numfatoms, frg_separator):
     """Takes the output of the automatic fragmentation procedure, the total number of fragments,
     the number of atoms in one fragment, and the string that separates the fragments.
@@ -328,15 +335,17 @@ def nmerbuilder(nmertype, rcut):
         ucnmlbls = "Trimer"
         numnmlbl = "3"
 
-    if nmertype == "tetramers":
+    elif nmertype == "tetramers":
         print("Merging trimers with monomers to obtain tetramers.\n")
         nmerpatt = "^3-[0-9]+.xyz$"
         ucnmlbls = "Tetramer"
         numnmlbl = "4"
+    else:
+        print_error("The N-mer type must be defined as 'dimers', 'trimers', or 'tetramers'.")
 
     directory = os.getcwd()
     nmerfs = os.listdir(directory)
-    natmcntrcell = 12 # TODO: Number of atoms in the central cell for monomer-in-the-cell cutoff.
+    nfrgcntrcll = 12 # TODO: Number of fragments in the central cell for monomer-in-the-cell cutoff.
     moidx = 0
     nmidx = 0
     dscrdexs = 0
@@ -344,7 +353,7 @@ def nmerbuilder(nmertype, rcut):
 
     for nmer in nmerfs:
 
-        if (re.match(nmerpatt, nmer) and moidx <= natmcntrcell): # Monomer-in-the-cell filter
+        if (re.match(nmerpatt, nmer) and moidx <= nfrgcntrcll): # Monomer-in-the-cell filter
  
             for monomer in nmerfs:
  
@@ -365,14 +374,18 @@ def nmerbuilder(nmertype, rcut):
  
                             print("%s %i (%s) generated: Merged %s and %s" % (ucnmlbls, nmidx, newnm, nmer, monomer))
                     
-                    elif nmer == monomer: # Repeated monomer filter
+                    elif nmer == monomer: # Identic structures filter
                         continue
 
-                    else: # Monomer-in-the-cell filter
+                    else: # Double-counting filter
                         nmidx += 1
                         print("%s %i (%s) discarded: %s of %s and %s already exists" % (ucnmlbls, nmidx, newnm, ucnmlbls, monomer, nmer))
                         dscrdexs += 1
-	
+                    
+                    # TODO: Nuclear repulsion energy filter.
+
+                    # TODO: Filter for symetric structures.
+
         if (nmertype == "dimers"):
             moidx += 1		
 
@@ -490,7 +503,13 @@ def main():
     # monomers.
     #
     # Filter trimers that are too distant apart.
-    #
+
+    #rtrimer = 2.5
+
+    #print("Creating trimers from dimer and monomer files.\n")
+
+    #nmerbuilder("trimers", rtrimer)
+
     # Filter out and keep count of all non-unique trimers, using 
     # ArbAlign.
     # ------------------------------------------------------------------
