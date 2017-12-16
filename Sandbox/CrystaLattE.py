@@ -909,65 +909,65 @@ def nmerbuilder(nmertype, rcut):
         if (nmertype == "dimers"):
             moidx += 1
 
-            if (re.match(nmerpatt, nmer) and moidx <= natmcntrcell + 1): # Monomer-in-the-cell filter
-
-                for monomer in nmerfs:
-
-                    if re.match('^1-[0-9]+.xyz$', monomer):
-
-                        if nmer < monomer: # WARNING: This may not work for trimers, tetramers, ...
-                            nmidx += 1
-                            newnm = numnmlbl + "-" + str(nmer)[2:-4] + "+" + str(monomer)[2:]
-                            
-                            mindist = rmin(nmer, monomer) # Separation cutoff filter.
-
-                            if rcut <= mindist:
-                                print("%s %i: Discarded - Interaction separation %3.2f greater than cutoff %3.2f" % (ucnmlbls, nmidx, mindist, rcut))
-                                dscrdsep += 1
-
-                            else:
-
-                                with open(nmer, 'r') as mf, open(monomer, 'r') as nf, open(newnm, 'w') as newf:
+        if (re.match(nmerpatt, nmer) and moidx <= natmcntrcell + 1): # Monomer-in-the-cell filter
+ 
+            for monomer in nmerfs:
+ 
+                if re.match('^1-[0-9]+.xyz$', monomer):
+ 
+                    if nmer < monomer: # WARNING: This may not work for trimers, tetramers, ...
+                        nmidx += 1
+                        newnm = numnmlbl + "-" + str(nmer)[2:-4] + "+" + str(monomer)[2:]
+                        
+                        mindist = rmin(nmer, monomer) # Separation cutoff filter.
+ 
+                        if rcut <= mindist:
+                            print("%s %i: Discarded - Interaction separation %3.2f greater than cutoff %3.2f" % (ucnmlbls, nmidx, mindist, rcut))
+                            dscrdsep += 1
+ 
+                        else:
+ 
+                            with open(nmer, 'r') as mf, open(monomer, 'r') as nf, open(newnm, 'w') as newf:
+                                
+                                l1idx = 0
+                                for l1 in mf.readlines():
+                                    l1idx += 1
+ 
+                                    if l1idx == 1:
+                                        newfl1 = str(int(l1) + int(nf.readline())) + "\n"
+                                        newf.write(newfl1)
+ 
+                                    elif l1.startswith("Monomer"):
+                                        newl1 = ucnmlbls + " " + str(nmidx) + " (Monomers " + str(nmer)[2:-4] + "+" + str(monomer)[2:-4] + ")\n"
+                                        newf.write(newl1)
+ 
+                                    elif l1.startswith("Dimer"):
+                                        newl1 = ucnmlbls + " " + str(nmidx) + " (Monomers " + str(nmer)[2:-4] + "+" + str(monomer)[2:-4] + ")\n"
+                                        newf.write(newl1)
+ 
+                                    elif l1.startswith("Trimer"):
+                                        newl1 = ucnmlbls + " " + str(nmidx) + " (Monomers " + str(nmer)[2:-4] + "+" + str(monomer)[2:-4] + ")\n"
+                                        newf.write(newl1)
                                     
-                                    l1idx = 0
-                                    for l1 in mf.readlines():
-                                        l1idx += 1
-
-                                        if l1idx == 1:
-                                            newfl1 = str(int(l1) + int(nf.readline())) + "\n"
-                                            newf.write(newfl1)
-
-                                        elif l1.startswith("Monomer"):
-                                            newl1 = ucnmlbls + " " + str(nmidx) + " (Monomers " + str(nmer)[2:-4] + "+" + str(monomer)[2:-4] + ")\n"
-                                            newf.write(newl1)
-
-                                        elif l1.startswith("Dimer"):
-                                            newl1 = ucnmlbls + " " + str(nmidx) + " (Monomers " + str(nmer)[2:-4] + "+" + str(monomer)[2:-4] + ")\n"
-                                            newf.write(newl1)
-
-                                        elif l1.startswith("Trimer"):
-                                            newl1 = ucnmlbls + " " + str(nmidx) + " (Monomers " + str(nmer)[2:-4] + "+" + str(monomer)[2:-4] + ")\n"
-                                            newf.write(newl1)
-                                        
-                                        else:
-                                            newf.write(l1)
-
-                                    l2idx = 0
-                                    for l2 in nf.readlines():
-                                        l2idx += 1
-
-                                        if l2idx < 2:
-                                            continue
-
-                                        else:
-                                            newf.write(l2)
-
-                                print(ucnmlbls + " " + str(nmidx) + ": " + str(newnm) + " created from " + str(nmer) + " and " + str(monomer))
-
-            else: # Monomer-in-the-cell filter
-                nmidx += 1
-                print("%s %i: Discarded - No atom is contained in the central unit cell" % (ucnmlbls, nmidx))
-                dscrdcll += 1
+                                    else:
+                                        newf.write(l1)
+ 
+                                l2idx = 0
+                                for l2 in nf.readlines():
+                                    l2idx += 1
+ 
+                                    if l2idx < 2:
+                                        continue
+ 
+                                    else:
+                                        newf.write(l2)
+ 
+                            print(ucnmlbls + " " + str(nmidx) + ": " + str(newnm) + " created from " + str(nmer) + " and " + str(monomer))
+ 
+        else: # Monomer-in-the-cell filter
+           nmidx += 1
+           print("%s %i: Discarded - No atom is contained in the central unit cell" % (ucnmlbls, nmidx))
+           dscrdcll += 1
 		
 
     print("")
