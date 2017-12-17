@@ -286,42 +286,44 @@ def rmin(nmer1, nmer2):
 # ==================================================================
 
 # ==================================================================
-def nmermerger(nmer, monomer, newnm):
-    """Takes the .xyz filenames of an existing n-mer, an existing monomer, and of a n-mer to be written.
-    Produces the .xyz file of the new nmer."""
+def nmermerger(nm_a, nm_b, nm_new):
+    """Takes the .xyz filenames of two existing N-mers and of a new N-mer to be written.
+    Produces the .xyz file of the new N-mer."""
 
-    with open(nmer, 'r') as mf, open(monomer, 'r') as nf, open(newnm, 'w') as newf:
+    with open(nm_a, 'r') as nm_a_f, open(nm_b, 'r') as nm_b_f, open(nm_new, 'w') as nm_n_f:
 
-        l1idx = 0
-        for l1 in mf.readlines():
-            l1idx += 1
+        i = 0
+        for line_nm_a_f in nm_a_f.readlines():
+            i += 1
 
-            if l1idx == 1:
-                newfl1 = str(int(l1) + int(nf.readline())) + "\n"
-                newf.write(newfl1)
+            if i == 1:
+                nm_n_f_line = str(int(line_nm_a_f) + int(nm_b_f.readline())) + "\n"
+                nm_n_f.write(nm_n_f_line)
 
-            elif l1.startswith("Monomer"):
-                newl1 = "Monomers " + str(nmer)[2:-4] + "+" + str(monomer)[2:-4] + "\n"
-                newf.write(newl1)
+            elif line_nm_a_f.startswith("Monomer"):
+                nm_n_f_new_line = "Monomers " + str(nm_a)[2:-4] + "+" + str(nm_b)[2:-4] + "\n"
+                nm_n_f.write(nm_n_f_new_line)
 
             else:
-                newf.write(l1)
+                nm_n_f.write(line_nm_a_f)
 
-        l2idx = 0
-        for l2 in nf.readlines():
-            l2idx += 1
+        j = 0
+        for line_nm_b_f in nm_b_f.readlines():
+            j += 1
 
-            if l2idx < 2:
+            if j < 2:
                 continue
 
             else:
-                newf.write(l2)
+                nm_n_f.write(line_nm_b_f)
 # ==================================================================
 
 # ==================================================================
 def nmerbuilder(nmertype, rcut):
     """Takes a float indicating a cutoff distance in Angstroms.
     Returns dimer files that pass through the filter."""
+
+    # Function reused for different types of N-mers.
 
     if nmertype == "dimers":
         print("Merging monomers with monomers to obtain dimers.\n")
@@ -340,6 +342,7 @@ def nmerbuilder(nmertype, rcut):
         nmerpatt = "^3-[0-9]+.xyz$"
         ucnmlbls = "Tetramer"
         numnmlbl = "4"
+    
     else:
         print_error("The N-mer type must be defined as 'dimers', 'trimers', or 'tetramers'.")
 
@@ -351,40 +354,40 @@ def nmerbuilder(nmertype, rcut):
     dscrdexs = 0
     dscrdsep = 0
 
-    for nmer in nmerfs:
+    for monomer in nmerfs:
 
-        if (re.match(nmerpatt, nmer) and moidx <= nfrgcntrcll): # Monomer-in-the-cell filter
+        if (re.match('^1-[0-9]+.xyz$', monomer) and moidx <= nfrgcntrcll): # Monomer-in-the-cell filter
+
+            for nmer in nmerfs:
+
+                if re.match(nmerpatt, nmer):
+                    newnm = numnmlbl + "-" + str(monomer)[2:-4] + "+" + str(nmer)[2:]
  
-            for monomer in nmerfs:
- 
-                if re.match('^1-[0-9]+.xyz$', monomer):
-                    newnm = numnmlbl + "-" + str(nmer)[2:-4] + "+" + str(monomer)[2:]
- 
-                    if nmer < monomer: # WARNING: This may not work for trimers, tetramers, ...
+                    if monomer < nmer: # WARNING: This may not work for trimers, tetramers, ...
                         nmidx += 1
                         
-                        mindist = rmin(nmer, monomer) # Separation cutoff filter.
+                        mindist = rmin(nmer, monomer)
  
-                        if rcut <= mindist:
+                        if rcut <= mindist: # Separation cutoff filter.
                             print("%s %i (%s) discarded: Separation %3.2f longer than cutoff %3.2f" % (ucnmlbls, nmidx, newnm, mindist, rcut))
                             dscrdsep += 1
+
+                            # TODO: Nuclear repulsion energy filter.
+                            
+                            # TODO: Filter for symetric structures.
  
                         else:
-                            nmermerger(nmer, monomer, newnm)
+                            nmermerger(monomer, nmer, newnm)
  
-                            print("%s %i (%s) generated: Merged %s and %s" % (ucnmlbls, nmidx, newnm, nmer, monomer))
+                            print("%s %i (%s) generated: Merged %s and %s" % (ucnmlbls, nmidx, newnm, monomer, nmer))
                     
                     elif nmer == monomer: # Identic structures filter
                         continue
 
                     else: # Double-counting filter
                         nmidx += 1
-                        print("%s %i (%s) discarded: %s of %s and %s already exists" % (ucnmlbls, nmidx, newnm, ucnmlbls, monomer, nmer))
+                        print("%s %i (%s) discarded: %s of %s and %s already exists" % (ucnmlbls, nmidx, newnm, ucnmlbls, nmer, monomer))
                         dscrdexs += 1
-                    
-                    # TODO: Nuclear repulsion energy filter.
-
-                    # TODO: Filter for symetric structures.
 
         if (nmertype == "dimers"):
             moidx += 1		
@@ -394,7 +397,6 @@ def nmerbuilder(nmertype, rcut):
 # ==================================================================
 
 # ==================================================================
-# Main program.
 def main():
     "Takes a CIF file and computes the crystal lattice energy using a manybody expansion approach."
     
