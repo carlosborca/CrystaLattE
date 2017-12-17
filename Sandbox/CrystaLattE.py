@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import fnmatch
 import math
 import psi4
 import re
@@ -184,7 +185,6 @@ def frgs2mols():
     molecule = 0
 
     for file in proxlist:
-    #for file in proxlist[:10]: # NOTE: For tests
         molecule += 1
         molfname = "m" + str(molecule).zfill(len(proxlist[-1]) - 5) + ".xyz"
 
@@ -311,22 +311,26 @@ def nmermerger(nm_a, nm_b, nm_new):
     """Takes the .xyz filenames of two existing N-mers and of a new N-mer to be written.
     Produces the .xyz file of the new N-mer."""
 
-    with open(nm_a, 'r') as nm_a_f, open(nm_b, 'r') as nm_b_f, open(nm_new, 'w') as nm_n_f:
+    with open(nm_a, 'r') as nm_a_f, open(nm_b, 'r') as nm_b_f:
+        
+        nm_n_l = []
 
         i = 0
         for line_nm_a_f in nm_a_f.readlines():
             i += 1
 
             if i == 1:
-                nm_n_f_line = str(int(line_nm_a_f) + int(nm_b_f.readline())) + "\n"
-                nm_n_f.write(nm_n_f_line)
+                nm_n_l_line = str(int(line_nm_a_f) + int(nm_b_f.readline())) + "\n"
+                nm_n_l.append(nm_n_l_line)
 
             elif line_nm_a_f.startswith("Monomer"):
-                nm_n_f_new_line = "Monomers " + str(nm_a)[2:-4] + "+" + str(nm_b)[2:-4] + "\n"
-                nm_n_f.write(nm_n_f_new_line)
+                nm_n_l_new_line = "Monomers " + str(nm_a)[2:-4] + "+" + str(nm_b)[2:-4] + "\n"
+                nm_n_l.append(nm_n_l_new_line)
 
             else:
-                nm_n_f.write(line_nm_a_f)
+                nm_n_l.append(line_nm_a_f)
+        
+        nm_n_l.append("\n")
 
         j = 0
         for line_nm_b_f in nm_b_f.readlines():
@@ -336,7 +340,16 @@ def nmermerger(nm_a, nm_b, nm_new):
                 continue
 
             else:
-                nm_n_f.write(line_nm_b_f)
+                nm_n_l.append(line_nm_b_f)
+
+    with open(nm_new, "w") as nm_n_f:
+
+        for line_nm_n_l in nm_n_l:
+            
+            if line_nm_n_l.rstrip():
+
+                nm_n_f.write(line_nm_n_l)
+
 # ==================================================================
 
 # ==================================================================
@@ -348,19 +361,19 @@ def nmerbuilder(nmertype, rcut):
 
     if nmertype == "dimers":
         print("Merging monomers with monomers to obtain dimers.\n")
-        nmerpatt = "^1-[0-9]+.xyz$"
+        nmerpatt = "1-*.xyz"
         ucnmlbls = "Dimer"
         numnmlbl = "2"
 
     elif nmertype == "trimers":
         print("Merging dimers with monomers to obtain trimers.\n")
-        nmerpatt = "^2-[0-9]+.xyz$"
+        nmerpatt = "2-*+*.xyz"
         ucnmlbls = "Trimer"
         numnmlbl = "3"
 
     elif nmertype == "tetramers":
         print("Merging trimers with monomers to obtain tetramers.\n")
-        nmerpatt = "^3-[0-9]+.xyz$"
+        nmerpatt = "3-*+*+*.xyz"
         ucnmlbls = "Tetramer"
         numnmlbl = "4"
     
@@ -377,14 +390,14 @@ def nmerbuilder(nmertype, rcut):
     dscrdsep = 0
 
     for monomer in nmerfs:
-
+        
         if (re.match('^1-[0-9]+.xyz$', monomer) and moidx < nfrgcntrcll): # Dimer with at least one monomer in the central cell filter
 
             for nmer in nmerfs:
 
-                if re.match(nmerpatt, nmer):
+                if fnmatch.fnmatch(nmer, nmerpatt):
                     newnm = numnmlbl + "-" + str(monomer)[2:-4] + "+" + str(nmer)[2:]
- 
+
                     if monomer < nmer: # WARNING: This may not work for trimers, tetramers, ...
                         nmidx += 1
                         
@@ -415,10 +428,12 @@ def nmerbuilder(nmertype, rcut):
                 moidx += 1		
 
     print("\nTotal number of monomers: %i" % total_monomers)
-
     print("\nMaximum possible number of dimers: %i" % total_dimers)
+    print("\nMaximum possible number of trimers: %i" % total_trimers)
+    print("\nMaximum possible number of tetramers: %i" % total_tetramers)
+    print("\nDiscarded %i far-separated N-mers and %i to avoid double counting of structures." % (dscrdsep, dscrdexs))
+    print("\nGenerated %i N-mers.\n" % generatd)
 
-    print("\nDiscarded %i far-separated n-mers and %i to avoid double counting of structures.\n" % (dscrdsep, dscrdexs))
 # ==================================================================
 
 # ==================================================================
@@ -480,7 +495,9 @@ def main():
     
     print("Producing .xyz files for each fragment of the supercell.\n")
 
+    #p4frag = "bztest.p4" # NOTE: for test only!
     p4frag = "bzfrag.p4" # WARNING: Name of the fragmented super cell file is temporarily hardcoded.
+    
     numfrags = 664       # WARNING: Number of fragments temporarily hardcoded!
     numfatoms = 12       # WARNING: Number of atoms per fragment hardcoded! What if there are two types of molecules?
     frg_separator = "--" # Fragment separator string.
@@ -515,7 +532,7 @@ def main():
     #
     # Filter dimers that are too distant apart.
     
-    rdimer = 10.0
+    rdimer = 3.0
     nmerbuilder("dimers", rdimer)
 
     # Filter out and keep count of all non-unique dimers, using the
@@ -528,8 +545,8 @@ def main():
     #
     # Filter trimers that are too distant apart.
 
-    #rtrimer = 2.5
-    #nmerbuilder("trimers", rtrimer)
+    rtrimer = 3.0
+    nmerbuilder("trimers", rtrimer)
 
     # Filter out and keep count of all non-unique trimers, using 
     # ArbAlign.
