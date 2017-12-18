@@ -2,11 +2,9 @@
 
 import fnmatch
 import math
-import psi4
 import re
 import os
 import sys
-from psi4.driver.wrapper_autofrag import auto_fragments
 
 # Imports of outsourced code.
 sys.path.insert(0, "Read_CIF")
@@ -20,195 +18,188 @@ def print_error(msg):
 # ==================================================================
 
 # ==================================================================
-def psifrg2xyz(p4frag, numfrags, numfatoms, frg_separator):
+def psifragments2xyz(fragmented_supecell_file, num_frags, num_atoms_frag, fragment_separator):
     """Takes the output of the automatic fragmentation procedure, the total number of fragments,
     the number of atoms in one fragment, and the string that separates the fragments.
     Returns .xyz files for each fragment."""
 
     # Read the output of the automatic fragmentation.
-    with open(p4frag) as cellfrags:
-        frags = cellfrags.readlines()
+    with open(fragmented_supecell_file) as supercell_fragments:
+        sc_frags_f_lines = supercell_fragments.readlines()
 
     # Generate .xyz files for each fragment.
-    fcounter = 1         # Counter of processed fragments.
-    lcounter = 0         # Counter of lines.
-    HeaderLine = True    # Flag for first line of a fragment .xyz file.
+    counter_fragments = 1         # Counter of processed fragments.
+    counter_lines     = 0         # Counter of lines.
+    header_line       = True      # Flag for first line of a fragment .xyz file.
 
-    for line in frags:
-        lcounter += 1
+    for sc_frags_f_line in sc_frags_f_lines:
+        counter_lines += 1
 
-        if line.startswith(frg_separator):
-            fcounter += 1
-            HeaderLine = True
+        if sc_frags_f_line.startswith(fragment_separator):
+            counter_fragments += 1
+            header_line = True
 
         else:
-            ffnidx = "f" + str(fcounter).zfill(len(str(numfrags))) \
+            fragment_filename = "f" + str(counter_fragments).zfill(len(str(num_frags))) \
                      + ".xyz"
-            with open(ffnidx, "a") as frgxyz: # WARNING: File exists?
+            with open(fragment_filename, "a") as fragment_xyz_file: # WARNING: File exists?
 
-                if HeaderLine == True:
-                    frgxyz.write(str(numfatoms) + "\n" + "Fragment " # TODO: What if there are more than two molecules in the central unit cell.
-                    + str(fcounter) + "\n")
-                    HeaderLine = False
+                if header_line == True:
+                    fragment_xyz_file.write(str(num_atoms_frag) + "\n" + "Fragment " + str(counter_fragments) + "\n")
+                    header_line = False
 
-                if HeaderLine == False:
-                    frgxyz.write(line)
+                if header_line == False:
+                    fragment_xyz_file.write(sc_frags_f_line)
     
-    print("%i fragment .xyz files were created." % fcounter)
+    print("%i fragment .xyz files were created." % counter_fragments)
 
     return
 # ==================================================================
 
 # ==================================================================
-def frags_filter(n_atm_frg): # WARNING: The number of atoms in a fragment probably should be passed as a list.
+def fragment_filter(number_atoms_per_frag): # WARNING: The number of atoms in a fragment probably should be passed as a list.
     """It takes the possible numbers of atoms in a fragment and discards all fragments files that contain a smaller number of atoms."""
 
-    # TODO: What if there are more than two types of molecules in the
-    #       unit cell? n_atom_frg should be passed as a list with
-    #       possible numbers of atoms in a fragment.
+    # TODO: What if there are more than two types of molecules in the unit cell? 
+    # The number of atoms per framgent should be passed as a list with possible numbers of atoms in a fragment.
 
     directory = os.getcwd()
     files = os.listdir(directory)
-    incmolcounter = 0
+    counter_removed_fragments = 0
 
     for file in files:
 
         if re.match('^f[0-9]+.xyz$', file): # Match filenames f???.xyz
 
-            with open(file, 'r') as f:
-                lines = f.readlines()
+            with open(file, 'r') as fragment_file:
+                frag_file_lines = fragment_file.readlines()
 
-                if len(lines) != n_atm_frg + 2: # Match files with unexpected atoms.
-                    print("Expected " + str(n_atm_frg)\
-                          + " atoms. Found only " + str(len(lines) - 2)\
-                          + ". Removing: " + file)
-
+                if len(frag_file_lines) != number_atoms_per_frag + 2: # Match files with unexpected atoms.
+                    print("Expected %i atoms. Found only %i. Removing: %s" % (number_atoms_per_frag, (len(frag_file_lines) - 2), file))
                     os.remove(os.path.join(directory,file))
+                    counter_removed_fragments += 1
 
-                    incmolcounter += 1
-
-    print("\nRemoved %s fragments.\n" % incmolcounter)
+    print("\nRemoved %s fragments.\n" % counter_removed_fragments)
 
     return
 # ==================================================================
 
 # ==================================================================
-def scellcntr(xyzpattern):
+def supercell_center(frag_filename_pattern):
     """Compute the center of coordinates of .xyz files with a matching pattern in the filename.
     Returns a list with fragment names, x, y, and z coordinates in lists of floats and the coordinates of the center."""
 
-    frg = [] # Fragments file names.
-    x = [] # Values of x coordinates.
-    y = [] # Values of y coordinates.
-    z = [] # Values of z coordinates.
+    frag_filenames_list = [] # Fragments file names.
+    frag_coords_x = []           # Values of x coordinates.
+    frag_coords_y = []           # Values of y coordinates.
+    frag_coords_z = []           # Values of z coordinates.
 
     directory = os.getcwd()
     files = os.listdir(directory)
 
     for file in files:
 
-        if re.match(xyzpattern, file):
+        if re.match(frag_filename_pattern, file):
             
-            with open(file, 'r') as f:
-                lines = f.readlines()
+            with open(file, 'r') as frag_file:
+                frag_file_lines = frag_file.readlines()
 
                 i = 0
-                for i in range(len(lines)):
+                for i in range(len(frag_file_lines)):
 
                     if i < 2:
                         continue
 
                     else:
-                        info = lines[i].split()
-                        frg.append(file)
-                        x.append(float(info[1]))
-                        y.append(float(info[2]))
-                        z.append(float(info[3]))
+                        frag_info = frag_file_lines[i].split()
+                        frag_filenames_list.append(file)
+                        frag_coords_x.append(float(frag_info[1]))
+                        frag_coords_y.append(float(frag_info[2]))
+                        frag_coords_z.append(float(frag_info[3]))
 
-    cntr_x = (max(x) - min(x))/2.0
-    cntr_y = (max(y) - min(y))/2.0
-    cntr_z = (max(z) - min(z))/2.0
+    cntr_x = (max(frag_coords_x) - min(frag_coords_x))/2.0
+    cntr_y = (max(frag_coords_y) - min(frag_coords_y))/2.0
+    cntr_z = (max(frag_coords_z) - min(frag_coords_z))/2.0
 
     print("Center of the supercell located at:")
-    print("x= %10.5f"   % (cntr_x))
-    print("y= %10.5f"   % (cntr_y))
-    print("z= %10.5f\n" % (cntr_z))
+    print("x = %10.5f"   % (cntr_x))
+    print("y = %10.5f"   % (cntr_y))
+    print("z = %10.5f\n" % (cntr_z))
 
-    return frg, x, y, z, cntr_x, cntr_y, cntr_z 
+    return frag_filenames_list, frag_coords_x, frag_coords_y, frag_coords_z, cntr_x, cntr_y, cntr_z 
 # ==================================================================
 
 # ==================================================================
-def posvecmag(xyzpattern):
-    """Using the scellcntr() function it computes the magnitude of the position vector of the atoms read by the scellcntr() function.
+def position_vec_mag(frag_filename_pattern):
+    """Using the supercell_center() function it computes the magnitude of the position vector of the atoms read by the supercell_center() function.
     Returns the filename and the magnitude of the position vector."""
 
-    frg, x, y, z, cntr_x, cntr_y, cntr_z = scellcntr(xyzpattern)
+    frag_fnames_list, frag_x, frag_y, frag_z, cntr_x, cntr_y, cntr_z = supercell_center(frag_filename_pattern)
 
-    r = []
+    atoms_r = []
 
-    for j in range(len(x)):
-        r.append(math.sqrt((x[j] - cntr_x)**2.0 + (y[j] - cntr_y)**2.0 + (z[j] - cntr_z)**2.0))
+    for j in range(len(frag_x)):
+        atoms_r.append(math.sqrt((frag_x[j] - cntr_x)**2.0 + (frag_y[j] - cntr_y)**2.0 + (frag_z[j] - cntr_z)**2.0))
 
     print("Magnitudes of the position vectors calculated.\n")
 
-    return frg, r
+    return frag_fnames_list, atoms_r
 # ==================================================================
 
 # ==================================================================
-def proximity():
-    """Using position vector magnitude, computed in posvecmag(). This function returns a list of fragments filenames
+def frag_atoms_r_list(frag_filename_pattern):
+    """Using position vector magnitude, computed in position_vec_mag(). This function returns a list of fragments filenames
     with fragments containing atoms closest to the center of the supercell first."""
 
-    frg, r = posvecmag("^f[0-9]+.xyz$")
+    frag_filenames_list, r = position_vec_mag(frag_filename_pattern)
 
-    frgprox = []
+    frag_proximity_list = []
 
     for pair in sorted(enumerate(r), key=lambda item:item[1]):
-        if frg[pair[0]] in frgprox:
+        if frag_filenames_list[pair[0]] in frag_proximity_list:
             continue
         else:
-            frgprox.append(frg[pair[0]])
+            frag_proximity_list.append(frag_filenames_list[pair[0]])
 
-    print("Molecules organized based on the closest atom to the")
-    print("center of the supercell.\n")
+    print("Molecules organized based on the closest atom to the center of the supercell.\n")
 
-    return frgprox
+    return frag_proximity_list
 # ==================================================================
 
 # ==================================================================
-def frgs2mols():
-    """Takes fragents and a list of proximity to the center of the supercell, generated by the proximity() function.
+def fragments2mols():
+    """Takes fragents and a list of proximity to the center of the supercell, generated by the frag_atoms_r_list() function.
     Writes new files with molecules indexed by increasing proximity to the center of the supercell."""
 
     directory = os.getcwd()
-    proxlist = proximity()
-    molecule = 0
+    frag_prox_ordered_list = frag_atoms_r_list("^f[0-9]+.xyz$")
+    counter_new_molecule = 0
 
-    for file in proxlist:
-        molecule += 1
-        molfname = "m" + str(molecule).zfill(len(proxlist[-1]) - 5) + ".xyz"
+    for file in frag_prox_ordered_list:
+        counter_new_molecule += 1
+        filename_new_molecule = "m" + str(counter_new_molecule).zfill(len(frag_prox_ordered_list[-1]) - 5) + ".xyz"
 
-        with open(file, 'r') as ffile, open(molfname, 'w') as mfile:
+        with open(file, 'r') as frag_file, open(filename_new_molecule, 'w') as mol_file:
 
-            for l in ffile.readlines():
+            for frag_file_line in frag_file.readlines():
 
-                if l.startswith("Fragment"):
-                    newl = "Molecule " + str(molecule) + " (" + l[:-1] + ")\n"
-                    mfile.write(newl)
+                if frag_file_line.startswith("Fragment"):
+                    frag_file_new_line = "Molecule " + str(counter_new_molecule) + " (" + frag_file_line[:-1] + ")\n"
+                    mol_file.write(frag_file_new_line)
 
                 else:
-                    mfile.write(l)
+                    mol_file.write(frag_file_line)
 
         os.remove(os.path.join(directory, file))
 
-        print("Fragment " + str(file) + " has been rewritten to: " + str(molfname))
+        print("Fragment %s has been rewritten to: %s" % (file, filename_new_molecule))
 
     print("")
 # ==================================================================
 
 # ==================================================================
 def mols2mons():
-    """Takes molecules and filters and a list of proximity to the center of the supercell, generated by the proximity() function.
+    """Takes molecules and filters and a list of proximity to the center of the supercell, generated by the frag_atoms_r_list() function.
     Writes new files with molecules indexed by increasing proximity to the center of the supercell.
     It returns four global variables with the number of monomeers and the maximum possible number of dimers, trimers, tetramers."""
 
@@ -246,17 +237,11 @@ def mols2mons():
     global total_dimers
     total_dimers = (total_monomers)*(total_monomers - 1)/2
 
-    print("\nMaximum possible number of dimers: %i" % total_dimers)
-
     global total_trimers
     total_trimers = (total_monomers)*(total_monomers - 1)*(total_monomers - 2)/6
 
-    print("\nMaximum possible number of trimers: %i" % total_trimers)
-
     global total_tetramers
     total_tetramers = (total_monomers)*(total_monomers - 1)*(total_monomers - 2)*(total_monomers - 3)/24
-
-    print("\nMaximum possible number of tetramers: %i\n" % total_tetramers)
 
 # ==================================================================
 
@@ -313,24 +298,24 @@ def nmermerger(nm_a, nm_b, nm_new):
 
     with open(nm_a, 'r') as nm_a_f, open(nm_b, 'r') as nm_b_f:
         
-        nm_n_l = []
+        new_nm_list = []
 
         i = 0
         for line_nm_a_f in nm_a_f.readlines():
             i += 1
 
             if i == 1:
-                nm_n_l_line = str(int(line_nm_a_f) + int(nm_b_f.readline())) + "\n"
-                nm_n_l.append(nm_n_l_line)
+                new_nm_list_line = str(int(line_nm_a_f) + int(nm_b_f.readline())) + "\n"
+                new_nm_list.append(new_nm_list_line)
 
             elif line_nm_a_f.startswith("Monomer"):
-                nm_n_l_new_line = "Monomers " + str(nm_a)[2:-4] + "+" + str(nm_b)[2:-4] + "\n"
-                nm_n_l.append(nm_n_l_new_line)
+                new_nm_list_new_line = "Monomers " + str(nm_a)[2:-4] + "+" + str(nm_b)[2:-4] + "\n"
+                new_nm_list.append(new_nm_list_new_line)
 
             else:
-                nm_n_l.append(line_nm_a_f)
+                new_nm_list.append(line_nm_a_f)
         
-        nm_n_l.append("\n")
+        new_nm_list.append("\n")
 
         j = 0
         for line_nm_b_f in nm_b_f.readlines():
@@ -340,110 +325,108 @@ def nmermerger(nm_a, nm_b, nm_new):
                 continue
 
             else:
-                nm_n_l.append(line_nm_b_f)
+                new_nm_list.append(line_nm_b_f)
 
     with open(nm_new, "w") as nm_n_f:
 
-        for line_nm_n_l in nm_n_l:
+        for line_new_nm_list in new_nm_list:
             
-            if line_nm_n_l.rstrip():
+            if line_new_nm_list.rstrip():
 
-                nm_n_f.write(line_nm_n_l)
-
-# ==================================================================
+                nm_n_f.write(line_new_nm_list)
 
 # ==================================================================
-def nmerbuilder(nmertype, rcut):
+
+# ==================================================================
+def nmerbuilder(nmer_type, nmer_separation_cutoff):
     """Takes a float indicating a cutoff distance in Angstroms.
     Returns dimer files that pass through the filter."""
 
     # Function reused for different types of N-mers.
 
-    if nmertype == "dimers":
+    if nmer_type == "dimers":
         print("Merging monomers with monomers to obtain dimers.\n")
-        nmerpatt = "1-*.xyz"
-        ucnmlbls = "Dimer"
-        numnmlbl = "2"
+        nm_filename_pattern = "1-*.xyz"
+        nm_txt_lbl = "Dimer"
+        nm_num_lbl = "2"
 
-    elif nmertype == "trimers":
+    elif nmer_type == "trimers":
         print("Merging dimers with monomers to obtain trimers.\n")
-        nmerpatt = "2-*+*.xyz"
-        ucnmlbls = "Trimer"
-        numnmlbl = "3"
+        nm_filename_pattern = "2-*+*.xyz"
+        nm_txt_lbl = "Trimer"
+        nm_num_lbl = "3"
 
-    elif nmertype == "tetramers":
+    elif nmer_type == "tetramers":
         print("Merging trimers with monomers to obtain tetramers.\n")
-        nmerpatt = "3-*+*+*.xyz"
-        ucnmlbls = "Tetramer"
-        numnmlbl = "4"
+        nm_filename_pattern = "3-*+*+*.xyz"
+        nm_txt_lbl = "Tetramer"
+        nm_num_lbl = "4"
     
     else:
         print_error("The N-mer type must be defined as 'dimers', 'trimers', or 'tetramers'.")
 
     directory = os.getcwd()
-    nmerfs = os.listdir(directory)
-    nfrgcntrcll = 12 # TODO: Number of fragments in the central cell for monomer-in-the-cell cutoff.
-    moidx = 0
-    nmidx = 0
-    generatd = 0
-    dscrdspi = 0
-    dscrdexs = 0
-    dscrdsep = 0
+    nmer_files = os.listdir(directory)
+    num_monomers_ctrl_cell = 12 # TODO: Number of fragments in the central cell for monomer-in-the-cell cutoff.
+    counter_monomers = 0
+    counter_nmers = 0
+    counter_new_nmers = 0
+    counter_dscrd_spi = 0
+    counter_dscrd_exs = 0
+    counter_dscrd_sep = 0
 
-    for monomer in nmerfs:
+    for monomer in nmer_files:
         
-        if (re.match('^1-[0-9]+.xyz$', monomer) and moidx < nfrgcntrcll): # Dimer with at least one monomer in the central cell filter
+        if (re.match('^1-[0-9]+.xyz$', monomer) and counter_monomers < num_monomers_ctrl_cell): # Dimer with at least one monomer in the central cell filter
 
-            for nmer in nmerfs:
+            for nmer in nmer_files:
 
-                if fnmatch.fnmatch(nmer, nmerpatt):
-                    newnm = numnmlbl + "-" + str(monomer)[2:-4] + "+" + str(nmer)[2:]
+                if fnmatch.fnmatch(nmer, nm_filename_pattern):
+                    new_nm_filename = nm_num_lbl + "-" + str(monomer)[2:-4] + "+" + str(nmer)[2:]
 
-                    #if monomer < nmer: # If identic structure filter is on this should be the condition.
                     if monomer <= nmer:
-                        nmidx += 1
+                        counter_nmers += 1
                         
-                        mindist = rmin(nmer, monomer)
+                        min_separation = rmin(nmer, monomer)
 
-                        if mindist == 0: # Superimposed monomers filter. For trimers and tetramers.
-                            print("%s %i (%s) discarded: Separation %3.2f A, superimposed structures" % (ucnmlbls, nmidx, newnm, mindist))
-                            dscrdspi += 1
+                        if min_separation == 0: # Superimposed monomers filter. For trimers and tetramers.
+                            print( "%s %i (%s) discarded: Separation %3.2f A, superimposed structures" % \
+                                   (nm_txt_lbl, counter_nmers, new_nm_filename, min_separation) )
+                            counter_dscrd_spi += 1
                             continue
 
-                        elif rcut <= mindist: # Separation cutoff filter.
-                            print("%s %i (%s) discarded: Separation %3.2f A longer than cutoff %3.2f A" % (ucnmlbls, nmidx, newnm, mindist, rcut))
-                            dscrdsep += 1
+                        elif nmer_separation_cutoff <= min_separation: # Separation cutoff filter.
+                            print( "%s %i (%s) discarded: Separation %3.2f A longer than cutoff %3.2f A" \
+                                   % (nm_txt_lbl, counter_nmers, new_nm_filename, min_separation, nmer_separation_cutoff) )
+                            counter_dscrd_sep += 1
 
                             # TODO: Nuclear repulsion energy filter.
                             
                             # TODO: Filter for symetric structures.
  
                         else:
-                            nmermerger(monomer, nmer, newnm)
-                            print("%s %i (%s) generated: Merged %s and %s" % (ucnmlbls, nmidx, newnm, monomer, nmer))
-                            generatd += 1
+                            nmermerger(monomer, nmer, new_nm_filename)
+                            print( "%s %i (%s) generated: Merged %s and %s" \
+                                   % (nm_txt_lbl, counter_nmers, new_nm_filename, monomer, nmer) )
+                            counter_new_nmers += 1
                     
-                    # elif nmer == monomer: # Identic structures filter. For dimers.
-                    #     print("%s %i (%s) discarded: Identic structures" % (ucnmlbls, nmidx, newnm))
-                    #     dscrdspi += 1
-                    #     continue
-
                     else: # Double-counting filter
-                        nmidx += 1
-                        print("%s %i (%s) discarded: %s of %s and %s already exists" % (ucnmlbls, nmidx, newnm, ucnmlbls, nmer, monomer))
-                        dscrdexs += 1
+                        counter_nmers += 1
+                        print( "%s %i (%s) discarded: %s of %s and %s already exists" \
+                               % (nm_txt_lbl, counter_nmers, new_nm_filename, nm_txt_lbl, nmer, monomer) )
+                        counter_dscrd_exs += 1
 
-            if (nmertype == "dimers"):
-                moidx += 1		
+            if (nmer_type == "dimers"):
+                counter_monomers += 1		
 
     print("\nTotal number of monomers: %i" % total_monomers)
     print("\nMaximum possible number of dimers: %i" % total_dimers)
     print("Maximum possible number of trimers: %i" % total_trimers)
     print("Maximum possible number of tetramers: %i" % total_tetramers)
-    print("\nDiscarded %i %s with far-separated atoms." % (dscrdsep, ucnmlbls.lower() + "s"))
-    print("Discarded %i %s with double-counted structures." % (dscrdexs, ucnmlbls.lower() + "s"))
-    print("Discarded %i %s with superimposing atoms." % (dscrdspi, ucnmlbls.lower() + "s"))
-    print("\nGenerated %i %s.\n" % (generatd, ucnmlbls.lower() + "s"))
+    print("\nDiscarded %i %s with far-separated atoms." % (counter_dscrd_sep, nm_txt_lbl.lower() + "s"))
+    print("Discarded %i %s with double-counted structures." % (counter_dscrd_exs, nm_txt_lbl.lower() + "s"))
+    print("Discarded %i %s with superimposing atoms." % (counter_dscrd_spi, nm_txt_lbl.lower() + "s"))
+    print("\nGenerated %i %s.\n" % (counter_new_nmers, nm_txt_lbl.lower() + "s"))
 
 # ==================================================================
 
@@ -469,18 +452,18 @@ def main():
     # ------------------------------------------------------------------
     # Read a CIF file and generates a supercell.
     
-    ReadCifIn = 'Benzene-138K.cif'  # CIF input file. # WARNING: Hardcoded for now!
-    ReadCifOut = 'Benzene-138K.xyz' # XYZ output file. # WARNING: Hardcoded for now!
-    ReadCifA = '5'                  # X replicas. # WARNING: Hardcoded for now!
-    ReadCifB = '5'                  # Y replicas. # WARNING: Hardcoded for now!
-    ReadCifC = '5'                  # Z replicas. # WARNING: Hardcoded for now!
+    read_cif_input = 'Benzene-138K.cif'  # CIF input file. # WARNING: Hardcoded for now!
+    read_cif_output = 'Benzene-138K.xyz' # XYZ output file. # WARNING: Hardcoded for now!
+    read_cif_a = '5'                  # X replicas. # WARNING: Hardcoded for now!
+    read_cif_b = '5'                  # Y replicas. # WARNING: Hardcoded for now!
+    read_cif_c = '5'                  # Z replicas. # WARNING: Hardcoded for now!
     
-    args = ['', '-i', ReadCifIn, '-o', ReadCifOut, '-b', ReadCifA, ReadCifB, ReadCifC]
+    read_cif_arguments = ['', '-i', read_cif_input, '-o', read_cif_output, '-b', read_cif_a, read_cif_b, read_cif_c]
     
     print("The following arguments will be passed to the CIF reader script:\n")
-    print("./Read_CIF.py" + " ".join(str(arg) for arg in args) + "\n")
+    print("./Read_CIF.py" + " ".join(str(read_cif_argument) for read_cif_argument in read_cif_arguments) + "\n")
     
-    Read_CIF.main(args)
+    Read_CIF.main(read_cif_arguments)
     # ------------------------------------------------------------------
     
     # ------------------------------------------------------------------
@@ -489,8 +472,8 @@ def main():
     print ("")
     
     # Read the lines in the .xyz file recently generated by Read_CIF.py
-    with open(ReadCifOut) as fxyz:
-        sxyz = fxyz.readlines()
+    #with open(read_cif_output) as supercell_xyz_file:
+    #    sc_xyz_f_lines = supercell_xyz_file.readlines()
     
     # Generate a SuperCell object.
     #SuperCell = psi4.geometry('\n'.join(sxyz[2:]))
@@ -506,20 +489,20 @@ def main():
     
     print("Producing .xyz files for each fragment of the supercell.\n")
 
-    p4frag = "bztest.p4" # NOTE: for test only!
-    #p4frag = "bzfrag.p4" # WARNING: Name of the fragmented super cell file is temporarily hardcoded.
+    fragmented_supecell_file = "bztest.p4"      # NOTE: for test only!
+    #fragmented_supecell_file = "bzfrag.p4"     # TODO: Name of the fragmented super cell file is temporarily hardcoded.
     
-    numfrags = 664       # WARNING: Number of fragments temporarily hardcoded!
-    numfatoms = 12       # WARNING: Number of atoms per fragment hardcoded! What if there are two types of molecules?
-    frg_separator = "--" # Fragment separator string.
+    num_frags = 664           # TODO: Number of fragments temporarily hardcoded!
+    num_atoms_frag = 12       # TODO: Number of atoms per fragment hardcoded! What if there are two types of molecules?
+    fragment_separator = "--" # Fragment separator string.
 
-    psifrg2xyz(p4frag, numfrags, numfatoms, frg_separator)
+    psifragments2xyz(fragmented_supecell_file, num_frags, num_atoms_frag, fragment_separator)
 
     # Discard fragments that are not a complete molecule.
     
     print("Detecting fragments with incomplete molecules.\n")
 
-    frags_filter(numfatoms)
+    fragment_filter(num_atoms_frag)
 
     # Organize fragments according to their distance to the center of
     # the supercell, produce molecule files.
@@ -527,7 +510,7 @@ def main():
     print("Organizing molecules according to their separation to the")
     print("center of the supercell.\n")
 
-    frgs2mols()
+    fragments2mols()
     
     # Create monomer files from fragment files.
 
@@ -543,8 +526,8 @@ def main():
     #
     # Filter dimers that are too distant apart.
     
-    rdimer = 3.0
-    nmerbuilder("dimers", rdimer)
+    r_cut_dimer = 3.0
+    nmerbuilder("dimers", r_cut_dimer)
 
     # Filter out and keep count of all non-unique dimers, using the
     # nuclear repulsion energy criteria.
@@ -556,8 +539,8 @@ def main():
     #
     # Filter trimers that are too distant apart.
 
-    rtrimer = 3.0
-    nmerbuilder("trimers", rtrimer)
+    r_cut_trimer = 3.0
+    nmerbuilder("trimers", r_cut_trimer)
 
     # Filter out and keep count of all non-unique trimers, using 
     # ArbAlign.
