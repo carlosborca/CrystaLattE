@@ -386,6 +386,7 @@ def nmerbuilder(nmertype, rcut):
     moidx = 0
     nmidx = 0
     generatd = 0
+    dscrdspi = 0
     dscrdexs = 0
     dscrdsep = 0
 
@@ -398,12 +399,18 @@ def nmerbuilder(nmertype, rcut):
                 if fnmatch.fnmatch(nmer, nmerpatt):
                     newnm = numnmlbl + "-" + str(monomer)[2:-4] + "+" + str(nmer)[2:]
 
-                    if monomer < nmer: # WARNING: This may not work for trimers, tetramers, ...
+                    #if monomer < nmer: # If identic structure filter is on this should be the condition.
+                    if monomer <= nmer:
                         nmidx += 1
                         
                         mindist = rmin(nmer, monomer)
- 
-                        if rcut <= mindist: # Separation cutoff filter.
+
+                        if mindist == 0: # Superimposed monomers filter. For trimers and tetramers.
+                            print("%s %i (%s) discarded: Separation %3.2f A, superimposed structures" % (ucnmlbls, nmidx, newnm, mindist))
+                            dscrdspi += 1
+                            continue
+
+                        elif rcut <= mindist: # Separation cutoff filter.
                             print("%s %i (%s) discarded: Separation %3.2f A longer than cutoff %3.2f A" % (ucnmlbls, nmidx, newnm, mindist, rcut))
                             dscrdsep += 1
 
@@ -416,8 +423,10 @@ def nmerbuilder(nmertype, rcut):
                             print("%s %i (%s) generated: Merged %s and %s" % (ucnmlbls, nmidx, newnm, monomer, nmer))
                             generatd += 1
                     
-                    elif nmer == monomer: # Identic structures filter
-                        continue
+                    # elif nmer == monomer: # Identic structures filter. For dimers.
+                    #     print("%s %i (%s) discarded: Identic structures" % (ucnmlbls, nmidx, newnm))
+                    #     dscrdspi += 1
+                    #     continue
 
                     else: # Double-counting filter
                         nmidx += 1
@@ -429,10 +438,12 @@ def nmerbuilder(nmertype, rcut):
 
     print("\nTotal number of monomers: %i" % total_monomers)
     print("\nMaximum possible number of dimers: %i" % total_dimers)
-    print("\nMaximum possible number of trimers: %i" % total_trimers)
-    print("\nMaximum possible number of tetramers: %i" % total_tetramers)
-    print("\nDiscarded %i far-separated N-mers and %i to avoid double counting of structures." % (dscrdsep, dscrdexs))
-    print("\nGenerated %i N-mers.\n" % generatd)
+    print("Maximum possible number of trimers: %i" % total_trimers)
+    print("Maximum possible number of tetramers: %i" % total_tetramers)
+    print("\nDiscarded %i %s with far-separated atoms." % (dscrdsep, ucnmlbls.lower() + "s"))
+    print("Discarded %i %s with double-counted structures." % (dscrdexs, ucnmlbls.lower() + "s"))
+    print("Discarded %i %s with superimposing atoms." % (dscrdspi, ucnmlbls.lower() + "s"))
+    print("\nGenerated %i %s.\n" % (generatd, ucnmlbls.lower() + "s"))
 
 # ==================================================================
 
@@ -495,8 +506,8 @@ def main():
     
     print("Producing .xyz files for each fragment of the supercell.\n")
 
-    #p4frag = "bztest.p4" # NOTE: for test only!
-    p4frag = "bzfrag.p4" # WARNING: Name of the fragmented super cell file is temporarily hardcoded.
+    p4frag = "bztest.p4" # NOTE: for test only!
+    #p4frag = "bzfrag.p4" # WARNING: Name of the fragmented super cell file is temporarily hardcoded.
     
     numfrags = 664       # WARNING: Number of fragments temporarily hardcoded!
     numfatoms = 12       # WARNING: Number of atoms per fragment hardcoded! What if there are two types of molecules?
