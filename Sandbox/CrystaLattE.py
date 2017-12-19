@@ -410,6 +410,11 @@ def nmer_builder(nmer_type, nmer_separation_cutoff):
                             counter_dscrd_sep += 1
 
                             # TODO: Nuclear repulsion energy filter.
+                            # import psi4
+                            # g = psi4.geometry("""He 0 0 0\nHe 0 0 2""")
+                            # g.update_geometry()
+                            # g.nuclear_repulsion_energy()
+
                             
                             # TODO: Filter for symetric structures.
  
