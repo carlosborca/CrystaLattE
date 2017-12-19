@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 """ Calculate RMSD between two XYZ files
 
@@ -159,7 +159,7 @@ The script will return three RMSD values;
 """
 
   if len(args) < 2:
-    print usage
+    print(usage)
     sys.exit(0)
 
   mol1 = args[0]
@@ -182,7 +182,7 @@ The script will return three RMSD values;
   P -= Pc
   Q -= Qc
 
-  print "%-.3f" %kabsch(P, Q)
+  print("%-.3f" %kabsch(P, Q))
   #print kabsch(P, Q)
   #print "Kabsch RMSD:", kabsch(P, Q)
   #print "Fitted RMSD:", fit(P, Q)

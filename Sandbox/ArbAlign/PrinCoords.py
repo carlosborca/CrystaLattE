@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 """
 moi.py
@@ -20,9 +20,9 @@ The "sel" argument is always a list of Atoms.
 import sys
 import math
 from textwrap import dedent
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from operator import mul
-from itertools import izip
+import itertools
 from numpy import *
 from numpy.linalg import *
 
@@ -277,8 +277,8 @@ def rotationMatrix(A):
 def printMatrix(A):
   for i in range(len(A)):
     for j in range(len(A[0])):
-      print '%8f' % A[i][j],
-    print                    
+      print('%8f' % A[i][j])
+    print('                    ')
 
 def generateXYZFile(N, L, C):
   num_atoms = len(C)
@@ -307,7 +307,7 @@ def usage():
           file = Some-tetramer.xyz
           symm = 4
       """
-  print dedent(u)
+  print(dedent(u))
   sys.exit()
 
 def main():

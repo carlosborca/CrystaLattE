@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 import sys
 import numpy as np
@@ -358,7 +358,7 @@ If you find this script useful for any publishable work, please cite the corresp
    if NA_a == NA_b:
       InitRMSD_unsorted = kabsch(A_all,B_all)
    else:
-      print "Error: unequal number of atoms. " + str(NA_a) + " is not equal to " + str(NA_b) 
+      print("Error: unequal number of atoms. " + str(NA_a) + " is not equal to " + str(NA_b))
       sys.exit()
 
    """
@@ -366,18 +366,18 @@ If you find this script useful for any publishable work, please cite the corresp
    we don't need to do any reordering, swapping, or reflections
    """
    if InitRMSD_unsorted < 0.001:
-      print "The structures are identical. No reordering, swapping or reflection needed."
-      print "All-atom RMSD: %2.3f" % float(InitRMSD_unsorted)
+      print("The structures are identical. No reordering, swapping or reflection needed.")
+      print("All-atom RMSD: %2.3f" % float(InitRMSD_unsorted))
       name = str(args.xyz2.split(".xyz")[0]) + "-aligned_to-" + str(args.xyz1)
       write_to_xyz(num_atoms, name, b_labels, b_coords)
-      print "Best alignment of " + str(args.xyz2) + " on " + str(args.xyz1) + " is written to " + str(name)
+      print("Best alignment of " + str(args.xyz2) + " on " + str(args.xyz1) + " is written to " + str(name))
       sys.exit()
 
    #If ignoring hydrogens, the coordinates are written to a file with "noHydrogens.xyz" ending
    if args.noHydrogens:
       name = str(args.xyz1.split(".xyz")[0]) + "-noHydrogens" + ".xyz"
       write_to_xyz(NA_a, name, a_labels, a_coords)
-      print "Coordinates of " + str(args.xyz1) + " without hydrogens is written to " + str(name)
+      print("Coordinates of " + str(args.xyz1) + " without hydrogens is written to " + str(name))
 
    """
    Read in the original coordinates and labels of xyz1 and xyz2, 
@@ -409,16 +409,16 @@ If you find this script useful for any publishable work, please cite the corresp
       #del Atom_freq['H']
       #print Atom_freq
       Sorted_Atom_freq = sorted(Atom_freq.items(), key=operator.itemgetter(1), reverse=True)
-      print Sorted_Atom_freq
+      print(Sorted_Atom_freq)
       """
       Atom = sorted(Uniq, key=operator.itemgetter(0), reverse=True)
       print Atom
       print num_uniq
       """
    else:
-      print "Unequal number or type of atoms. Exiting ... "
-      print "Atoms in 1st molecule" +str(Atom_freq_a)
-      print "Atoms in 2nd molecule" +str(Atom_freq_b)
+      print("Unequal number or type of atoms. Exiting ... ")
+      print("Atoms in 1st molecule" +str(Atom_freq_a))
+      print("Atoms in 2nd molecule" +str(Atom_freq_b))
       sys.exit()
 
    A_all = np.array(a_coords)
@@ -499,7 +499,7 @@ If you find this script useful for any publishable work, please cite the corresp
          #print str(vars()[b_Indices[Uniq[l]]])
          b_perm = permute_atoms(b_coords, vars()[Perm[Uniq[l]]], vars()[b_Indices[Uniq[l]]])
          b_final = transform_coords(b_perm, B_t[i][1], B_t[i][2])
-         print str(Uniq[l]) + " Swap: " + str(B_t[i][1]) + " Refl: " + str(B_t[i][2]) + " RMSD: " + str(kabsch(a_coords, b_final)) + " " + str(vars()[Perm[Uniq[l]]])
+         print(str(Uniq[l]) + " Swap: " + str(B_t[i][1]) + " Refl: " + str(B_t[i][2]) + " RMSD: " + str(kabsch(a_coords, b_final)) + " " + str(vars()[Perm[Uniq[l]]]))
          rmsds.append([kabsch(a_coords, b_final), B_t[i][1], B_t[i][2], b_final, vars()[Perm[Uniq[l]]]])
          rmsds = sorted(rmsds, key = lambda x: x[0])
       else: 
@@ -527,24 +527,24 @@ If you find this script useful for any publishable work, please cite the corresp
             b_trans = b_final
             l += 1
             q = l - 1 
-            print str(Uniq[q]) + " Swap: " + str(B_t[i][1]) + " Refl: " + str(B_t[i][2]) + " RMSD: " + str(kabsch(a_coords, b_final)) + " " + str(vars()[Perm[Uniq[q]]])
+            print(str(Uniq[q]) + " Swap: " + str(B_t[i][1]) + " Refl: " + str(B_t[i][2]) + " RMSD: " + str(kabsch(a_coords, b_final)) + " " + str(vars()[Perm[Uniq[q]]]))
             rmsds.append([kabsch(a_coords, b_final), B_t[i][1], B_t[i][2], b_final])
             rmsds = sorted(rmsds, key = lambda x: x[0])
             #print "Permutation: " + str(vars()[Perm[Uniq[q]]])
    
    if not args.simple:
-      print "Swap Transform: " + str(rmsds[0][1])
-      print "Reflection Transform: " + str(rmsds[0][2])
+      print("Swap Transform: " + str(rmsds[0][1]))
+      print("Reflection Transform: " + str(rmsds[0][2]))
 
    #print "Permutation: " + str(rmsds[0][4])
    FinalRMSD = float(rmsds[0][0])
    if FinalRMSD < float(InitRMSD_unsorted): 
-      print "Initial unsorted RMSD: %2.3f" % float(InitRMSD_unsorted)
-      print "Initial   sorted RMSD: %2.3f" % float(InitRMSD_sorted)
-      print "Best             RMSD: %2.3f" % float(rmsds[0][0])
+      print("Initial unsorted RMSD: %2.3f" % float(InitRMSD_unsorted))
+      print("Initial   sorted RMSD: %2.3f" % float(InitRMSD_sorted))
+      print("Best             RMSD: %2.3f" % float(rmsds[0][0]))
    else:
-      print "The initial alignment is already optimal."
-      print "Initial and final RMSD: %2.3f" % float(InitRMSD_unsorted)
+      print("The initial alignment is already optimal.")
+      print("Initial and final RMSD: %2.3f" % float(InitRMSD_unsorted))
 
    if args.noHydrogens:
       name = str(args.xyz2.split(".xyz")[0]) + "-aligned_to-" + \
@@ -559,7 +559,7 @@ If you find this script useful for any publishable work, please cite the corresp
       b_final_coords = b_init_coords
 
    write_to_xyz(num_atoms, name, b_final_labels, b_final_coords)
-   print "Best alignment of " + str(args.xyz2) + " with " + str(args.xyz1) + " is written to " + str(name)
+   print("Best alignment of " + str(args.xyz2) + " with " + str(args.xyz1) + " is written to " + str(name))
 
 if __name__ == "__main__":
    main()

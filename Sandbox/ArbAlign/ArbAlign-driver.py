@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 import sys
 import subprocess
@@ -179,7 +179,7 @@ If you find this script useful for any publishable work, please cite the corresp
       read_and_write_xyz(c_ref_file, 'reference.xyz', 'c')
       read_and_write_xyz(OutFile, 'molecule-aligned_to-reference.xyz', 'c')
    else:
-       print "Error: unsure how to perform the alignment"
+       print("Error: unsure how to perform the alignment")
 
 
 if __name__ == "__main__":
