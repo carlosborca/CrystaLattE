@@ -30,7 +30,7 @@ import sys
 from math import *
 
 # Import two functions from the PyCIFRW module. 
-sys.path.insert(0, 'pycifrw-4.1.1-min')
+#sys.path.insert(0, 'pycifrw-4.1.1-min')
 from CifFile import CifFile, CifBlock
 
 # =============================================================================
@@ -234,7 +234,7 @@ def read_cif(fNameIn):
     
     except KeyError as e:
         print('Error!  Missing item in file.') # Carlos Borca (2017-09-19-1427)
-        print ('e') # Carlos Borca (2017-09-19-1427)
+        print('e') # Carlos Borca (2017-09-19-1427)
 
         sys.exit()
 
@@ -398,8 +398,8 @@ def main(args):
 	
 	
 	# Update the user.
-	print('Loaded a CIF file with %d atom coordinates and %d symmetry operations.' % (len(atoms), len(ops))) # Carlos Borca (2017-09-19-1429)
-	print('') # Carlos Borca (2017-12-06-1554)
+	#CrystaLattE VERBOSE print('Loaded a CIF file with %d atom coordinates and %d symmetry operations.' % (len(atoms), len(ops))) # Carlos Borca (2017-09-19-1429)
+	#CrystaLattE VERBOSE print('') # Carlos Borca (2017-12-06-1554)
 	
 	# Just for reference, here is a typical example of a CIF file:
 	"""
@@ -489,14 +489,14 @@ def main(args):
 	
 	
 	# Done with creating the unit cell.  Update the user.
-	print('Created a unit cell consisting of %d atoms.' % len(atoms))
-	print('') # Carlos Borca (2017-12-06-1554)	
+	#CrystaLattE VERBOSE print('Created a unit cell consisting of %d atoms.' % len(atoms))
+	#CrystaLattE VERBOSE print('') # Carlos Borca (2017-12-06-1554)	
 
-	print('Fractional coordinates:')
-	for atom in atoms:
-	    print('%10s  %.3f  %.3f  %.3f' % atom)
+	#CrystaLattE VERBOSE print('Fractional coordinates:')
+	#CrystaLattE VERBOSE for atom in atoms:
+	    #CrystaLattE VERBOSE print('%10s  %.3f  %.3f  %.3f' % atom)
 	
-	print ('') # Carlos Borca (2017-12-06-1554)	
+	#CrystaLattE VERBOSE print('') # Carlos Borca (2017-12-06-1554)	
 	
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# Create a larger box made of several unit cells: the super cell.
@@ -581,14 +581,14 @@ def main(args):
 	
 	
 	# Update the user.
-	print('The primitive unit cell vectors are:')
-	print('   a = [%6.4f, %6.4f, %6.4f]' % (ax,0,0))
-	print('   b = [%6.4f, %6.4f, %6.4f]' % (bx,by,0))
-	print('   c = [%6.4f, %6.4f, %6.4f]' % (cx,cy,cz))
-	print('') # Carlos Borca (2017-12-06-1558)
-	print('This gives a volume of %f A^3.' % V) # Carlos Borca (2017-12-06-1558)
-	print('CIF file indicates it is %f A^3.' % volume) # Carlos Borca (2017-12-06-1558)
-	print('') # Carlos Borca (2017-12-06-1559)
+	#CrystaLattE VERBOSE print('The primitive unit cell vectors are:')
+	#CrystaLattE VERBOSE print('   a = [%6.4f, %6.4f, %6.4f]' % (ax,0,0))
+	#CrystaLattE VERBOSE print('   b = [%6.4f, %6.4f, %6.4f]' % (bx,by,0))
+	#CrystaLattE VERBOSE print('   c = [%6.4f, %6.4f, %6.4f]' % (cx,cy,cz))
+	#CrystaLattE VERBOSE print('') # Carlos Borca (2017-12-06-1558)
+	#CrystaLattE VERBOSE print('This gives a volume of %f A^3.' % V) # Carlos Borca (2017-12-06-1558)
+	#CrystaLattE VERBOSE print('CIF file indicates it is %f A^3.' % volume) # Carlos Borca (2017-12-06-1558)
+	#CrystaLattE VERBOSE print('') # Carlos Borca (2017-12-06-1559)
 	
 	
 	# Determine the box size.
@@ -653,7 +653,7 @@ def main(args):
 	    print_error('Failed to write to output file')
 	
 	
-	print('Created output file %s (%d atoms in total).' % (fNameOut, len(atoms)))
+	#CrystaLattE VERBOSE print('Created output file %s (%d atoms in total).' % (fNameOut, len(atoms)))
 	fOut.close()
 	
 	
