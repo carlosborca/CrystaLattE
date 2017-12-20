@@ -2,6 +2,7 @@
 
 import fnmatch
 import math
+import numpy as np
 import re
 import os
 import sys
@@ -9,6 +10,10 @@ import sys
 # Imports of outsourced code.
 sys.path.insert(0, "Read_CIF")
 import Read_CIF
+
+import psi4
+from psi4.driver import qcdb
+from psi4.driver.qcdb.bfs import BFS
 
 # ==================================================================
 def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose=1):
@@ -21,6 +26,22 @@ def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, rea
         print("./Read_CIF.py" + " ".join(str(read_cif_argument) for read_cif_argument in read_cif_arguments))
     
     return read_cif_arguments
+# ==================================================================
+
+# ==================================================================
+def supercell2fragments(read_cif_output, verbose=1):
+    """Take the supercell xyz file produced by Read_CIF and break it into fragments."""
+    
+    scell_geom = np.loadtxt(read_cif_output, skiprows=2, usecols=(1, 2, 3))
+    scell_elem = np.loadtxt(read_cif_output, skiprows=2, usecols=(0), dtype='str')
+
+    fragments = BFS(scell_geom / qcdb.psi_bohr2angstroms, scell_elem)
+    frag_geoms = [scell_geom[fr] for fr in fragments]
+    frag_elems = [scell_elem[fr] for fr in fragments]
+
+    if verbose >= 2:
+        print(frag_geoms)
+        print(frag_elems)
 # ==================================================================
 
 # ==================================================================
@@ -531,7 +552,8 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, fr
     
     if verbose >= 2:
         print("\nProducing .xyz files for each fragment of the supercell.")
-
+    
+    supercell2fragments(read_cif_output, verbose)
     psifragments2xyzs(fragmented_supecell_file, num_frags, num_atoms_frag, fragment_separator, verbose)
 
     # Discard fragments that are not a complete molecule.
