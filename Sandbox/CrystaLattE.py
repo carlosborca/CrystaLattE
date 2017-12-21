@@ -18,7 +18,8 @@ from psi4.driver.qcdb.bfs import BFS
 
 # ==================================================================
 def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose=1):
-    """Takes a CIF file and calls Read_CIF() to generate a supercell."""
+    """Takes a the names of a CIF input file, a .xyz output file, and the number of replicas of the rectangular cell in each direction (A, B, and C).
+    It then calls Read_CIF() and passes that information as arguments to generate an .xyz file of the supercell."""
 
     read_cif_arguments = ['', '-i', read_cif_input, '-o', read_cif_output, '-b', read_cif_a, read_cif_b, read_cif_c]
 
@@ -33,58 +34,43 @@ def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, rea
 def supercell2fragments(read_cif_output, r_cut_monomer, verbose=1):
     """Take the supercell xyz file produced by Read_CIF and break it into fragments."""
     
-    scell_geom = np.loadtxt(read_cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64)
-    scell_elem = np.loadtxt(read_cif_output, skiprows=2, usecols=(0), dtype='str')
+    scell_geom = np.loadtxt(read_cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64) # Creates a NumPy array with the coordinates of atoms in the supercell
+    scell_elem = np.loadtxt(read_cif_output, skiprows=2, usecols=(0), dtype='str') # Creates a NumPy array with the element symbols of the atoms in the supercell
     
-    scell_geom = scell_geom / qcdb.psi_bohr2angstroms # Coordinates will be handled in bohr.    
+    scell_geom = scell_geom / qcdb.psi_bohr2angstroms # Coordinates will be handled in Bohr
 
-    scell_cntr = (np.max(scell_geom, axis=0) - np.min(scell_geom, axis=0))/2.0
+    scell_cntr = (np.max(scell_geom, axis=0) - np.min(scell_geom, axis=0))/2.0 # Determines the supercell center
     
     if verbose >= 2:
         print(scell_cntr)
 
-    scell_geom -= scell_cntr
+    scell_geom -= scell_cntr # Translates the supercell to the origin
 
-    scell_geom_max_coords = np.max(scell_geom, axis=0)
+    scell_geom_max_coords = np.max(scell_geom, axis=0) # Returns an np.array with 3 numbers: the maximum of x, of y, and of z
 
     if (r_cut_monomer / qcdb.psi_bohr2angstroms) > np.min(scell_geom_max_coords):
-        print("\nERROR: Cutoff (%10.2f A) longer than half the smallest dimension of the supercell (%10.2f A)." % (r_cut_monomer, np.min(scell_geom_max_coords)*qcdb.psi_bohr2angstroms))
+        print("\nERROR: Cutoff (%10.2f A) longer than half the smallest dimension of the supercell (%10.2f A)." \
+              % (r_cut_monomer, np.min(scell_geom_max_coords)*qcdb.psi_bohr2angstroms))
         print("       Please increase the size of the supercell to at least twice r_cut_monomer.\n")
 
-    fragments = BFS(scell_geom, scell_elem)
+    fragments = BFS(scell_geom, scell_elem) # Passes the supercell geometry and elements the breadth-first search algorithm of QCDB to obtain fragments
     frag_geoms = [scell_geom[fr] for fr in fragments]
     frag_elems = [scell_elem[fr] for fr in fragments]
 
-    #if verbose >= 2:
-        #print(frag_geoms)
-        #print(frag_elems)
-
-    # Build a dictionary of monomer data, keeping only monomers within r_cut_monomer 
-    #for frag in frag_geoms:
-    #    r_atom_min = 1000000000
-
-    #    for atom in frag:
-    #        r_atom = np.sqrt(atom[0]**2 + atom[1]**2 + atom[2]**2)
-    #        
-    #        if r_atom < r_atom_min:
-    #            r_atom_min = r_atom
-        
-    #    if r_atom_min < r_cut_monomer:
-    
-    frag_r_mins = []
+    frag_r_mins = [] # List containing the magnitude of the shortest position vector of each fragment.
 
     for frag in frag_geoms:
-        r_min_atom = np.min(np.linalg.norm(frag, axis=1)) # Get the minium of the norm of the position vectors of all atoms in a fragment
+        r_min_atom = np.min(np.linalg.norm(frag, axis=1)) # Get the minium of the norm of the position vectors of all atoms in the fragment.
         frag_r_mins.append(r_min_atom)
     
-    frag_r_mins = np.array(frag_r_mins)
+    frag_r_mins = np.array(frag_r_mins) # Conversion to NumPy array.
 
-    mapper = frag_r_mins.argsort() # Array containing the indices of fragments sorted by r_min_atom.
+    mapper = frag_r_mins.argsort() # Array mapping the indices of the fragments sorted by r_min_atom to the order in the frag_r_mins list.
 
     if verbose >= 2:
         print(mapper)
 
-    nmers = {}
+    nmers = {} # The N-Mers dictionary
 
     for i in range(len(frag_geoms)):
         index = mapper[i]
@@ -94,9 +80,10 @@ def supercell2fragments(read_cif_output, r_cut_monomer, verbose=1):
             nmers[name]['monomers'] = [i]
             nmers[name]['elem'] = frag_elems[index]
             nmers[name]['coords'] = frag_geoms[index]
-            nmers[name]['r_min'] = frag_r_mins[index]
+            nmers[name]['rmin'] = frag_r_mins[index]
 
-    print(nmers)
+    if verbose >= 2:
+        print(nmers)
 
 # ==================================================================
 
@@ -222,50 +209,6 @@ def supercell_center(frag_filename_pattern, verbose=1):
     return frag_filenames_list, frag_coords_x, frag_coords_y, frag_coords_z, cntr_x, cntr_y, cntr_z 
 # ==================================================================
 
-# ==================================================================
-def supercell_center_(frag_filename_pattern, verbose=1):
-    """Compute the center of coordinates of .xyz files with a matching pattern in the filename.
-    Returns a list with fragment names, x, y, and z coordinates in lists of floats and the coordinates of the center."""
-
-    frag_filenames_list = [] # Fragments file names.
-    frag_coords_x = []           # Values of x coordinates.
-    frag_coords_y = []           # Values of y coordinates.
-    frag_coords_z = []           # Values of z coordinates.
-
-    directory = os.getcwd()
-    files = os.listdir(directory)
-
-    for file in files:
-
-        if re.match(frag_filename_pattern, file):
-
-            with open(file, 'r') as frag_file:
-                frag_file_lines = frag_file.readlines()
-
-                i = 0
-                for i in range(len(frag_file_lines)):
-
-                    if i < 2:
-                        continue
-
-                    else:
-                        frag_info = frag_file_lines[i].split()
-                        frag_filenames_list.append(file)
-                        frag_coords_x.append(float(frag_info[1]))
-                        frag_coords_y.append(float(frag_info[2]))
-                        frag_coords_z.append(float(frag_info[3]))
-
-    cntr_x = (max(frag_coords_x) - min(frag_coords_x))/2.0
-    cntr_y = (max(frag_coords_y) - min(frag_coords_y))/2.0
-    cntr_z = (max(frag_coords_z) - min(frag_coords_z))/2.0
-
-    if verbose >= 2:
-        print("Center of the supercell located at:")
-        print("x = %10.5f"   % (cntr_x))
-        print("y = %10.5f"   % (cntr_y))
-        print("z = %10.5f\n" % (cntr_z))
-
-    return frag_filenames_list, frag_coords_x, frag_coords_y, frag_coords_z, cntr_x, cntr_y, cntr_z
 # ==================================================================
 def position_vec_mag(frag_filename_pattern, verbose=1):
     """Using the supercell_center() function it computes the magnitude of the position vector of the atoms read by the supercell_center() function.
