@@ -9,7 +9,7 @@ c. Go to the directory where you downloaded the installer and execute it: bash M
 
 2. CrystaLattE Environment and Configuration:
 
-a. export PYTHONPATH=/home/carlosborca/Gits/psi4/objdir/stage/usr/local/psi4/lib//:$PYTHONPATH
+a. export PYTHONPATH=/home/carlosborca/Gits/psi4/objdir/stage/usr/local/psi4/lib//:/home/carlosborca/Gits/hungarian/build/lib.linux-x86_64-3.6/:$PYTHONPATH
 
 b. python -c "import psi4; print(psi4.__version__); print(psi4.__file__)"
 
