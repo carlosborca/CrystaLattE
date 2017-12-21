@@ -7,6 +7,13 @@ b. Download the version that best fits your interests.
 c. Go to the directory where you downloaded the installer and execute it: bash Miniconda3-latest-Linux-x86_64.sh (or bash Psi4conda-latest-py36-Linux-x86_64.sh)
 
 
-2. PyCIFRW
+2. CrystaLattE Environment and Configuration:
+
+a. export PYTHONPATH=/home/carlosborca/Gits/psi4/objdir/stage/usr/local/psi4/lib//:$PYTHONPATH
+
+b. python -c "import psi4; print(psi4.__version__); print(psi4.__file__)"
+
+
+3. PyCifRW:
 
 Install using: conda install -c conda-forge pycifrw
