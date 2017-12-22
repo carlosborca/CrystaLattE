@@ -118,6 +118,7 @@ def merge_nmers(nmers, nm_a, nm_b, verbose=1):
     # Elements and coordinates of the atoms in the new N-mer.
     nm_new_elem_arrays = []
     nm_new_coords_arrays = []
+    
     for monomer in nm_new_monomers:
         name = "1mer-" + str(monomer)
         nm_new_elem_arrays.append(nmers[name]["elem"])
@@ -214,12 +215,15 @@ def build_nmer(nmers, nmer_type, nmer_separation_cutoff, verbose=1):
             for nmer_key, nmer in nmers.items():
 
                 if nmer_key.startswith(nm_dictname_pattern):
+                    
                     if (monomer["monomers"][0] in nmer["monomers"]):
                         continue
+                    
                     new_nmer_name, new_nmer = merge_nmers(nmers, monomer, nmer, verbose)
                     distm, r_min = distance_matrix(monomer["coords"], nmer["coords"])
 
                     if r_min <= 1.e-5: # Superimposed monomers filter.
+                        
                         if verbose >= 2:
                             print("%s %s discarded: Separation %3.2f A, superimposed structures" \
                                   % (nm_txt_lbl, new_nmer_name, r_min))
@@ -227,15 +231,16 @@ def build_nmer(nmers, nmer_type, nmer_separation_cutoff, verbose=1):
                         counter_dscrd_spi += 1
 
                     elif r_min > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms): # Separation cutoff filter.
+                        
                         if verbose >= 2:
                             print("%s %s discarded: Separation %3.2f A, longer than cutoff %3.2f A" \
                                   % (nm_txt_lbl, new_nmer_name, r_min*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
                         
                         counter_dscrd_sep += 1
 
-                    # TODO: Nuclear repulsion energy filter (?)
                     else:
                         found_duplicate = False
+                        
                         for existing in new_nmers.values():
                             
                             if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5:
@@ -246,6 +251,7 @@ def build_nmer(nmers, nmer_type, nmer_separation_cutoff, verbose=1):
                                 
                                 # Call the dream(a)li(g)ner of QCDB.
                                 rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"])
+                                
                                 if rmsd < 1.e-3:
                                     found_duplicate = True
                                     print("%s %s discarded: A duplicate of this N-mer was generated before" % (nm_txt_lbl, new_nmer_name))
@@ -269,8 +275,7 @@ def build_nmer(nmers, nmer_type, nmer_separation_cutoff, verbose=1):
 # ==================================================================
 
 # ==================================================================
-#def main(input_cif_file, r_cut_monomer=10.0, r_cut_dimer=10.0, r_cut_trimer=10.0, r_cut_tetramer=10.0, r_cut_pentamer=10.0, verbose=1):
-def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, fragmented_supecell_file, num_frags, num_atoms_frag, fragment_separator, nmers_up_to=3, r_cut_monomer=10.0, r_cut_dimer=10.0, r_cut_trimer=10.0, r_cut_tetramer=10.0, r_cut_pentamer=10.0, verbose=1):
+def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nmers_up_to=3, r_cut_monomer=10.0, r_cut_dimer=10.0, r_cut_trimer=10.0, r_cut_tetramer=10.0, r_cut_pentamer=10.0, verbose=1):
     "Takes a CIF file and computes the crystal lattice energy using a manybody expansion approach."
     
     # Print program header.
@@ -300,28 +305,24 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, fr
         
         if verbose >= 2:
             print("\nMerging monomers with monomers to obtain dimers.")
-        
         build_nmer(nmers, "dimers", r_cut_dimer, verbose)
 
     if nmers_up_to >= 3:
         
         if verbose >= 2:
             print("\nMerging dimers with monomers to obtain trimers.")
-
         build_nmer(nmers, "trimers", r_cut_trimer, verbose)
 
     if nmers_up_to >= 4:
         
         if verbose >= 2:
             print("\nMerging trimers with monomers to obtain tetramers.")
-
         build_nmer(nmers, "tetramers", r_cut_tetramer, verbose)
 
     if nmers_up_to == 5:
         
         if verbose >= 2:
             print("\nMerging tetramers with monomers to obtain pentamers.")
-
         build_nmer(nmers, "pentamers", r_cut_pentamer, verbose)
 
     if nmers_up_to > 5:
@@ -340,7 +341,6 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, fr
 # ==================================================================
 
 if __name__ == "__main__":
-    #main(read_cif_input, nmers_up_to=3)
     
     # Test up to trimers, with reduced supercell of benzene, and shortened cutoffs.
     main(   read_cif_input="Benzene-138K.cif", 
@@ -348,10 +348,6 @@ if __name__ == "__main__":
             read_cif_a=3, 
             read_cif_b=3, 
             read_cif_c=3, 
-            fragmented_supecell_file="bztest.p4", 
-            num_frags=664, 
-            num_atoms_frag=12, 
-            fragment_separator="--", 
             nmers_up_to=2, 
             r_cut_monomer=5.0, 
             r_cut_dimer=3.0, 
@@ -361,18 +357,13 @@ if __name__ == "__main__":
             verbose=2)
 
     # Test up to trimers, with water supercell, and shortened cutoffs.
-    #main(   read_cif_input="ice-Ih.cif", \
-    #        read_cif_output="ice-Ih.xyz", \
-    #        read_cif_a=5, \
-    #        read_cif_b=5, \
-    #        read_cif_c=5, \
-    #        fragmented_supecell_file="icefrag.p4", \
-    #        num_frags=13, \
-    #        num_atoms_frag=3, \
-    #        fragment_separator="--", \
-    #        nmers_up_to=3, \
-    #        r_cut_dimer=3.0, \
-    #        r_cut_trimer=3.0, \
-    #        r_cut_tetramer=3.0, \
-    #        r_cut_pentamer=3.0, \
-    #        verbose=2)
+    #main(   read_cif_input="ice-Ih.cif",
+    #        read_cif_output="ice-Ih..xyz",
+    #        read_cif_a=3,
+    #        read_cif_b=3,
+    #        read_cif_c=3,
+    #        nmers_up_to=2,
+    #        r_cut_monomer=5.0,
+    #        r_cut_dimer=3.0,
+    #        r_cut_trimer=3.0,
+    #        r_cut_tetramer=3.0,
