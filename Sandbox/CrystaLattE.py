@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import itertools
 import fnmatch
 import math
 import numpy as np
@@ -99,6 +100,7 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
             nmers[name]["elem"] = frag_elems[index]
             nmers[name]["coords"] = frag_geoms[index]
             nmers[name]["rmin"] = frag_r_mins[index]
+            nmers[name]["delimiters"] = []
 
             if verbose >= 3:
                 print(name)
@@ -106,35 +108,52 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
     
     return nmers
 # ==================================================================
-def merge_nmers(nmers, nm_a, nm_b, verbose=1):
+def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     
     nm_new = {}
 
     # Monomers included in the new N-mer.
-    nm_new_monomers = nm_a["monomers"] + nm_b["monomers"]
-    nm_new_monomers.sort()
+    nm_new_monomers = []
+    nm_new_monomers.append(ref_monomer["monomers"][0])
+    nm_new_monomers.extend(other_monomers)
+    #nm_new_monomers.sort() shouldn't need
     nm_new["monomers"] = nm_new_monomers
     
     # Elements and coordinates of the atoms in the new N-mer.
     nm_new_elem_arrays = []
     nm_new_coords_arrays = []
-    
+    nm_new["atoms_per_monomer"] = []
+
     for monomer in nm_new_monomers:
         name = "1mer-" + str(monomer)
+        nm_new["atoms_per_monomer"].append(len(nmers[name]["elem"]))
         nm_new_elem_arrays.append(nmers[name]["elem"])
         nm_new_coords_arrays.append(nmers[name]["coords"])
+
+    nm_new["delimiters"] = np.cumsum(nm_new["atoms_per_monomer"])
 
     nm_new["elem"] = np.concatenate(nm_new_elem_arrays, axis=0)
     nm_new["coords"] = np.concatenate(nm_new_coords_arrays, axis=0)
 
     # Norm of the shortest position vector of an atom in the new N-mer.
-    nm_new_rmin = min([nm_a["rmin"], nm_b["rmin"]])
-    nm_new["rmin"] = nm_new_rmin
+    # nm_new_rmin = min([nm_a["rmin"], nm_b["rmin"]])
+    # the reference is always closest to the origin so it is always the minimum rmin
+    nm_new["rmin"] = ref_monomer["rmin"]
 
     nm_new_name = str(len(nm_new_monomers)) + "mer-" + "+".join(map(str, nm_new_monomers))
 
     nm_new["nre"] = nre(nm_new["elem"], nm_new["coords"])
     nm_new["replicas"] = 1
+
+    nm_new["min_monomer_separations"] = []
+    for a in nm_new_monomers:
+        a_name = "1mer-" + str(a)
+        for b in nm_new_monomers:
+            if b <= a:
+                continue
+            b_name = "1mer-" + str(b)
+            distm, r_min = distance_matrix(nmers[a_name]["coords"], nmers[b_name]["coords"]) 
+            nm_new["min_monomer_separations"].append(r_min)
 
     return nm_new_name, nm_new
 # ==================================================================
@@ -172,7 +191,7 @@ def nre(elem, geom):
 # ==================================================================
 
 # ==================================================================
-def build_nmer(nmers, nmer_type, nmer_separation_cutoff, verbose=1):
+def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, verbose=1):
     """Takes a float indicating a cutoff distance in Angstroms.
     Returns dimer files that pass through the filter."""
 
@@ -182,21 +201,25 @@ def build_nmer(nmers, nmer_type, nmer_separation_cutoff, verbose=1):
         nm_dictname_pattern = "1mer-"
         nm_txt_lbl = "Dimer"
         nm_num_lbl = "2"
+        num_monomers = 2
 
     elif nmer_type == "trimers":
         nm_dictname_pattern = "2mer-"
         nm_txt_lbl = "Trimer"
         nm_num_lbl = "3"
+        num_monomers = 3
 
     elif nmer_type == "tetramers":
         nm_dictname_pattern = "3mer-"
         nm_txt_lbl = "Tetramer"
         nm_num_lbl = "4"
+        num_monomers = 4
 
     elif nmer_type == "pentamers":
         nm_dictname_pattern = "4mer-"
         nm_txt_lbl = "Pentamer"
         nm_num_lbl = "5"
+        num_monomers = 5
     
     else:
         print("\nERROR: The N-mer type must be defined as 'dimers', 'trimers', 'tetramers', or 'pentamer'.")
@@ -208,75 +231,168 @@ def build_nmer(nmers, nmer_type, nmer_separation_cutoff, verbose=1):
 
     new_nmers = {}
 
-    for monomer_key, monomer in nmers.items():
+    num_ref_monomers = 1
 
-        if monomer_key.startswith("1mer-"):
+    print("Total monomers  =", total_monomers)
 
-            for nmer_key, nmer in nmers.items():
+    for ref_monomer_idx in range(num_ref_monomers):
+        monomer_key = "1mer-" + str(ref_monomer_idx)
+        ref_monomer = nmers[monomer_key]
 
-                if nmer_key.startswith(nm_dictname_pattern):
-                    
-                    if (monomer["monomers"][0] in nmer["monomers"]):
-                        continue
-                    
-                    new_nmer_name, new_nmer = merge_nmers(nmers, monomer, nmer, verbose)
-                    distm, r_min = distance_matrix(monomer["coords"], nmer["coords"])
+        for other_monomers in itertools.combinations(range(ref_monomer_idx+1, total_monomers), num_monomers-1):
 
-                    if r_min <= 1.e-5: # Superimposed monomers filter.
+            new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, other_monomers, verbose)
+
+            max_dist = max(new_nmer["min_monomer_separations"])
+            if max_dist > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms):
+                
+                if verbose >= 2: 
+                    print("%s %s discarded: Separation %3.2f A, longer than cutoff %3.2f A" \
+                          % (nm_txt_lbl, new_nmer_name, max_dist*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
                         
-                        if verbose >= 2:
-                            print("%s %s discarded: Separation %3.2f A, superimposed structures" \
-                                  % (nm_txt_lbl, new_nmer_name, r_min))
-                        
-                        counter_dscrd_spi += 1
+                    counter_dscrd_sep += 1
+	
+            else:
+                found_duplicate = False
 
-                    elif r_min > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms): # Separation cutoff filter.
-                        
-                        if verbose >= 2:
-                            print("%s %s discarded: Separation %3.2f A, longer than cutoff %3.2f A" \
-                                  % (nm_txt_lbl, new_nmer_name, r_min*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
-                        
-                        counter_dscrd_sep += 1
+                for existing in new_nmers.values():
 
+                    if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5:
+                        # check if this is superimposable on the other structure or not
+                        # if superimposable then discard.
+
+                        print(existing["coords"], new_nmer["coords"], existing["elem"], new_nmer["elem"])
+
+                        # Call the dream(a)li(g)ner of QCDB.
+                        rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"])
+
+                        if rmsd < 1.e-3:
+                            found_duplicate = True
+                            print("%s %s discarded: A duplicate of this N-mer was generated before" % (nm_txt_lbl, new_nmer_name))
+                            existing["replicas"] += 1
+                            break
                     else:
-                        found_duplicate = False
-                        
-                        for existing in new_nmers.values():
-                            
-                            if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5:
-                                # check if this is superimposable on the other structure or not
-                                # if superimposable then discard.
-                                
-                                print(existing["coords"], new_nmer["coords"], existing["elem"], new_nmer["elem"])
-                                
-                                # Call the dream(a)li(g)ner of QCDB.
-                                rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"])
-                                
-                                if rmsd < 1.e-3:
-                                    found_duplicate = True
-                                    print("%s %s discarded: A duplicate of this N-mer was generated before" % (nm_txt_lbl, new_nmer_name))
-                                    existing["replicas"] += 1
-                                    break
-                            else:
-                                print("This one does not have matching NRE ", existing["nre"], new_nmer["nre"])
+                        print("This one does not have matching NRE ", existing["nre"], new_nmer["nre"])
 
-                        if not found_duplicate:
-                            new_nmers[new_nmer_name] = new_nmer
-                            
-                            if verbose >= 2:
-                                print("%s %s generated" \
-                                      % (nm_txt_lbl, new_nmer_name))
-                        
-                            counter_new_nmers += 1
-    
+                if not found_duplicate:
+                    new_nmers[new_nmer_name] = new_nmer
+
+                    if verbose >= 2:
+                        print("%s %s generated" \
+                              % (nm_txt_lbl, new_nmer_name))
+
+                    counter_new_nmers += 1
+
     nmers.update(new_nmers)
 
+    print(nmers)
+
     return nmers
+
+
+# ===
+#def old():
+#
+#        if monomer_key.startswith("1mer-"):
+#
+#            for nmer_key, nmer in nmers.items():
+#
+#                if nmer_key.startswith(nm_dictname_pattern):
+#                    
+#                    if (monomer["monomers"][0] in nmer["monomers"]):
+#                        continue
+#                    
+#                    new_nmer_name, new_nmer = merge_nmers(nmers, monomer, nmer, verbose)
+#                    distm, r_min = distance_matrix(monomer["coords"], nmer["coords"])
+#
+#                    if r_min <= 1.e-5: # Superimposed monomers filter.
+#                        
+#                        if verbose >= 2:
+#                            print("%s %s discarded: Separation %3.2f A, superimposed structures" \
+#                                  % (nm_txt_lbl, new_nmer_name, r_min))
+#                        
+#                        counter_dscrd_spi += 1
+#
+#                    elif r_min > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms): # Separation cutoff filter.
+#                        
+#                        if verbose >= 2:
+#                            print("%s %s discarded: Separation %3.2f A, longer than cutoff %3.2f A" \
+#                                  % (nm_txt_lbl, new_nmer_name, r_min*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
+#                        
+#                        counter_dscrd_sep += 1
+#
+#                    else:
+#                        found_duplicate = False
+#                        
+#                        for existing in new_nmers.values():
+#                            
+#                            if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5:
+#                                # check if this is superimposable on the other structure or not
+#                                # if superimposable then discard.
+#                                
+#                                print(existing["coords"], new_nmer["coords"], existing["elem"], new_nmer["elem"])
+#                                
+#                                # Call the dream(a)li(g)ner of QCDB.
+#                                rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"])
+#                                
+#                                if rmsd < 1.e-3:
+#                                    found_duplicate = True
+#                                    print("%s %s discarded: A duplicate of this N-mer was generated before" % (nm_txt_lbl, new_nmer_name))
+#                                    existing["replicas"] += 1
+#                                    break
+#                            else:
+#                                print("This one does not have matching NRE ", existing["nre"], new_nmer["nre"])
+#
+#                        if not found_duplicate:
+#                            new_nmers[new_nmer_name] = new_nmer
+#                            
+#                            if verbose >= 2:
+#                                print("%s %s generated" \
+#                                      % (nm_txt_lbl, new_nmer_name))
+#                        
+#                            counter_new_nmers += 1
+#    
+#    nmers.update(new_nmers)
+#
+#    return nmers
+
+# ==================================================================
+def energies(nmers):
+    
+    atomfmt2 = """  {:6} {:16.8f} {:16.8f} {:16.8f} \n"""
+    for knmer, nmer in nmers.items():
+        num_monomers = len(nmer["monomers"])
+        if num_monomers == 1:
+            continue
+        text = "\nunits = au\n"
+        text += "no_com\n"
+        text += "no_reorient\n"
+        print("Here it is", nmer["coords"].shape[0])
+        for at in range(nmer["coords"].shape[0]):
+            print(nmer["delimiters"])
+            if at in nmer["delimiters"]:
+                text += "--\n" 
+            text += atomfmt2.format(nmer["elem"][at], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+
+        print(text)
+        mymol = psi4.geometry(text)
+        print(mymol)
+        # psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
+        psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc']) 
+        # get the non-additive n-body contribution, exclusive of all previous-body interactions
+        varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
+        n_body_energy = psi4.core.get_variable(varstring) 
+        varstring = "VMFC-CORRECTED " + str(num_monomers-1) + "-BODY INTERACTION ENERGY"
+        n_minus_1_body_energy = psi4.core.get_variable(varstring)
+        # should store this somewhere for possible later use
+        n_body_nonadditive_energy = n_body_energy - n_minus_1_body_energy
+        print("nmer {:25} contributes {:10.6f} kcal/mol\n".format(knmer, n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol))
+
 # ==================================================================
 
 # ==================================================================
 def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nmers_up_to=3, r_cut_monomer=10.0, r_cut_dimer=10.0, r_cut_trimer=10.0, r_cut_tetramer=10.0, r_cut_pentamer=10.0, verbose=1):
-    "Takes a CIF file and computes the crystal lattice energy using a manybody expansion approach."
+    '''Takes a CIF file and computes the crystal lattice energy using a manybody expansion approach.'''
     
     # Print program header.
     if verbose >= 1:
@@ -291,7 +407,8 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
     
     # Read the output of the automatic fragmentation.
     nmers = supercell2monomers(read_cif_output, r_cut_monomer, verbose)
-    
+    total_monomers = len(nmers)
+
     # Loop through all monomers and monomers in the central unit cell
     # to generate dimers with at least one monomer in the central cell.
     # Then loop through all existing N-mers and generate higher-order 
@@ -305,33 +422,36 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
         
         if verbose >= 2:
             print("\nMerging monomers with monomers to obtain dimers.")
-        build_nmer(nmers, "dimers", r_cut_dimer, verbose)
+        build_nmer(nmers, total_monomers, "dimers", r_cut_dimer, verbose)
 
     if nmers_up_to >= 3:
         
         if verbose >= 2:
             print("\nMerging dimers with monomers to obtain trimers.")
-        build_nmer(nmers, "trimers", r_cut_trimer, verbose)
+        build_nmer(nmers, total_monomers, "trimers", r_cut_trimer, verbose)
 
     if nmers_up_to >= 4:
         
         if verbose >= 2:
             print("\nMerging trimers with monomers to obtain tetramers.")
-        build_nmer(nmers, "tetramers", r_cut_tetramer, verbose)
+        build_nmer(nmers, total_monomers, "tetramers", r_cut_tetramer, verbose)
 
     if nmers_up_to == 5:
         
         if verbose >= 2:
             print("\nMerging tetramers with monomers to obtain pentamers.")
-        build_nmer(nmers, "pentamers", r_cut_pentamer, verbose)
+        build_nmer(nmers, total_monomers, "pentamers", r_cut_pentamer, verbose)
 
     if nmers_up_to > 5:
         print("\nERROR: The current implementation of CrystaLattE is limited to pentamers.")
         print("       Please use 2 <= nmer_up_to < 5.")
-    
+   
     # ------------------------------------------------------------------
     # TODO: Run plesantly parallel PSI4 computations on all the final list of 
     # monomers, dimers, trimers, etc.
+ 
+    energies(nmers)
+
     #
     # TODO: Multiply the resulting energy of each one by the degeneracy factor.
     #
@@ -341,22 +461,39 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
 # ==================================================================
 
 if __name__ == "__main__":
+
+    import cProfile as profile 
+    # Test with benzene supercell and timings.
+#    profile.run("""main(   read_cif_input="Benzene-138K.cif", 
+#            read_cif_output="Benzene-138K.xyz", 
+#            read_cif_a=3, 
+#            read_cif_b=3, 
+#            read_cif_c=3, 
+#            nmers_up_to=3, 
+#            r_cut_monomer=5.0, 
+#            r_cut_dimer=3.0, 
+#            r_cut_trimer=3.0, 
+#            r_cut_tetramer=3.0, 
+#            r_cut_pentamer=3.0, 
+#            verbose=2)
+#    """)
     
-    # Test up to trimers, with reduced supercell of benzene, and shortened cutoffs.
-    main(   read_cif_input="Benzene-138K.cif", 
-            read_cif_output="Benzene-138K.xyz", 
-            read_cif_a=3, 
-            read_cif_b=3, 
-            read_cif_c=3, 
-            nmers_up_to=2, 
-            r_cut_monomer=5.0, 
-            r_cut_dimer=3.0, 
-            r_cut_trimer=3.0, 
-            r_cut_tetramer=3.0, 
-            r_cut_pentamer=3.0, 
+    # Test with benzene supercell.
+    main(   read_cif_input="Benzene-138K.cif",
+            read_cif_output="Benzene-138K.xyz",
+            read_cif_a=3,
+            read_cif_b=3,
+            read_cif_c=3,
+            nmers_up_to=2,
+            r_cut_monomer=5.0,
+            r_cut_dimer=3.0,
+            r_cut_trimer=3.0,
+            r_cut_tetramer=3.0,
+            r_cut_pentamer=3.0,
             verbose=2)
 
-    # Test up to trimers, with water supercell, and shortened cutoffs.
+    # Test with water supercell and timings.
+    #profile.run("""
     #main(   read_cif_input="ice-Ih.cif",
     #        read_cif_output="ice-Ih..xyz",
     #        read_cif_a=3,
@@ -367,3 +504,4 @@ if __name__ == "__main__":
     #        r_cut_dimer=3.0,
     #        r_cut_trimer=3.0,
     #        r_cut_tetramer=3.0,
+    #""")
