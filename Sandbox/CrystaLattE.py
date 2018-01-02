@@ -33,7 +33,7 @@ import fnmatch
 import math
 import numpy as np
 import re
-import os
+#import os
 import sys
 
 # Imports of outsourced code.
@@ -342,22 +342,22 @@ def energies(nmers, verbose=0):
             print("\nPSI4 Molecule of %s:" % knmer)
             print(text)
         
-        # Example: psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
-        psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc']) 
-        
-        # get the non-additive n-body contribution, exclusive of all previous-body interactions
-        varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
-        
-        n_body_energy = psi4.core.get_variable(varstring) 
-        
-        varstring = "VMFC-CORRECTED " + str(num_monomers-1) + "-BODY INTERACTION ENERGY"
-        
-        n_minus_1_body_energy = psi4.core.get_variable(varstring)
-        # should store this somewhere for possible later use
-        
-        n_body_nonadditive_energy = n_body_energy - n_minus_1_body_energy
-        
-        print("nmer {:25} contributes {:10.6f} kcal/mol\n".format(knmer, n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol))
+#        # Example: psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
+#        psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc']) 
+#        
+#        # get the non-additive n-body contribution, exclusive of all previous-body interactions
+#        varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
+#        
+#        n_body_energy = psi4.core.get_variable(varstring) 
+#        
+#        varstring = "VMFC-CORRECTED " + str(num_monomers-1) + "-BODY INTERACTION ENERGY"
+#        
+#        n_minus_1_body_energy = psi4.core.get_variable(varstring)
+#        # should store this somewhere for possible later use
+#        
+#        n_body_nonadditive_energy = n_body_energy - n_minus_1_body_energy
+#        
+#        print("nmer {:25} contributes {:10.6f} kcal/mol\n".format(knmer, n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol))
 
 # ==================================================================
 
@@ -470,9 +470,9 @@ if __name__ == "__main__":
             read_cif_b=3,
             read_cif_c=3,
             nmers_up_to=3,
-            r_cut_monomer=5.0,
-            r_cut_dimer=3.0,
-            r_cut_trimer=3.0,
+            r_cut_monomer=9.0,
+            r_cut_dimer=7.0,
+            r_cut_trimer=5.0,
             r_cut_tetramer=3.0,
             r_cut_pentamer=3.0,
             verbose=2)
