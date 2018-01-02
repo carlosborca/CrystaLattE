@@ -1,5 +1,33 @@
 #!/usr/bin/env python
 
+#
+# @BEGIN LICENSE
+#
+# CrystaLattE: The tool for the automated calculation of crystal lattice energies.
+#
+# Copyright (c) 2017 Carlos H. Borca, Lori A. Burns, C. David Sherrill.
+#
+# The copyrights for code used from other parties are included in
+# the corresponding files.
+#
+# This file is part of CrystaLattE.
+#
+# CrystaLattE is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, version 3.
+#
+# CrystaLattE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License along
+# with CrystaLattE; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# @END LICENSE
+#
+
 import itertools
 import fnmatch
 import math
@@ -21,7 +49,7 @@ from psi4.driver.qcdb.align import B787
 
 # ==================================================================
 def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose=1):
-    """Takes a the names of a CIF input file, a .xyz output file, and the number of replicas of the rectangular cell in each direction (A, B, and C).
+    """Takes the names of a CIF input file, a .xyz output file, and the number of replicas of the rectangular cell in each direction (A, B, and C).
     It then calls Read_CIF() and passes that information as arguments to generate an .xyz file of the supercell."""
 
     read_cif_arguments = ["", "-i", read_cif_input, "-o", read_cif_output, "-b", read_cif_a, read_cif_b, read_cif_c]
@@ -67,7 +95,7 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
               % (r_cut_monomer, np.min(scell_geom_max_coords)*qcdb.psi_bohr2angstroms))
         print("       Please increase the size of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.")
 
-    fragments = BFS(scell_geom, scell_elem) # Passes the supercell geometry and elements the breadth-first search algorithm of QCDB to obtain fragments
+    fragments = BFS(scell_geom, scell_elem) # Passes the supercell geometry and elements to the breadth-first search algorithm of QCDB to obtain fragments
     frag_geoms = [scell_geom[fr] for fr in fragments]
     frag_elems = [scell_elem[fr] for fr in fragments]
 
@@ -103,6 +131,8 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
             nmers[name]["delimiters"] = []
 
     return nmers
+# ==================================================================
+
 # ==================================================================
 def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     
@@ -435,7 +465,7 @@ if __name__ == "__main__":
 
     # Test with water supercell.
     main(   read_cif_input="ice-Ih.cif",
-            read_cif_output="ice-Ih..xyz",
+            read_cif_output="ice-Ih.xyz",
             read_cif_a=3,
             read_cif_b=3,
             read_cif_c=3,

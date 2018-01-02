@@ -1,19 +1,31 @@
-1. Miniconda (or Psi4conda):
+    1. Miniconda (or Psi4conda):
 
-a. Go to: https://conda.io/miniconda.html (or http://vergil.chemistry.gatech.edu/psicode-download/1.1.html)
+        a. Go to: https://conda.io/miniconda.html (or http://vergil.chemistry.gatech.edu/psicode-download/1.1.html)
 
-b. Download the version that best fits your interests.
+        b. Download the version that best fits your interests.
 
-c. Go to the directory where you downloaded the installer and execute it: bash Miniconda3-latest-Linux-x86_64.sh (or bash Psi4conda-latest-py36-Linux-x86_64.sh)
-
-
-2. CrystaLattE Environment and Configuration:
-
-a. export PYTHONPATH=/home/carlosborca/Gits/psi4/objdir/stage/usr/local/psi4/lib//:/home/carlosborca/Gits/hungarian/build/lib.linux-x86_64-3.6/:$PYTHONPATH
-
-b. python -c "import psi4; print(psi4.__version__); print(psi4.__file__)"
+        c. Go to the directory where you downloaded the installer and execute it: bash Miniconda3-latest-Linux-x86_64.sh (or bash Psi4conda-latest-py36-Linux-x86_64.sh)
 
 
-3. PyCifRW:
+    2. CrystaLattE Conda Environment:
 
-Install using: conda install -c conda-forge pycifrw
+        a. conda create -n CrystaLattE psi4-dev python=3.6 -c psi4
+
+        b. source activate CrystaLattE
+
+
+    3. PyCifRW:
+
+        a. Install using: conda install -c conda-forge pycifrw
+
+
+    3. Psi4 and QCDB:
+
+        a.
+
+
+    4. Runtime Configuration:
+
+        a. export PYTHONPATH=/home/carlosborca/Gits/psi4/objdir/stage/usr/local/psi4/lib//:/home/carlosborca/Gits/hungarian/build/lib.linux-x86_64-3.6/:$PYTHONPATH
+
+        b. python -c "import psi4; print(psi4.__version__); print(psi4.__file__)"
