@@ -33,7 +33,6 @@ import fnmatch
 import math
 import numpy as np
 import re
-#import os
 import sys
 
 # Imports of outsourced code.
@@ -317,6 +316,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, verbose
 def energies(nmers, verbose=0):
     """."""
     
+    crystal_lattice_energy = 0.0
+
     atomfmt2 = """  {:6} {:16.8f} {:16.8f} {:16.8f} \n"""
     
     for knmer, nmer in nmers.items():
@@ -342,22 +343,33 @@ def energies(nmers, verbose=0):
             print("\nPSI4 Molecule of %s:" % knmer)
             print(text)
         
-#        # Example: psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
-#        psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc']) 
-#        
-#        # get the non-additive n-body contribution, exclusive of all previous-body interactions
-#        varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
-#        
-#        n_body_energy = psi4.core.get_variable(varstring) 
-#        
-#        varstring = "VMFC-CORRECTED " + str(num_monomers-1) + "-BODY INTERACTION ENERGY"
-#        
-#        n_minus_1_body_energy = psi4.core.get_variable(varstring)
-#        # should store this somewhere for possible later use
-#        
-#        n_body_nonadditive_energy = n_body_energy - n_minus_1_body_energy
-#        
-#        print("nmer {:25} contributes {:10.6f} kcal/mol\n".format(knmer, n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol))
+        psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'freeze_core': 'true'})
+
+        # Example: psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
+        #          psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
+        psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
+        
+        # get the non-additive n-body contribution, exclusive of all previous-body interactions
+        varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
+        
+        n_body_energy = psi4.core.get_variable(varstring) 
+        
+        if num_monomers > 2:
+            varstring = "VMFC-CORRECTED " + str(num_monomers-1) + "-BODY INTERACTION ENERGY"
+            n_minus_1_body_energy = psi4.core.get_variable(varstring)            
+            # should store this somewhere for possible later use
+            n_body_nonadditive_energy = n_body_energy - n_minus_1_body_energy
+
+        else:
+            n_body_nonadditive_energy = n_body_energy
+        
+        crystal_lattice_energy += n_body_nonadditive_energy * nmer["replicas"]
+        
+        print("N-mer {:25} contributes {:10.6f} kcal/mol\n".format(knmer, n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol * nmer["replicas"]))
+        print("N-mer {:25} has {:4} replicas\n".format(knmer, nmer["replicas"]))
+    
+    print("Crystal Lattice Energy [Eh] = {:12.8f}\n".format(crystal_lattice_energy))
+    print("Crystal Lattice Energy [Kcal/mol] = {:8.4f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
 
 # ==================================================================
 
@@ -450,29 +462,29 @@ if __name__ == "__main__":
 #    """)
     
     # Test with benzene supercell.
-#    main(   read_cif_input="Benzene-138K.cif",
-#            read_cif_output="Benzene-138K.xyz",
+    main(   read_cif_input="Benzene-138K.cif",
+            read_cif_output="Benzene-138K.xyz",
+            read_cif_a=3,
+            read_cif_b=3,
+            read_cif_c=3,
+            nmers_up_to=2,
+            r_cut_monomer=8.0,
+            r_cut_dimer=6.0,
+            r_cut_trimer=3.0,
+            r_cut_tetramer=3.0,
+            r_cut_pentamer=3.0,
+            verbose=2)
+
+    # Test with water supercell.
+#    main(   read_cif_input="ice-Ih.cif",
+#            read_cif_output="ice-Ih.xyz",
 #            read_cif_a=3,
 #            read_cif_b=3,
 #            read_cif_c=3,
-#            nmers_up_to=2,
+#            nmers_up_to=3,
 #            r_cut_monomer=5.0,
 #            r_cut_dimer=3.0,
 #            r_cut_trimer=3.0,
 #            r_cut_tetramer=3.0,
 #            r_cut_pentamer=3.0,
 #            verbose=2)
-
-    # Test with water supercell.
-    main(   read_cif_input="ice-Ih.cif",
-            read_cif_output="ice-Ih.xyz",
-            read_cif_a=3,
-            read_cif_b=3,
-            read_cif_c=3,
-            nmers_up_to=3,
-            r_cut_monomer=9.0,
-            r_cut_dimer=7.0,
-            r_cut_trimer=5.0,
-            r_cut_tetramer=3.0,
-            r_cut_pentamer=3.0,
-            verbose=2)
