@@ -13,7 +13,7 @@
 # This file is part of CrystaLattE.
 #
 # CrystaLattE is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
+# it under the tesms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, version 3.
 #
 # CrystaLattE is distributed in the hope that it will be useful,
@@ -42,9 +42,10 @@ import Read_CIF
 # Import parts of Psi4.
 import psi4
 from psi4.driver import qcdb
-from psi4.driver.qcdb.bfs import BFS
-from psi4.driver.qcdb.periodictable import el2z
 from psi4.driver.qcdb.align import B787
+from psi4.driver.qcdb.bfs import BFS
+from psi4.driver.qcdb.periodictable import el2mass
+from psi4.driver.qcdb.periodictable import el2z
 
 # ==================================================================
 def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose=1):
@@ -90,9 +91,9 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
         print("\nChecking if the size of the supercell is acceptable")
 
     if (r_cut_monomer / qcdb.psi_bohr2angstroms) > np.min(scell_geom_max_coords):
-        print("\nERROR: Cutoff (%3.2f A) longer than half the smallest dimension of the supercell (%3.2f A)." \
+        print("\nWARNING: Cutoff (%3.2f A) longer than half the smallest dimension of the supercell (%3.2f A)." \
               % (r_cut_monomer, np.min(scell_geom_max_coords)*qcdb.psi_bohr2angstroms))
-        print("       Please increase the size of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.")
+        print("         Please increase the size of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.")
 
     fragments = BFS(scell_geom, scell_elem) # Passes the supercell geometry and elements to the breadth-first search algorithm of QCDB to obtain fragments
     frag_geoms = [scell_geom[fr] for fr in fragments]
@@ -128,6 +129,7 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
             nmers[name]["coords"] = frag_geoms[index]
             nmers[name]["rmin"] = frag_r_mins[index]
             nmers[name]["delimiters"] = []
+            nmers[name]["com"] = center_of_mass(frag_elems[index], frag_geoms[index])
 
     return nmers
 # ==================================================================
@@ -172,6 +174,9 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
 
     # Shortest separation vector between the atoms of the monomers in the N-mer.
     nm_new["min_monomer_separations"] = []
+
+    nm_new["com_monomer_separations"] = []
+
     for a in nm_new_monomers:
         a_name = "1mer-" + str(a)
         
@@ -181,13 +186,35 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
                 continue
             
             b_name = "1mer-" + str(b)
+
             distm, r_min = distance_matrix(nmers[a_name]["coords"], nmers[b_name]["coords"]) 
             nm_new["min_monomer_separations"].append(r_min)
-    
+
+            nm_new["com_monomer_separations"].append(np.linalg.norm(nmers[a_name]["com"] - nmers[b_name]["com"]))
+
+    #print("com_monomer_separations = ", nm_new["com_monomer_separations"])
+
     # Key of the new N-mer in the nmers dictionary.
     nm_new_name = str(len(nm_new_monomers)) + "mer-" + "+".join(map(str, nm_new_monomers))
 
     return nm_new_name, nm_new
+# ==================================================================
+
+# ==================================================================
+def center_of_mass(elems, geoms):
+    """Computes center of mass of molecule."""
+    
+    com = np.array([0.0, 0.0, 0.0])
+    total_mass = 0.0
+
+    for at in range(len(geoms)):
+        m = el2mass[elems[at]]
+        com += m*geoms[at]
+        total_mass += m
+    
+    com /= total_mass
+    
+    return com
 # ==================================================================
 
 # ==================================================================
@@ -223,7 +250,7 @@ def nre(elem, geom):
 # ==================================================================
 
 # ==================================================================
-def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, verbose=1):
+def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_separation_cutoff, verbose=1):
     """Takes a float indicating a cutoff distance in Angstroms.
     Returns dimer files that pass through the filter."""
 
@@ -260,6 +287,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, verbose
     counter_dscrd_spi = 0
     counter_dscrd_exs = 0
     counter_dscrd_sep = 0
+    counter_dscrd_com = 0
 
     new_nmers = {}
 
@@ -273,28 +301,42 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, verbose
 
             new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, other_monomers, verbose)
 
-            max_dist = max(new_nmer["min_monomer_separations"])
-            if max_dist > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms):
+            max_mon_sep = max(new_nmer["min_monomer_separations"])
+            max_com_sep = min(new_nmer["com_monomer_separations"])
+
+            if max_mon_sep > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
                 if verbose >= 2: 
-                    print("%s %s discarded: Separation %3.2f A, longer than cutoff %3.2f A" \
-                          % (nm_txt_lbl, new_nmer_name, max_dist*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
+                    print("%s %s discarded: Atomic separation %3.2f A, longer than cutoff %3.2f A" \
+                          % (nm_txt_lbl, new_nmer_name, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
                         
                     counter_dscrd_sep += 1
-	
+            
+            elif max_com_sep > (coms_separation_cutoff / qcdb.psi_bohr2angstroms):
+                
+                if verbose >= 2:
+                    print("%s %s discarded: Centers of mass separation %3.2f A, longer than cutoff %3.2f A" \
+                          % (nm_txt_lbl, new_nmer_name, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff))
+                    
+                    counter_dscrd_com += 1
+
             else:
                 found_duplicate = False
 
-                for existing in new_nmers.values():
+                for kexisting, existing in new_nmers.items():
 
                     if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5: # Nuclear repulsion energy filter.
+
+                        #print("Working on %s, found matching NRE in %s" % (new_nmer_name, kexisting))
                         
                         # Call the dream(a)li(g)ner of QCDB.
                         rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], verbose=0)
 
+                        #print("RMSD: %3.5f" % rmsd)
+
                         if rmsd < 1.e-3:
                             found_duplicate = True
-                            print("%s %s discarded: This is a replica of one of the N-mers generated before." % (nm_txt_lbl, new_nmer_name))
+                            print("%s %s discarded: This is a replica of %s." % (nm_txt_lbl, new_nmer_name, kexisting))
                             existing["replicas"] += 1
                             break
 
@@ -345,9 +387,11 @@ def energies(nmers, verbose=0):
         
         psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'freeze_core': 'true'})
 
-        # Example: psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
-        #          psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
-        psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
+        # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
+        #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
+        #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
+        
+        psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         
         # get the non-additive n-body contribution, exclusive of all previous-body interactions
         varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
@@ -358,23 +402,30 @@ def energies(nmers, verbose=0):
             varstring = "VMFC-CORRECTED " + str(num_monomers-1) + "-BODY INTERACTION ENERGY"
             n_minus_1_body_energy = psi4.core.get_variable(varstring)            
             # should store this somewhere for possible later use
-            n_body_nonadditive_energy = n_body_energy - n_minus_1_body_energy
+            #n_body_nonadditive_energy = n_body_energy - n_minus_1_body_energy
+            n_body_nonadditive_energy = (n_body_energy - n_minus_1_body_energy) / float(num_monomers)
 
         else:
             n_body_nonadditive_energy = n_body_energy
         
         crystal_lattice_energy += n_body_nonadditive_energy * nmer["replicas"]
         
-        print("N-mer {:25} contributes {:10.6f} kcal/mol\n".format(knmer, n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol * nmer["replicas"]))
-        print("N-mer {:25} has {:4} replicas\n".format(knmer, nmer["replicas"]))
+        rcomseps = ""
+
+        for r in nmer["com_monomer_separations"]:
+            rcomseps += "{:7.3f} ".format(r * qcdb.psi_bohr2angstroms)
+
+        print("N-mer: {:14} {:4.8f} {:3} {:4.8f} {}".format(knmer, n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
+            nmer["replicas"], n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J * nmer["replicas"], rcomseps))
     
-    print("Crystal Lattice Energy [Eh] = {:12.8f}\n".format(crystal_lattice_energy))
-    print("Crystal Lattice Energy [Kcal/mol] = {:8.4f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
+    print("\nCrystal Lattice Energy [Eh] = {:12.8f}".format(crystal_lattice_energy))
+    print("Crystal Lattice Energy [KJ/mol] = {:12.8f}".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
+    print("Crystal Lattice Energy [Kcal/mol] = {:12.8f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
 
 # ==================================================================
 
 # ==================================================================
-def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nmers_up_to=3, r_cut_monomer=10.0, r_cut_dimer=10.0, r_cut_trimer=10.0, r_cut_tetramer=10.0, r_cut_pentamer=10.0, verbose=1):
+def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nmers_up_to=3, r_cut_com=20.0, r_cut_monomer=10.0, r_cut_dimer=10.0, r_cut_trimer=10.0, r_cut_tetramer=10.0, r_cut_pentamer=10.0, verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a manybody expansion approach."""
     
     # Print program header.
@@ -405,25 +456,25 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
         
         if verbose >= 2:
             print("\nMerging monomers with monomers to obtain dimers.")
-        build_nmer(nmers, total_monomers, "dimers", r_cut_dimer, verbose)
+        build_nmer(nmers, total_monomers, "dimers", r_cut_dimer, r_cut_com, verbose)
 
     if nmers_up_to >= 3:
         
         if verbose >= 2:
             print("\nMerging dimers with monomers to obtain trimers.")
-        build_nmer(nmers, total_monomers, "trimers", r_cut_trimer, verbose)
+        build_nmer(nmers, total_monomers, "trimers", r_cut_trimer, r_cut_com, verbose)
 
     if nmers_up_to >= 4:
         
         if verbose >= 2:
             print("\nMerging trimers with monomers to obtain tetramers.")
-        build_nmer(nmers, total_monomers, "tetramers", r_cut_tetramer, verbose)
+        build_nmer(nmers, total_monomers, "tetramers", r_cut_tetramer, r_cut_com, verbose)
 
     if nmers_up_to == 5:
         
         if verbose >= 2:
             print("\nMerging tetramers with monomers to obtain pentamers.")
-        build_nmer(nmers, total_monomers, "pentamers", r_cut_pentamer, verbose)
+        build_nmer(nmers, total_monomers, "pentamers", r_cut_pentamer, r_cut_com, verbose)
 
     if nmers_up_to > 5:
         print("\nERROR: The current implementation of CrystaLattE is limited to pentamers.")
@@ -435,10 +486,6 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
  
     energies(nmers, verbose)
 
-    #
-    # TODO: Multiply the resulting energy of each one by the degeneracy factor.
-    #
-    # TODO: Sum results to get a lattice energy.
     # ------------------------------------------------------------------
 
 # ==================================================================
@@ -453,6 +500,7 @@ if __name__ == "__main__":
 #            read_cif_b=3, 
 #            read_cif_c=3, 
 #            nmers_up_to=3, 
+#            r_cut_com=7.0,
 #            r_cut_monomer=5.0, 
 #            r_cut_dimer=3.0, 
 #            r_cut_trimer=3.0, 
@@ -462,17 +510,33 @@ if __name__ == "__main__":
 #    """)
     
     # Test with benzene supercell.
+#    main(   read_cif_input="Benzene-138K.cif",
+#            read_cif_output="Benzene-138K.xyz",
+#            read_cif_a=3,
+#            read_cif_b=3,
+#            read_cif_c=3,
+#            nmers_up_to=4,
+#            r_cut_com=7.0,
+#            r_cut_monomer=5.0,
+#            r_cut_dimer=5.0,
+#            r_cut_trimer=5.0,
+#            r_cut_tetramer=5.0,
+#            r_cut_pentamer=5.0,
+#            verbose=2)
+
+    # Actual test with benzene supercell.
     main(   read_cif_input="Benzene-138K.cif",
             read_cif_output="Benzene-138K.xyz",
-            read_cif_a=3,
-            read_cif_b=3,
-            read_cif_c=3,
+            read_cif_a=4,
+            read_cif_b=4,
+            read_cif_c=4,
             nmers_up_to=2,
-            r_cut_monomer=8.0,
-            r_cut_dimer=6.0,
-            r_cut_trimer=3.0,
-            r_cut_tetramer=3.0,
-            r_cut_pentamer=3.0,
+            r_cut_com=9.5,
+            r_cut_monomer=11.4,
+            r_cut_dimer=11.4,
+            r_cut_trimer=11.4,
+            r_cut_tetramer=11.4,
+            r_cut_pentamer=11.4,
             verbose=2)
 
     # Test with water supercell.
@@ -482,6 +546,7 @@ if __name__ == "__main__":
 #            read_cif_b=3,
 #            read_cif_c=3,
 #            nmers_up_to=3,
+#            r_cut_com=7.0,
 #            r_cut_monomer=5.0,
 #            r_cut_dimer=3.0,
 #            r_cut_trimer=3.0,
