@@ -391,7 +391,7 @@ def energies(nmers, verbose=0):
         #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         
-        psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
+        psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
         
         # get the non-additive n-body contribution, exclusive of all previous-body interactions
         varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
@@ -407,6 +407,7 @@ def energies(nmers, verbose=0):
 
         else:
             n_body_nonadditive_energy = n_body_energy
+            #n_body_nonadditive_energy = n_body_energy / float(num_monomers) # NOTE: Is this correct?!
         
         crystal_lattice_energy += n_body_nonadditive_energy * nmer["replicas"]
         
@@ -415,7 +416,7 @@ def energies(nmers, verbose=0):
         for r in nmer["com_monomer_separations"]:
             rcomseps += "{:7.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
-        print("N-mer: {:14} {:4.8f} {:3} {:4.8f} {}".format(knmer, n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
+        print("N-mer: {:14} {:5.8f} {:3} {:5.8f} {}".format(knmer, n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
             nmer["replicas"], n_body_nonadditive_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J * nmer["replicas"], rcomseps))
     
     print("\nCrystal Lattice Energy [Eh] = {:12.8f}".format(crystal_lattice_energy))
