@@ -402,14 +402,15 @@ def energies(nmers, verbose=0):
             varstring = "VMFC-CORRECTED " + str(num_monomers-1) + "-BODY INTERACTION ENERGY"
             n_minus_1_body_energy = psi4.core.get_variable(varstring)            
             # should store this somewhere for possible later use
-            #n_body_nonadditive_energy = n_body_energy - n_minus_1_body_energy
-            n_body_nonadditive_energy = (n_body_energy - n_minus_1_body_energy) / float(num_monomers)
+            n_body_nonadditive_energy = n_body_energy - n_minus_1_body_energy
+            #n_body_nonadditive_energy = (n_body_energy - n_minus_1_body_energy) / float(num_monomers) # NOTE: Is this correct?!
 
         else:
             n_body_nonadditive_energy = n_body_energy
             #n_body_nonadditive_energy = n_body_energy / float(num_monomers) # NOTE: Is this correct?!
         
-        crystal_lattice_energy += n_body_nonadditive_energy * nmer["replicas"]
+        #crystal_lattice_energy += n_body_nonadditive_energy * nmer["replicas"]
+        crystal_lattice_energy += n_body_nonadditive_energy * nmer["replicas"] / float(num_monomers)
         
         rcomseps = ""
 

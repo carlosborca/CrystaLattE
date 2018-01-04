@@ -27,5 +27,6 @@
     4. Runtime Configuration:
 
         a. export PYTHONPATH=/home/carlosborca/Gits/psi4/objdir/stage/usr/local/psi4/lib//:/home/carlosborca/Gits/hungarian/build/lib.linux-x86_64-3.6/:$PYTHONPATH
+           export PYTHONPATH=/theoryfs2/ds/cborca/Gits/psi4/objdir/stage/usr/local/psi4/lib//:/theoryfs2/ds/cborca/Gits/hungarian/build/lib.linux-x86_64-3.6/:$PYTHONPATH
 
         b. python -c "import psi4; print(psi4.__version__); print(psi4.__file__)"
