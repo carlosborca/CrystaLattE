@@ -496,8 +496,8 @@ if __name__ == "__main__":
 
     import cProfile as profile 
     # Test with benzene supercell and timings.
-#    profile.run("""main(   read_cif_input="Benzene-138K.cif", 
-#            read_cif_output="Benzene-138K.xyz", 
+#    profile.run("""main(   read_cif_input="bz-138K.cif", 
+#            read_cif_output="bz-138K.xyz", 
 #            read_cif_a=3, 
 #            read_cif_b=3, 
 #            read_cif_c=3, 
@@ -512,8 +512,8 @@ if __name__ == "__main__":
 #    """)
     
     # Test with benzene supercell.
-#    main(   read_cif_input="Benzene-138K.cif",
-#            read_cif_output="Benzene-138K.xyz",
+#    main(   read_cif_input="bz-138K.cif",
+#            read_cif_output="bz-138K.xyz",
 #            read_cif_a=3,
 #            read_cif_b=3,
 #            read_cif_c=3,
@@ -527,8 +527,8 @@ if __name__ == "__main__":
 #            verbose=2)
 
     # Actual test with benzene supercell.
-    main(   read_cif_input="Benzene-138K.cif",
-            read_cif_output="Benzene-138K.xyz",
+    main(   read_cif_input="bz-138K.cif",
+            read_cif_output="bz-138K.xyz",
             read_cif_a=4,
             read_cif_b=4,
             read_cif_c=4,
