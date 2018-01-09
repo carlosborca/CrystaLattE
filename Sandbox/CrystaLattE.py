@@ -340,7 +340,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                         np.seterr(divide='ignore') #NOTE: block B787 printout
                         
                         # Call the dreamliner from QCDB.
-                        rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], verbose=0)
+                        rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], run_mirror=True, verbose=0)
 
                         sys.stdout = sys.__stdout__ # Reanable printout
 
@@ -440,7 +440,7 @@ def energies(nmers, verbose=0):
             rcomseps += "{:7.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
         if verbose >= 1:
-            print("{:>24} | {:>5.12f} | {:>4} | {:>5.12f} | {}".format(knmer, nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
+            print("{:24} | {:>14.8f} | {:>4} | {:>14.8f} | {}".format(knmer, nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
                 nmer["replicas"], nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, rcomseps))
     
     if verbose >= 1:
@@ -545,13 +545,13 @@ if __name__ == "__main__":
             read_cif_b=4,
             read_cif_c=4,
             nmers_up_to=5,
-            r_cut_com=6.0,
-            r_cut_monomer=4.0,
-            r_cut_dimer=6.0,
-            r_cut_trimer=6.0,
-            r_cut_tetramer=6.0,
-            r_cut_pentamer=6.0,
-            verbose=1)
+            r_cut_com=9.5,
+            r_cut_monomer=11.4,
+            r_cut_dimer=9.5,
+            r_cut_trimer=9.5,
+            r_cut_tetramer=11.4,
+            r_cut_pentamer=11.4,
+            verbose=2)
 
     # Test with water supercell.
 #    main(   read_cif_input="ice-Ih.cif",
