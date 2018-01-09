@@ -336,11 +336,25 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                     if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5: # Nuclear repulsion energy filter.
 
-                        sys.stdout = open(os.devnull, 'w') #NOTE: block B787 printout
-                        np.seterr(divide='ignore') #NOTE: block B787 printout
+                        if verbose >= 3:
+                            print(kexisting)
+                            print(existing["elem"])
+                            print(existing["coords"])
                         
+                        if verbose >= 3:
+                            print(new_nmer_name)
+                            print(new_nmer["elem"])
+                            print(new_nmer["coords"])
+                        
+                        #B787out = kexisting + "-B787.dat"
+                        #sys.stdout = open(B787out, 'w') # Redirect B787 output.
+
+                        sys.stdout = open(os.devnull, 'w') # Block B787 printout
+                        
+                        np.seterr(divide='ignore') # Block NumPy divide over zero warning printout.
+
                         # Call the dreamliner from QCDB.
-                        rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], run_mirror=True, verbose=0)
+                        rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], run_mirror=True, verbose=2)
 
                         sys.stdout = sys.__stdout__ # Reanable printout
 
@@ -440,7 +454,7 @@ def energies(nmers, verbose=0):
             rcomseps += "{:7.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
         if verbose >= 1:
-            print("{:24} | {:>14.8f} | {:>4} | {:>14.8f} | {}".format(knmer, nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
+            print("{:24} | {:>12.8f} | {:>4} | {:>12.8f} | {}".format(knmer, nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
                 nmer["replicas"], nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, rcomseps))
     
     if verbose >= 1:
@@ -453,9 +467,17 @@ def energies(nmers, verbose=0):
 
 
 # ==================================================================
-def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nmers_up_to=3, r_cut_com=20.0, r_cut_monomer=10.0, r_cut_dimer=10.0, r_cut_trimer=10.0, r_cut_tetramer=10.0, r_cut_pentamer=10.0, verbose=1):
+def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a manybody expansion approach."""
     
+    # Check proper input filename.
+    if read_cif_input.endswith(".cif"):
+        outf = read_cif_input[:-4] + ".out"
+        #sys.stdout = open(outf, 'w')
+    
+    else:
+        print("CrystaLattE needs a .cif file as input file.")
+
     # Print program header.
     if verbose >= 1:
         print("\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
@@ -544,14 +566,14 @@ if __name__ == "__main__":
             read_cif_a=4,
             read_cif_b=4,
             read_cif_c=4,
-            nmers_up_to=5,
+            nmers_up_to=3,
             r_cut_com=9.5,
             r_cut_monomer=11.4,
-            r_cut_dimer=9.5,
-            r_cut_trimer=9.5,
+            r_cut_dimer=11.4,
+            r_cut_trimer=11.4,
             r_cut_tetramer=11.4,
             r_cut_pentamer=11.4,
-            verbose=2)
+            verbose=3)
 
     # Test with water supercell.
 #    main(   read_cif_input="ice-Ih.cif",
