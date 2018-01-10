@@ -180,7 +180,11 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     # Shortest separation vector between the atoms of the monomers in the N-mer.
     nm_new["min_monomer_separations"] = []
 
+    # Separation vector between center of mass of the monomers in the N-mer.
     nm_new["com_monomer_separations"] = []
+
+    # Criterion to launch energy calculations.
+    nm_new["priority"] = 0.0
 
     for a in nm_new_monomers:
         a_name = "1mer-" + str(a)
@@ -377,7 +381,6 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                                 % (nm_txt_lbl, new_nmer_name, new_nmer["nre"]))
 
                     counter_new_nmers += 1
-
     
     if verbose >= 2:
         print("\n{} unique {} were found and generated.".format(counter_new_nmers, nmer_type))
@@ -406,7 +409,7 @@ def energies(nmers, verbose=0):
         
         if num_monomers == 1:
             continue
-        
+
         text = "\nunits = au\n"
         text += "no_com\n"
         text += "no_reorient\n"
@@ -423,7 +426,7 @@ def energies(nmers, verbose=0):
         if verbose >= 3:
             print("\nPSI4 Molecule of %s:" % knmer)
             print(text)
-        
+
         psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'freeze_core': 'true'})
         
         # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
@@ -566,14 +569,14 @@ if __name__ == "__main__":
             read_cif_a=4,
             read_cif_b=4,
             read_cif_c=4,
-            nmers_up_to=3,
+            nmers_up_to=2,
             r_cut_com=9.5,
             r_cut_monomer=11.4,
             r_cut_dimer=11.4,
             r_cut_trimer=11.4,
             r_cut_tetramer=11.4,
             r_cut_pentamer=11.4,
-            verbose=3)
+            verbose=2)
 
     # Test with water supercell.
 #    main(   read_cif_input="ice-Ih.cif",
