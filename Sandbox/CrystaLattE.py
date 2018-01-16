@@ -3,7 +3,8 @@
 #
 # @BEGIN LICENSE
 #
-# CrystaLattE: The tool for the automated calculation of crystal lattice energies.
+# CrystaLattE: The tool for the automated calculation of crystal lattice 
+# energies.
 #
 # Copyright (c) 2017 Carlos H. Borca, Lori A. Burns, C. David Sherrill.
 #
@@ -13,17 +14,18 @@
 # This file is part of CrystaLattE.
 #
 # CrystaLattE is free software; you can redistribute it and/or modify
-# it under the tesms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, version 3.
+# it under the tesms of the GNU Lesser General Public License as 
+# published by the Free Software Foundation, version 3.
 #
 # CrystaLattE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU Lesser General Public License along
-# with CrystaLattE; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+# You should have received a copy of the GNU Lesser General Public 
+# License along with CrystaLattE; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 
+# 02110-1301 USA.
 #
 # @END LICENSE
 #
@@ -47,10 +49,13 @@ from psi4.driver.qcdb.periodictable import el2mass
 from psi4.driver.qcdb.periodictable import el2z
 
 
-# ==================================================================
+# ======================================================================
 def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose=1):
-    """Takes the names of a CIF input file, a .xyz output file, and the number of replicas of the rectangular cell in each direction (A, B, and C).
-    It then calls Read_CIF() and passes that information as arguments to generate an .xyz file of the supercell."""
+    """Takes the names of a CIF input file, a .xyz output file, and the
+    number of replicas of the rectangular cell in each direction (A, B,
+    and C). It then calls Read_CIF() and passes that information as
+    arguments to generate an .xyz file of the supercell.
+    """
 
     read_cif_arguments = ["", "-i", read_cif_input, "-o", read_cif_output, "-b", read_cif_a, read_cif_b, read_cif_c]
 
@@ -60,12 +65,14 @@ def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, rea
         print("./Read_CIF.py" + " ".join(str(read_cif_argument) for read_cif_argument in read_cif_arguments))
     
     return read_cif_arguments
-# ==================================================================
+# ======================================================================
 
 
-# ==================================================================
+# ======================================================================
 def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
-    """Take the supercell xyz file produced by Read_CIF and break it into fragments."""
+    """Take the supercell xyz file produced by Read_CIF and break it
+    into fragments.
+    """
     
     if verbose >= 2:
         print("Generating monomers for all complete molecules in the supercell:")
@@ -130,11 +137,15 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
             nmers[name]["com"] = center_of_mass(frag_elems[index], frag_geoms[index])
 
     return nmers
-# ==================================================================
+# ======================================================================
 
 
-# ==================================================================
+# ======================================================================
 def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
+    """Provided with a dictionary with nmers, a reference monomer and 
+    other N-mer, this function will merge both structures and create a
+    new N-mer..
+    """
     
     nm_new = {}
 
@@ -205,12 +216,13 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     nm_new_name = str(len(nm_new_monomers)) + "mer-" + "+".join(map(str, nm_new_monomers))
 
     return nm_new_name, nm_new
-# ==================================================================
+# ======================================================================
 
 
-# ==================================================================
+# ======================================================================
 def center_of_mass(elems, geoms):
-    """Computes center of mass of molecule."""
+    """Computes center of mass of molecule.
+    """
     
     com = np.array([0.0, 0.0, 0.0])
     total_mass = 0.0
@@ -223,13 +235,15 @@ def center_of_mass(elems, geoms):
     com /= total_mass
     
     return com
-# ==================================================================
+# ======================================================================
 
 
-# ==================================================================
+# ======================================================================
 def distance_matrix(a, b):
-    """Euclidean distance matrix between rows of arrays `a` and `b`. Equivalent to
-    `scipy.spatial.distance.cdist(a, b, 'euclidean')`. Returns a.shape[0] x b.shape[0] array."""
+    """Euclidean distance matrix between rows of arrays `a` and `b`.
+    Equivalent to `scipy.spatial.distance.cdist(a, b, 'euclidean')`.
+    Returns a.shape[0] x b.shape[0] array.
+    """
 
     assert(a.shape[1] == b.shape[1])
     distm = np.zeros([a.shape[0], b.shape[0]])
@@ -242,12 +256,13 @@ def distance_matrix(a, b):
     r_min = np.min(distm)
 
     return distm, r_min
-# ==================================================================
+# ======================================================================
 
 
-# ==================================================================
+# ======================================================================
 def nre(elem, geom):
-    """Nuclear repulsion energy"""
+    """Nuclear repulsion energy
+    """
     
     nre = 0.
     for at1 in range(geom.shape[0]):
@@ -257,13 +272,14 @@ def nre(elem, geom):
             nre += el2z[elem[at1]] * el2z[elem[at2]] / dist
 
     return nre
-# ==================================================================
+# ======================================================================
 
 
-# ==================================================================
+# ======================================================================
 def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_separation_cutoff, verbose=1):
     """Takes a float indicating a cutoff distance in Angstroms.
-    Returns dimer files that pass through the filter."""
+    Returns dimer files that pass through the filter.
+    """
 
     # Function reused for different types of N-mers.
 
@@ -393,16 +409,39 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     nmers.update(new_nmers)
 
     return nmers
-# ==================================================================
+# ======================================================================
 
 
-# ==================================================================
+#=======================================================================
+def nmer2psimol(nmers, knmer, nmer, verbose=0):
+    """.
+    """
+
+    text = "\nunits = au\n"
+    text += "no_com\n"
+    text += "no_reorient\n"
+    
+    for at in range(nmer["coords"].shape[0]):
+
+        if at in nmer["delimiters"]:
+            text += "--\n"
+        
+        text += "  {:6} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+
+    if verbose >= 3:
+        print("\nPSI4 Molecule of %s:" % knmer)
+        print(text)
+
+    return text
+#=======================================================================
+
+
+# ======================================================================
 def energies(nmers, verbose=0):
-    """."""
+    """.
+    """
     
     crystal_lattice_energy = 0.0
-
-    atomfmt2 = """  {:6} {:16.8f} {:16.8f} {:16.8f} \n"""
 
     for knmer, nmer in nmers.items():
         num_monomers = len(nmer["monomers"])
@@ -410,23 +449,9 @@ def energies(nmers, verbose=0):
         if num_monomers == 1:
             continue
 
-        text = "\nunits = au\n"
-        text += "no_com\n"
-        text += "no_reorient\n"
-        
-        for at in range(nmer["coords"].shape[0]):
-            
-            if at in nmer["delimiters"]:
-                text += "--\n" 
-            
-            text += atomfmt2.format(nmer["elem"][at], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
-
+        text = nmer2psimol(nmers, knmer, nmer, verbose)
         mymol = psi4.geometry(text)
         
-        if verbose >= 3:
-            print("\nPSI4 Molecule of %s:" % knmer)
-            print(text)
-
         psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'freeze_core': 'true'})
         
         # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
@@ -457,7 +482,7 @@ def energies(nmers, verbose=0):
             rcomseps += "{:7.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
         if verbose >= 1:
-            print("{:24} | {:>12.8f} | {:>4} | {:>12.8f} | {}".format(knmer, nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
+            print("{:24} | {:>14.8f} | {:>4} | {:>14.8f} | {}".format(knmer, nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
                 nmer["replicas"], nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, rcomseps))
     
     if verbose >= 1:
@@ -466,12 +491,14 @@ def energies(nmers, verbose=0):
         print("Crystal Lattice Energy [Kcal/mol] = {:9.8f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
 
     return crystal_lattice_energy
-# ==================================================================
+# ======================================================================
 
 
-# ==================================================================
+# ======================================================================
 def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, verbose=1):
-    """Takes a CIF file and computes the crystal lattice energy using a manybody expansion approach."""
+    """Takes a CIF file and computes the crystal lattice energy using a
+    many-body expansion approach.
+    """
     
     # Check proper input filename.
     if read_cif_input.endswith(".cif"):
@@ -541,7 +568,7 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
 
     energies(nmers, verbose)
     # ------------------------------------------------------------------
-# ==================================================================
+# ======================================================================
 
 
 if __name__ == "__main__":
