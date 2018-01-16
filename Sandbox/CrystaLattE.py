@@ -194,9 +194,6 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     # Separation vector between center of mass of the monomers in the N-mer.
     nm_new["com_monomer_separations"] = []
 
-    # Criterion to launch energy calculations.
-    nm_new["priority"] = 0.0
-
     for a in nm_new_monomers:
         a_name = "1mer-" + str(a)
         
@@ -211,6 +208,18 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
             nm_new["min_monomer_separations"].append(r_min)
 
             nm_new["com_monomer_separations"].append(np.linalg.norm(nmers[a_name]["com"] - nmers[b_name]["com"]))
+    
+
+    # Criterion to launch energy calculations.
+    nm_new["priority"] = 0.0
+
+    priority = 1.0
+    
+    for r in nm_new["com_monomer_separations"]:
+        one_over_r3 = 1.0/r**3
+        priority *= one_over_r3
+    
+    nm_new["priority"] = priority
 
     # Key of the new N-mer in the nmers dictionary.
     nm_new_name = str(len(nm_new_monomers)) + "mer-" + "+".join(map(str, nm_new_monomers))
@@ -412,7 +421,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 # ======================================================================
 
 
-#=======================================================================
+# ======================================================================
 def nmer2psimol(nmers, knmer, nmer, verbose=0):
     """.
     """
@@ -448,7 +457,9 @@ def energies(nmers, verbose=0):
         
         if num_monomers == 1:
             continue
-
+        
+        print("N-Mer priority", nmer["priority"])
+        
         text = nmer2psimol(nmers, knmer, nmer, verbose)
         mymol = psi4.geometry(text)
         
@@ -510,10 +521,11 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
 
     # Print program header.
     if verbose >= 1:
-        print("\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-        print("                             CrystaLattE                             \n")
-        print(" The tool for the automated calculation of crystal lattice energies. \n")
-        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+        print("")
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+        print("                              CrystaLattE                              \n")
+        print("  The tool for the automated calculation of crystal lattice energies.  \n")
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 
     # Read a CIF file and generate the unit cell.
     read_cif_arguments = read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose)
@@ -596,13 +608,13 @@ if __name__ == "__main__":
             read_cif_a=4,
             read_cif_b=4,
             read_cif_c=4,
-            nmers_up_to=2,
-            r_cut_com=9.5,
-            r_cut_monomer=11.4,
-            r_cut_dimer=11.4,
-            r_cut_trimer=11.4,
-            r_cut_tetramer=11.4,
-            r_cut_pentamer=11.4,
+            nmers_up_to=5,
+            r_cut_com=5.5,
+            r_cut_monomer=5.5,
+            r_cut_dimer=5.5,
+            r_cut_trimer=2.7,
+            r_cut_tetramer=2.7,
+            r_cut_pentamer=5.0,
             verbose=2)
 
     # Test with water supercell.
