@@ -51,10 +51,11 @@ from psi4.driver.qcdb.periodictable import el2z
 
 # ======================================================================
 def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose=1):
-    """Takes the names of a CIF input file, a .xyz output file, and the
-    number of replicas of the rectangular cell in each direction (A, B,
-    and C). It then calls Read_CIF() and passes that information as
-    arguments to generate an .xyz file of the supercell.
+    """Takes strings with the names of a CIF input file and a .xyz 
+    output file, as well as integers for the number of replicas of the
+    rectangular cell in each direction (A, B, and C). It then calls 
+    Read_CIF() and passes that information as arguments to generate an
+    .xyz file of the supercell.
     """
 
     read_cif_arguments = ["", "-i", read_cif_input, "-o", read_cif_output, "-b", read_cif_a, read_cif_b, read_cif_c]
@@ -69,20 +70,34 @@ def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, rea
 
 
 # ======================================================================
-def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
-    """Take the supercell xyz file produced by Read_CIF and break it
-    into fragments.
+def center_supercell(read_cif_output, verbose=0):
+    """Takes a string with the filename of the supercell xyz file 
+    produced by Read_CIF. Then the center of the supercell coordinates 
+    is computed to translate the supercell to the origin.
+    
+    Returns `scell_geom_max_coords`, which is an np.array with 3 
+    numbers: the maximum value of the coordinates x, y, and z of the
+    centered supercell.
+
+    It also returns scell_geom and scell_elem, two Numpy arrays with
+    geometry and element symbols of the centered supercell, 
+    respectively.
     """
     
     if verbose >= 2:
         print("Generating monomers for all complete molecules in the supercell:")
 
-    scell_geom = np.loadtxt(read_cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64) # Creates a NumPy array with the coordinates of atoms in the supercell
-    scell_elem = np.loadtxt(read_cif_output, skiprows=2, usecols=(0), dtype="str") # Creates a NumPy array with the element symbols of the atoms in the supercell
+    # Creates two NumPy arrays: one with the coordinates of atoms in the
+    # supercell and other with the element symbols of the atoms in it.
+    scell_geom = np.loadtxt(read_cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64)
+    scell_elem = np.loadtxt(read_cif_output, skiprows=2, usecols=(0), dtype="str")
     
-    scell_geom = scell_geom / qcdb.psi_bohr2angstroms # Coordinates will be handled in Bohr
+    # Distnaces will be handled in Bohr.
+    scell_geom = scell_geom / qcdb.psi_bohr2angstroms
 
-    scell_cntr = (np.max(scell_geom, axis=0) - np.min(scell_geom, axis=0))/2.0 # Determines the supercell center
+    # Calculation of the supercell center as the midpoint of all
+    # coordinates.
+    scell_cntr = (np.max(scell_geom, axis=0) - np.min(scell_geom, axis=0))/2.0
     
     if verbose >= 2:
         print("\nCenter of the supercell located at:")
@@ -91,43 +106,93 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
         print("z = %10.5f" % (scell_cntr[2]))
         print("\nThe supercell will be translated to the origin")
 
-    scell_geom -= scell_cntr # Translates the supercell to the origin
+    # Translate the supercell to the origin.
+    scell_geom -= scell_cntr
+    
+    # Return a NumPy array with 3 numbers: the maximum of each x, y, and
+    # z.
+    scell_geom_max_coords = np.max(scell_geom, axis=0)
 
-    scell_geom_max_coords = np.max(scell_geom, axis=0) # Returns an np.array with 3 numbers: the maximum of x, of y, and of z
+    return scell_geom_max_coords, scell_geom, scell_elem
+# ======================================================================
 
+
+# ======================================================================
+def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
+    """Takes a string with the filename of the supercell xyz file
+    produced by Read_CIF, and passes it to the `center_supercell()`
+    function which translates the supercell to the origin returns it.
+
+    The centered supercell geometries and elements arrays are passed to
+    the Breadth-First Search of which returns all fragments found in
+    the supercell.
+
+    This function also takes a second argument, a float, with a cutoff
+    distance, measured from the origin, which is then used to decide if
+    a monomer should be considered or not based on its proximity to the
+    origin.
+
+    Returns a dictionary with all the fragments that are within the
+    cutoff criterion.
+    """
+    
+    # Centering the supercell.
+    scell_geom_max_coords, scell_geom, scell_elem = center_supercell(read_cif_output, verbose)
+
+    # Check if each of dimensions of the supercell satisfies the 
+    # condition of being the twice as long as the cutoff. This helps
+    # filtering out fragments that contain incomplete molecules located
+    # at the edges of the supercell.
     if (r_cut_monomer / qcdb.psi_bohr2angstroms) > np.min(scell_geom_max_coords):
         print("\nWARNING: Cutoff (%3.2f A) longer than half the smallest dimension of the supercell (%3.2f A)." \
               % (r_cut_monomer, np.min(scell_geom_max_coords)*qcdb.psi_bohr2angstroms))
         print("         Please increase the size of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.")
 
-    fragments = BFS(scell_geom, scell_elem) # Passes the supercell geometry and elements to the breadth-first search algorithm of QCDB to obtain fragments
+    # Passes the supercell geometry and elements to the breadth-first
+    # search algorithm of QCDB to obtain fragments.
+    fragments = BFS(scell_geom, scell_elem)
+    
+    # Two lists containing geometries and elements of a fragment.
     frag_geoms = [scell_geom[fr] for fr in fragments]
     frag_elems = [scell_elem[fr] for fr in fragments]
 
-    frag_r_mins = [] # List containing the magnitude of the shortest position vector of each fragment.
+    # List containing the magnitude of the shortest position vector of
+    # each fragment.
+    frag_r_mins = []
 
     for frag in frag_geoms:
-        r_min_atom = np.min(np.linalg.norm(frag, axis=1)) # Get the minium of the norm of the position vectors of all atoms in the fragment.
+        # Get the minium of the norm of the position vectors of all
+        # atoms in the fragment.
+        r_min_atom = np.min(np.linalg.norm(frag, axis=1))
         frag_r_mins.append(r_min_atom)
     
-    frag_r_mins = np.array(frag_r_mins) # Conversion to NumPy array.
+    # Convert the list of minimums to a NumPy array
+    frag_r_mins = np.array(frag_r_mins)
 
-    mapper = frag_r_mins.argsort() # Array mapping the indices of the fragments sorted by r_min_atom to the order in the frag_r_mins list.
+    # Array mapping the indices of the fragments sorted by r_min_atom to
+    # the order in the frag_r_mins list.
+    mapper = frag_r_mins.argsort()
 
-    # A dictionary for storing N-mers will be created.
-    # Then, for each fragment in the frag_geoms list, an index will be defined based on the mapper list.
-    # If the shortest position vector is shorter that the monomers cutoff,
-    # a new dictionary will be created to store all the information corresponding to such N-mer.
+    # A dictionary for storing N-mers will be created. 
 
-    nmers = {} # The N-Mers dictionary
+    # Then, for each fragment in the frag_geoms list, an index will be 
+    # defined based on the mapper list.
+    
+    # If the shortest position vector is shorter that the monomers 
+    # cutoff, a new dictionary will be created to store all the 
+    # information corresponding to such N-mer.
+    nmers = {}
 
     for i in range(len(frag_geoms)):
         index = mapper[i]
 
-        if frag_r_mins[index] <= (r_cut_monomer / qcdb.psi_bohr2angstroms): # Discard edges of the supercell and keeps the monomers within a sphere of the cutoff radius.
+        # Discard edges of the supercell and keeps the monomers within a
+        # sphere of the cutoff radius.
+        if frag_r_mins[index] <= (r_cut_monomer / qcdb.psi_bohr2angstroms):
             name = "1mer-" + str(i)
             
-            nmers[name] = {} # The dictionary of one N-mer.
+            # The dictionary of one N-mer.
+            nmers[name] = {}
             
             nmers[name]["monomers"] = [i]
             nmers[name]["elem"] = frag_elems[index]
@@ -144,7 +209,7 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
 def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     """Provided with a dictionary with nmers, a reference monomer and 
     other N-mer, this function will merge both structures and create a
-    new N-mer..
+    new N-mer.
     """
     
     nm_new = {}
@@ -230,7 +295,9 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
 
 # ======================================================================
 def center_of_mass(elems, geoms):
-    """Computes center of mass of molecule.
+    """Takes two Numpy arrays, one with the element symbols and one with
+    coordinates of a set of atoms and returns a Numpy array with the 
+    computed center of mass of the molecule.
     """
     
     com = np.array([0.0, 0.0, 0.0])
@@ -251,7 +318,8 @@ def center_of_mass(elems, geoms):
 def distance_matrix(a, b):
     """Euclidean distance matrix between rows of arrays `a` and `b`.
     Equivalent to `scipy.spatial.distance.cdist(a, b, 'euclidean')`.
-    Returns a.shape[0] x b.shape[0] array.
+    Returns a.shape[0] x b.shape[0] array. It also returns the shortest
+    distance between the atoms of `a` and of `b`.
     """
 
     assert(a.shape[1] == b.shape[1])
@@ -270,7 +338,9 @@ def distance_matrix(a, b):
 
 # ======================================================================
 def nre(elem, geom):
-    """Nuclear repulsion energy
+    """Takes two Numpy arrays, one with the element symbols and one with
+    coordinates of a set of atoms and returns a float number with the 
+    computed nuclear repulsion energy.
     """
     
     nre = 0.
@@ -608,7 +678,7 @@ if __name__ == "__main__":
             read_cif_a=4,
             read_cif_b=4,
             read_cif_c=4,
-            nmers_up_to=5,
+            nmers_up_to=2,
             r_cut_com=5.5,
             r_cut_monomer=5.5,
             r_cut_dimer=5.5,
