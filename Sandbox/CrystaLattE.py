@@ -537,7 +537,7 @@ def energies(nmers, verbose=0):
         p4out = knmer + ".dat"
         psi4.core.set_output_file(p4out)
 
-        print("Computing energy of {}. N-Mer priority = {}".format(knmer, nmer["replicas"]*nmer["priority"]))
+        print("Computing energy of {}. N-Mer priority = {}".format(knmer, nmer["priority"]))
         
         text = nmer2psimol(nmers, knmer, nmer, verbose)
         mymol = psi4.geometry(text)
@@ -549,14 +549,13 @@ def energies(nmers, verbose=0):
 
         # Set the number of threads to run Psi4.
         # The 'False' argument quiets printout.
-        #psi4.core.set_num_threads(cpus, False)
         psi4.core.set_num_threads(cpus)
         
         # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
         #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         
-        psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0)
+        psi4.energy('PBE0/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
         
         # get the non-additive n-body contribution, exclusive of all previous-body interactions
         varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
@@ -716,9 +715,9 @@ if __name__ == "__main__":
             read_cif_b=4,
             read_cif_c=4,
             nmers_up_to=2,
-            r_cut_com=5.9,
-            r_cut_monomer=5.5,
-            r_cut_dimer=5.5,
+            r_cut_com=9.5,
+            r_cut_monomer=11.4,
+            r_cut_dimer=11.4,
             r_cut_trimer=2.7,
             r_cut_tetramer=2.7,
             r_cut_pentamer=5.0,
