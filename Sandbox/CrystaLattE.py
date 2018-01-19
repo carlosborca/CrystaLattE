@@ -6,7 +6,8 @@
 # CrystaLattE: The tool for the automated calculation of crystal lattice 
 # energies.
 #
-# Copyright (c) 2017 Carlos H. Borca, Lori A. Burns, C. David Sherrill.
+# Copyright (c) 2017-2018 
+# Carlos H. Borca, Lori A. Burns, and C. David Sherrill.
 #
 # The copyrights for code used from other parties are included in
 # the corresponding files.
@@ -32,6 +33,7 @@
 
 # Import standard Python modules.
 import itertools
+#import multiprocessing
 import numpy as np
 import os
 import sys
@@ -527,18 +529,30 @@ def energies(nmers, verbose=0):
         
         if num_monomers == 1:
             continue
-        
-        print("N-Mer priority", nmer["priority"])
+       
+        #p4out = knmer + ".dat"
+        #psi4.core.set_output_file(p4out)
+
+        #print("N-Mer priority", nmer["priority"])
         
         text = nmer2psimol(nmers, knmer, nmer, verbose)
         mymol = psi4.geometry(text)
+        print(text)
         
         psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'freeze_core': 'true'})
+        
+        # Find out the number of CPUs in the local system.
+        #cpus = multiprocessing.cpu_count()
+
+        # Set the number of threads to run Psi4.
+        # The 'False' argument quiets printout.
+        #psi4.core.set_num_threads(cpus, False)
         
         # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
         #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         
+        psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0)
         #psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
         
         # get the non-additive n-body contribution, exclusive of all previous-body interactions
