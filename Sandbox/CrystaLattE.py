@@ -33,7 +33,7 @@
 
 # Import standard Python modules.
 import itertools
-#import multiprocessing
+import multiprocessing
 import numpy as np
 import os
 import sys
@@ -522,7 +522,11 @@ def energies(nmers, verbose=0):
     """.
     """
     
+    global crystal_lattice_energy
+    global results
+
     crystal_lattice_energy = 0.0
+    results = []
 
     for knmer, nmer in nmers.items():
         num_monomers = len(nmer["monomers"])
@@ -530,30 +534,29 @@ def energies(nmers, verbose=0):
         if num_monomers == 1:
             continue
        
-        #p4out = knmer + ".dat"
-        #psi4.core.set_output_file(p4out)
+        p4out = knmer + ".dat"
+        psi4.core.set_output_file(p4out)
 
-        #print("N-Mer priority", nmer["priority"])
+        print("Computing energy of {}. N-Mer priority = {}".format(knmer, nmer["replicas"]*nmer["priority"]))
         
         text = nmer2psimol(nmers, knmer, nmer, verbose)
         mymol = psi4.geometry(text)
-        print(text)
         
         psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'freeze_core': 'true'})
         
         # Find out the number of CPUs in the local system.
-        #cpus = multiprocessing.cpu_count()
+        cpus = multiprocessing.cpu_count()
 
         # Set the number of threads to run Psi4.
         # The 'False' argument quiets printout.
         #psi4.core.set_num_threads(cpus, False)
+        psi4.core.set_num_threads(cpus)
         
         # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
         #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         
         psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0)
-        #psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
         
         # get the non-additive n-body contribution, exclusive of all previous-body interactions
         varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
@@ -576,16 +579,36 @@ def energies(nmers, verbose=0):
         for r in nmer["com_monomer_separations"]:
             rcomseps += "{:7.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
-        if verbose >= 1:
-            print("{:24} | {:>14.8f} | {:>4} | {:>14.8f} | {}".format(knmer, nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
-                nmer["replicas"], nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, rcomseps))
+        nmer_result = "{:24} | {:>14.8f} | {:>4} | {:>14.8f} | {}".format(
+                knmer, 
+                nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, 
+                nmer["replicas"], 
+                nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
+                rcomseps)
+        
+        results.append(nmer_result)
     
+    return crystal_lattice_energy
+# ======================================================================
+
+
+# ======================================================================
+def print_results(verbose=0):
+    """.
+    """
+
     if verbose >= 1:
+        print("")
+        print("-------------------------+----------------+------+----------------+------------------")
+        print("                         |   Non-Add. MBE |      |   Contribution | Rcom Separations")
+        print("N-mer Name:              |       [KJ/mol] | Rep. |       [KJ/mol] | [A]")
+        print("-------------------------+----------------+------+----------------+------------------")
+        for result in results:
+            print(result)
+        print("-------------------------+----------------+------+----------------+------------------")
         print("\nCrystal Lattice Energy [Eh]       = {:5.8f}".format(crystal_lattice_energy))
         print("Crystal Lattice Energy [KJ/mol]   = {:9.8f}".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
         print("Crystal Lattice Energy [Kcal/mol] = {:9.8f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
-
-    return crystal_lattice_energy
 # ======================================================================
 
 
@@ -598,7 +621,6 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
     # Check proper input filename.
     if read_cif_input.endswith(".cif"):
         outf = read_cif_input[:-4] + ".out"
-        #sys.stdout = open(outf, 'w')
     
     else:
         print("CrystaLattE needs a .cif file as input file.")
@@ -664,6 +686,7 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
 
     energies(nmers, verbose)
     # ------------------------------------------------------------------
+    print_results(verbose)
 # ======================================================================
 
 
@@ -693,7 +716,7 @@ if __name__ == "__main__":
             read_cif_b=4,
             read_cif_c=4,
             nmers_up_to=2,
-            r_cut_com=5.5,
+            r_cut_com=5.9,
             r_cut_monomer=5.5,
             r_cut_dimer=5.5,
             r_cut_trimer=2.7,
