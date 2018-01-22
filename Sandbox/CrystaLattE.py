@@ -37,6 +37,7 @@ import multiprocessing
 import numpy as np
 import os
 import sys
+import time
 
 # Import outsourced code.
 sys.path.insert(0, "Read_CIF")
@@ -555,7 +556,7 @@ def energies(nmers, verbose=0):
         #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         
-        psi4.energy('PBE0/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
+        #psi4.energy('B97/cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
         
         # get the non-additive n-body contribution, exclusive of all previous-body interactions
         varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
@@ -612,10 +613,28 @@ def print_results(verbose=0):
 
 
 # ======================================================================
+def print_end_msg(start, verbose=0):
+    """.
+    """
+    
+    if verbose >= 1:
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+        print("Execution terminated succesfully.")
+        print("Total elapsed wall-clock time: {:11.2f} seconds\n".format(time.time() - start))
+        print("Thank you for using CrystaLatte.\n")
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+
+# ======================================================================
+
+
+# ======================================================================
 def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
+   
+    # Start counting time.
+    start = time.time()
     
     # Check proper input filename.
     if read_cif_input.endswith(".cif"):
@@ -686,6 +705,8 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
     energies(nmers, verbose)
     # ------------------------------------------------------------------
     print_results(verbose)
+    
+    print_end_msg(start, verbose)
 # ======================================================================
 
 
