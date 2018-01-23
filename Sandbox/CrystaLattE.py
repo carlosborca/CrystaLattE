@@ -237,11 +237,13 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     nm_new["elem"] = np.concatenate(nm_new_elem_arrays, axis=0)
     nm_new["coords"] = np.concatenate(nm_new_coords_arrays, axis=0)
     
-    # Indices of each monomer in the array of elements and coordinates (For spliting N-mers into monomers).
+    # Indices of each monomer in the array of elements and coordinates 
+    # (For spliting N-mers into monomers).
     nm_new["delimiters"] = np.cumsum(nm_new["atoms_per_monomer"])
     
     # Norm of the shortest position vector of an atom in the new N-mer.
-    # The reference is always closest to the origin so it is always the minimum rmin
+    # The reference is always closest to the origin so it is always the
+    # minimum rmin
     nm_new["rmin"] = ref_monomer["rmin"]
 
     # Nuclear repulsion energy of the new N-mer.
@@ -256,10 +258,12 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     # Contribution of unique structure to crystal lattice energy.
     nm_new["contrib"] = 0.0
 
-    # Shortest separation vector between the atoms of the monomers in the N-mer.
+    # Shortest separation vector between the atoms of the monomers in
+    # the N-mer.
     nm_new["min_monomer_separations"] = []
 
-    # Separation vector between center of mass of the monomers in the N-mer.
+    # Separation vector between center of mass of the monomers in the
+    # N-mer.
     nm_new["com_monomer_separations"] = []
 
     for a in nm_new_monomers:
@@ -396,13 +400,15 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
         print("")
 
     counter_new_nmers = 0 # Number of new N-mers generated
-    counter_dscrd_sep = 0 # Number of N-mers filtered out by atomic separation criteria
-    counter_dscrd_com = 0 # Number of N-mers filtered out by center of mass separation criteria
-    counter_dscrd_rep = 0 # Number of N-mers filtered out as a replica of another N-mer
+    counter_dscrd_sep = 0 # N-mers filtered out by atomic separation
+    counter_dscrd_com = 0 # N-mers filtered out by COM separation
+    counter_dscrd_rep = 0 # N-mers filtered out as a replicas
 
     new_nmers = {}
 
-    num_ref_monomers = 1 # TODO: Support for crystals with more than one molecule in the primitive unit cell.
+    # TODO: Support for crystals with more than one molecule in the
+    # primitive unit cell.
+    num_ref_monomers = 1
 
     for ref_monomer_idx in range(num_ref_monomers):
         monomer_key = "1mer-" + str(ref_monomer_idx)
@@ -436,7 +442,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                 for kexisting, existing in new_nmers.items():
 
-                    if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5: # Nuclear repulsion energy filter.
+                    # Nuclear repulsion energy filter.
+                    if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5:
 
                         if verbose >= 3:
                             print(kexisting)
@@ -448,17 +455,21 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                             print(new_nmer["elem"])
                             print(new_nmer["coords"])
                         
+                        # Redirect B787 output.
                         #B787out = kexisting + "-B787.dat"
-                        #sys.stdout = open(B787out, 'w') # Redirect B787 output.
+                        #sys.stdout = open(B787out, 'w')
 
-                        sys.stdout = open(os.devnull, 'w') # Block B787 printout
+                        # Block B787 printout
+                        sys.stdout = open(os.devnull, 'w')
                         
-                        np.seterr(divide='ignore') # Block NumPy divide over zero warning printout.
+                        # Block NumPy divide over zero warning printout.
+                        np.seterr(divide='ignore')
 
                         # Call the dreamliner from QCDB.
                         rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], run_mirror=True, verbose=2)
 
-                        sys.stdout = sys.__stdout__ # Reanable printout
+                        # Reanable printout
+                        sys.stdout = sys.__stdout__
 
                         if rmsd < 1.e-3:
                             found_duplicate = True
@@ -515,7 +526,7 @@ def nmer2psimol(nmers, knmer, nmer, verbose=0):
         print(text)
 
     return text
-#=======================================================================
+# ======================================================================
 
 
 # ======================================================================
@@ -556,9 +567,10 @@ def energies(nmers, verbose=0):
         #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         
-        #psi4.energy('B97/cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
+        #psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
         
-        # get the non-additive n-body contribution, exclusive of all previous-body interactions
+        # Get the non-additive n-body contribution, exclusive of all
+        # previous-body interactions.
         varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
         
         n_body_energy = psi4.core.get_variable(varstring) 
@@ -579,7 +591,7 @@ def energies(nmers, verbose=0):
         for r in nmer["com_monomer_separations"]:
             rcomseps += "{:7.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
-        nmer_result = "{:24} | {:>14.8f} | {:>4} | {:>14.8f} | {}".format(
+        nmer_result = "{:26} | {:>14.8f} | {:>4} | {:>14.8f} | {}".format(
                 knmer, 
                 nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, 
                 nmer["replicas"], 
@@ -599,13 +611,13 @@ def print_results(verbose=0):
 
     if verbose >= 1:
         print("")
-        print("-------------------------+----------------+------+----------------+------------------")
-        print("                         |   Non-Add. MBE |      |   Contribution | Rcom Separations")
-        print("N-mer Name:              |       [KJ/mol] | Rep. |       [KJ/mol] | [A]")
-        print("-------------------------+----------------+------+----------------+------------------")
+        print("---------------------------+----------------+------+----------------+------------------")
+        print("                           |   Non-Add. MBE |      |   Contribution | Rcom Separations")
+        print("N-mer Name:                |       [KJ/mol] | Rep. |       [KJ/mol] | [A]")
+        print("---------------------------+----------------+------+----------------+------------------")
         for result in results:
             print(result)
-        print("-------------------------+----------------+------+----------------+------------------")
+        print("---------------------------+----------------+------+----------------+------------------")
         print("\nCrystal Lattice Energy [Eh]       = {:5.8f}".format(crystal_lattice_energy))
         print("Crystal Lattice Energy [KJ/mol]   = {:9.8f}".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
         print("Crystal Lattice Energy [Kcal/mol] = {:9.8f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
@@ -697,15 +709,18 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
         print("       Please use 2 <= nmer_up_to < 5.")
    
     # ------------------------------------------------------------------
-    # TODO: Run plesantly parallel PSI4 computations on all the final list of 
-    # monomers, dimers, trimers, etc.
+    # TODO: Run plesantly parallel PSI4 computations on all the final
+    #       list of monomers, dimers, trimers, etc.
     if verbose >= 2:
         print ("\nComputing interaction energies of N-mers:")
 
     energies(nmers, verbose)
     # ------------------------------------------------------------------
+    
+    # Print the final results.
     print_results(verbose)
     
+    # Print exit message and timings information.
     print_end_msg(start, verbose)
 # ======================================================================
 
