@@ -20,6 +20,10 @@
         a. Install using: conda install -c conda-forge pycifrw
 
 
+    4. Hungarian Algorithm
+
+        a. wget https://pypi.python.org/packages/b2/f9/9cccbbb8c724c4eff5d006bd3fe185e91d121caf2ffd345fe31421f1c886/hungarian-0.2.3.tar.gz
+    
     3. Psi4 and QCDB:
 
         a.

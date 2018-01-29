@@ -124,7 +124,7 @@ def center_supercell(read_cif_output, verbose=0):
 def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
     """Takes a string with the filename of the supercell xyz file
     produced by Read_CIF, and passes it to the `center_supercell()`
-    function which translates the supercell to the origin returns it.
+    function which translates the supercell to the origin.
 
     The centered supercell geometries and elements arrays are passed to
     the Breadth-First Search of which returns all fragments found in
@@ -210,9 +210,13 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
 
 # ======================================================================
 def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
-    """Provided with a dictionary with nmers, a reference monomer and 
-    other N-mer, this function will merge both structures and create a
-    new N-mer.
+    """Takes a `nmers` dictionary, and two strings with the keys of a
+    refrence monomer and other monomer.
+
+    This function will merge both monomers and create a new N-mer.
+
+    It returns a string `nm_new_name` and a `nm_new` dictionary
+    containing the information of the newly generated N-mer.
     """
     
     nm_new = {}
@@ -372,25 +376,21 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     if nmer_type == "dimers":
         nm_dictname_pattern = "1mer-"
         nm_txt_lbl = "Dimer"
-        nm_num_lbl = "2"
         num_monomers = 2
 
     elif nmer_type == "trimers":
         nm_dictname_pattern = "2mer-"
         nm_txt_lbl = "Trimer"
-        nm_num_lbl = "3"
         num_monomers = 3
 
     elif nmer_type == "tetramers":
         nm_dictname_pattern = "3mer-"
         nm_txt_lbl = "Tetramer"
-        nm_num_lbl = "4"
         num_monomers = 4
 
     elif nmer_type == "pentamers":
         nm_dictname_pattern = "4mer-"
         nm_txt_lbl = "Pentamer"
-        nm_num_lbl = "5"
         num_monomers = 5
     
     else:
@@ -407,7 +407,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     new_nmers = {}
 
     # TODO: Support for crystals with more than one molecule in the
-    # primitive unit cell.
+    #       primitive unit cell.
     num_ref_monomers = 1
 
     for ref_monomer_idx in range(num_ref_monomers):
@@ -434,7 +434,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                 if verbose >= 2:
                     print("%s %s discarded: Centers of mass separation %3.2f A, longer than cutoff %3.2f A" \
                           % (nm_txt_lbl, new_nmer_name, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff))
-                    
+
                     counter_dscrd_com += 1
 
             else:
@@ -589,13 +589,14 @@ def energies(nmers, verbose=0):
         rcomseps = ""
 
         for r in nmer["com_monomer_separations"]:
-            rcomseps += "{:7.3f} ".format(r * qcdb.psi_bohr2angstroms)
+            rcomseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
-        nmer_result = "{:26} | {:>14.8f} | {:>4} | {:>14.8f} | {}".format(
+        nmer_result = "{:26} | {:>14.8f} | {:>4} | {:>14.8f} | {:6.3f} | {}".format(
                 knmer, 
                 nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, 
                 nmer["replicas"], 
                 nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
+                float(max(nmer["min_monomer_separations"])) * qcdb.psi_bohr2angstroms,
                 rcomseps)
         
         results.append(nmer_result)
@@ -611,16 +612,16 @@ def print_results(verbose=0):
 
     if verbose >= 1:
         print("")
-        print("---------------------------+----------------+------+----------------+------------------")
-        print("                           |   Non-Add. MBE |      |   Contribution | Rcom Separations")
-        print("N-mer Name:                |       [KJ/mol] | Rep. |       [KJ/mol] | [A]")
-        print("---------------------------+----------------+------+----------------+------------------")
+        print("---------------------------+----------------+------+----------------+--------+------------------")
+        print("N-mer Name                 |   Non-Add. MBE |    # |   Contribution | MinRAB | Rcom Separations")
+        print("(Dictionary key)           |       (KJ/mol) | Rep. |       (KJ/mol) |    (A) | (A)")
+        print("---------------------------+----------------+------+----------------+--------+------------------")
         for result in results:
             print(result)
-        print("---------------------------+----------------+------+----------------+------------------")
-        print("\nCrystal Lattice Energy [Eh]       = {:5.8f}".format(crystal_lattice_energy))
-        print("Crystal Lattice Energy [KJ/mol]   = {:9.8f}".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
-        print("Crystal Lattice Energy [Kcal/mol] = {:9.8f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
+        print("---------------------------+----------------+------+----------------+--------+------------------")
+        print("\nCrystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy))
+        print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
+        print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
 # ======================================================================
 
 
@@ -745,8 +746,23 @@ if __name__ == "__main__":
 #    """)
     
     # Actual test with benzene supercell.
-    main(   read_cif_input="bz-138K.cif",
-            read_cif_output="bz-138K.xyz",
+#    main(   read_cif_input="bz-138K.cif",
+#            read_cif_output="bz-138K.xyz",
+#            read_cif_a=4,
+#            read_cif_b=4,
+#            read_cif_c=4,
+#            nmers_up_to=3,
+#            r_cut_com=9.5,
+#            r_cut_monomer=11.4,
+#            r_cut_dimer=11.4,
+#            r_cut_trimer=2.7,
+#            r_cut_tetramer=2.7,
+#            r_cut_pentamer=5.0,
+#            verbose=2)
+
+    # Test with carbon dioxide.
+    main(   read_cif_input="CO2.cif",
+            read_cif_output="CO2.xyz",
             read_cif_a=4,
             read_cif_b=4,
             read_cif_c=4,
@@ -759,7 +775,7 @@ if __name__ == "__main__":
             r_cut_pentamer=5.0,
             verbose=2)
 
-    # Test with water supercell.
+    # Test with water.
 #    main(   read_cif_input="ice-Ih.cif",
 #            read_cif_output="ice-Ih.xyz",
 #            read_cif_a=3,
