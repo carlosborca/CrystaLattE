@@ -66,7 +66,7 @@ def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, rea
     if verbose >= 2:
         print("\nGenerating the supercell .xyz file.")
         print("\nThe following arguments will be passed to the CIF reader script:")
-        print("./Read_CIF.py" + " ".join(str(read_cif_argument) for read_cif_argument in read_cif_arguments))
+        print("./Read_CIF.py" + " ".join(str(read_cif_argument) for read_cif_argument in read_cif_arguments) + "\n")
     
     return read_cif_arguments
 # ======================================================================
@@ -107,7 +107,7 @@ def center_supercell(read_cif_output, verbose=0):
         print("x = %10.5f" % (scell_cntr[0]))
         print("y = %10.5f" % (scell_cntr[1]))
         print("z = %10.5f" % (scell_cntr[2]))
-        print("\nThe supercell will be translated to the origin")
+        print("\nThe supercell will be translated to the origin.")
 
     # Translate the supercell to the origin.
     scell_geom -= scell_cntr
@@ -285,12 +285,13 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
 
             nm_new["com_monomer_separations"].append(np.linalg.norm(nmers[a_name]["com"] - nmers[b_name]["com"]))
     
-
+    
     # Criterion to launch energy calculations.
     nm_new["priority"] = 0.0
 
     priority = 1.0
     
+    #for r in nm_new["com_monomer_separations"]:
     for r in nm_new["com_monomer_separations"]:
         one_over_r3 = 1.0/r**3
         priority *= one_over_r3
@@ -375,22 +376,18 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
     if nmer_type == "dimers":
         nm_dictname_pattern = "1mer-"
-        nm_txt_lbl = "Dimer"
         num_monomers = 2
 
     elif nmer_type == "trimers":
         nm_dictname_pattern = "2mer-"
-        nm_txt_lbl = "Trimer"
         num_monomers = 3
 
     elif nmer_type == "tetramers":
         nm_dictname_pattern = "3mer-"
-        nm_txt_lbl = "Tetramer"
         num_monomers = 4
 
     elif nmer_type == "pentamers":
         nm_dictname_pattern = "4mer-"
-        nm_txt_lbl = "Pentamer"
         num_monomers = 5
     
     else:
@@ -424,16 +421,16 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
             if max_mon_sep > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
                 if verbose >= 2: 
-                    print("%s %s discarded: Atomic separation %3.2f A, longer than cutoff %3.2f A" \
-                          % (nm_txt_lbl, new_nmer_name, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
+                    print("%s discarded: Atomic separation %3.2f A, longer than cutoff %3.2f A" \
+                          % (new_nmer_name, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
                         
                     counter_dscrd_sep += 1
             
             elif max_com_sep > (coms_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
                 if verbose >= 2:
-                    print("%s %s discarded: Centers of mass separation %3.2f A, longer than cutoff %3.2f A" \
-                          % (nm_txt_lbl, new_nmer_name, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff))
+                    print("%s discarded: Centers of mass separation %3.2f A, longer than cutoff %3.2f A" \
+                          % (new_nmer_name, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff))
 
                     counter_dscrd_com += 1
 
@@ -475,7 +472,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                             found_duplicate = True
 
                             if verbose >= 2:
-                                print("%s %s discarded: This is a replica of %s." % (nm_txt_lbl, new_nmer_name, kexisting))
+                                print("%s discarded: This is a replica of %s." % (new_nmer_name, kexisting))
 
                             existing["replicas"] += 1
                             counter_dscrd_rep += 1
@@ -486,8 +483,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     new_nmers[new_nmer_name] = new_nmer
 
                     if verbose >= 2:
-                        print("%s %s generated: No matching NRE (%10.12f au) was found." \
-                                % (nm_txt_lbl, new_nmer_name, new_nmer["nre"]))
+                        print("%s generated: No matching NRE (%10.12f au) was found." \
+                                % (new_nmer_name, new_nmer["nre"]))
 
                     counter_new_nmers += 1
     
@@ -613,8 +610,9 @@ def print_results(verbose=0):
     if verbose >= 1:
         print("")
         print("---------------------------+----------------+------+----------------+--------+------------------")
-        print("N-mer Name                 |   Non-Add. MBE |    # |   Contribution | MinRAB | Rcom Separations")
-        print("(Dictionary key)           |       (KJ/mol) | Rep. |       (KJ/mol) |    (A) | (A)")
+        print("                           |   Non-Additive | Num. |          N-mer | Atomic | Rcom")
+        print("N-mer Name                 |      MB Energy | Rep. |   Contribution | Separ. | Separations")
+        print("                           |       (KJ/mol) |  (#) |       (KJ/mol) |    (A) | (A)")
         print("---------------------------+----------------+------+----------------+--------+------------------")
         for result in results:
             print(result)
@@ -637,6 +635,52 @@ def print_end_msg(start, verbose=0):
         print("Thank you for using CrystaLatte.\n")
         print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 
+# ======================================================================
+
+
+# ======================================================================
+def parse(fil_name):
+    """.
+    """
+
+    options = {}
+    options['nmers_up_to'] = 2 
+    options['r_cut_com'] = 10.0 
+    options['r_cut_monomer'] = 12.0 
+    options['r_cut_dimer'] = 10.0 
+    options['r_cut_trimer'] = 8.0
+    options['r_cut_tetramer'] = 6.0 
+    options['r_cut_pentamer'] = 4.0 
+    options['verbose'] = 1
+
+    with open(fil_name, 'r') as input_file:
+    
+        for lin in input_file:
+            split_line = lin.split('=')
+            option_name = split_line[0].lower()
+            option_value = split_line[1].split('\n')[0]
+        
+            try:
+                option_value = float(option_value)
+            
+            except:
+                pass
+            
+            options[option_name] = option_value
+    
+    main(options['read_cif_input'], 
+         options['read_cif_output'],
+         options['read_cif_a'], 
+         options['read_cif_b'],
+         options['read_cif_c'], 
+         options['nmers_up_to'], 
+         options['r_cut_com'], 
+         options['r_cut_monomer'], 
+         options['r_cut_dimer'], 
+         options['r_cut_trimer'], 
+         options['r_cut_tetramer'], 
+         options['r_cut_pentamer'], 
+         options['verbose'])
 # ======================================================================
 
 
@@ -728,6 +772,9 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
 
 if __name__ == "__main__":
 
+    # Test with parser
+#    parse(sys.argv[-1])
+
     # Test with benzene supercell and timings.
 #    import cProfile as profile 
 #    profile.run("""    main(   read_cif_input="bz-138K.cif",
@@ -746,27 +793,12 @@ if __name__ == "__main__":
 #    """)
     
     # Actual test with benzene supercell.
-#    main(   read_cif_input="bz-138K.cif",
-#            read_cif_output="bz-138K.xyz",
-#            read_cif_a=4,
-#            read_cif_b=4,
-#            read_cif_c=4,
-#            nmers_up_to=3,
-#            r_cut_com=9.5,
-#            r_cut_monomer=11.4,
-#            r_cut_dimer=11.4,
-#            r_cut_trimer=2.7,
-#            r_cut_tetramer=2.7,
-#            r_cut_pentamer=5.0,
-#            verbose=2)
-
-    # Test with carbon dioxide.
-    main(   read_cif_input="CO2.cif",
-            read_cif_output="CO2.xyz",
+    main(   read_cif_input="bz-138K.cif",
+            read_cif_output="bz-138K.xyz",
             read_cif_a=4,
             read_cif_b=4,
             read_cif_c=4,
-            nmers_up_to=2,
+            nmers_up_to=3,
             r_cut_com=9.5,
             r_cut_monomer=11.4,
             r_cut_dimer=11.4,
@@ -774,6 +806,21 @@ if __name__ == "__main__":
             r_cut_tetramer=2.7,
             r_cut_pentamer=5.0,
             verbose=2)
+
+    # Test with carbon dioxide.
+#    main(   read_cif_input="CO2.cif",
+#            read_cif_output="CO2.xyz",
+#            read_cif_a=4,
+#            read_cif_b=4,
+#            read_cif_c=4,
+#            nmers_up_to=2,
+#            r_cut_com=9.5,
+#            r_cut_monomer=11.4,
+#            r_cut_dimer=11.4,
+#            r_cut_trimer=2.7,
+#            r_cut_tetramer=2.7,
+#            r_cut_pentamer=5.0,
+#            verbose=2)
 
     # Test with water.
 #    main(   read_cif_input="ice-Ih.cif",

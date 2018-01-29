@@ -1,0 +1,13 @@
+read_cif_input=CO2.cif
+read_cif_a=4
+read_cif_b=4
+read_cif_c=4
+nmers_up_to=2
+r_cut_com=9.5
+r_cut_monomer=11.4
+r_cut_dimer=11.4
+r_cut_trimer=2.7
+r_cut_tetramer=2.7
+r_cut_pentamer=5.0
+verbose=2
+read_cif_output=CO2.xyz
