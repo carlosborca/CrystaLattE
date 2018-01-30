@@ -564,8 +564,8 @@ def energies(nmers, verbose=0):
         #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         
-        #psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
-        
+        psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
+
         # Get the non-additive n-body contribution, exclusive of all
         # previous-body interactions.
         varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
@@ -585,15 +585,16 @@ def energies(nmers, verbose=0):
         
         rcomseps = ""
 
-        for r in nmer["com_monomer_separations"]:
+        #for r in nmer["com_monomer_separations"]:
+        for r in nmer["min_monomer_separations"]:
             rcomseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
-        nmer_result = "{:26} | {:>14.8f} | {:>4} | {:>14.8f} | {:6.3f} | {}".format(
+        nmer_result = "{:26} | {:>13.8f} | {:>4} | {:>13.8f} | {:12.6e} | {}".format(
                 knmer, 
                 nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, 
                 nmer["replicas"], 
                 nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
-                float(max(nmer["min_monomer_separations"])) * qcdb.psi_bohr2angstroms,
+                nmer["priority"],
                 rcomseps)
         
         results.append(nmer_result)
@@ -609,14 +610,14 @@ def print_results(verbose=0):
 
     if verbose >= 1:
         print("")
-        print("---------------------------+----------------+------+----------------+--------+------------------")
-        print("                           |   Non-Additive | Num. |          N-mer | Atomic | Rcom")
-        print("N-mer Name                 |      MB Energy | Rep. |   Contribution | Separ. | Separations")
-        print("                           |       (KJ/mol) |  (#) |       (KJ/mol) |    (A) | (A)")
-        print("---------------------------+----------------+------+----------------+--------+------------------")
+        print("---------------------------+---------------+------+---------------+--------------+-----------------")
+        print("                           |  Non-Additive | Num. |         N-mer |  Calculation | Minimum Monomer")
+        print("N-mer Name                 |     MB Energy | Rep. |  Contribution |     Priority | Separations")
+        print("                           |      (KJ/mol) |  (#) |      (KJ/mol) | (Arb. Units) | (A)")
+        print("---------------------------+---------------+------+---------------+--------------+-----------------")
         for result in results:
             print(result)
-        print("---------------------------+----------------+------+----------------+--------+------------------")
+        print("---------------------------+---------------+------+---------------+--------------+-----------------")
         print("\nCrystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy))
         print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
         print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
@@ -773,7 +774,7 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
 if __name__ == "__main__":
 
     # Test with parser
-#    parse(sys.argv[-1])
+    parse(sys.argv[-1])
 
     # Test with benzene supercell and timings.
 #    import cProfile as profile 
@@ -793,19 +794,19 @@ if __name__ == "__main__":
 #    """)
     
     # Actual test with benzene supercell.
-    main(   read_cif_input="bz-138K.cif",
-            read_cif_output="bz-138K.xyz",
-            read_cif_a=4,
-            read_cif_b=4,
-            read_cif_c=4,
-            nmers_up_to=3,
-            r_cut_com=9.5,
-            r_cut_monomer=11.4,
-            r_cut_dimer=11.4,
-            r_cut_trimer=2.7,
-            r_cut_tetramer=2.7,
-            r_cut_pentamer=5.0,
-            verbose=2)
+#    main(   read_cif_input="bz-138K.cif",
+#            read_cif_output="bz-138K.xyz",
+#            read_cif_a=4,
+#            read_cif_b=4,
+#            read_cif_c=4,
+#            nmers_up_to=2,
+#            r_cut_com=20.0,
+#            r_cut_monomer=20.0,
+#            r_cut_dimer=20.0,
+#            r_cut_trimer=0.0,
+#            r_cut_tetramer=0.0,
+#            r_cut_pentamer=0.0,
+#            verbose=2)
 
     # Test with carbon dioxide.
 #    main(   read_cif_input="CO2.cif",
