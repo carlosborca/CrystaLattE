@@ -546,7 +546,8 @@ def energies(nmers, verbose=0):
         p4out = knmer + ".dat"
         psi4.core.set_output_file(p4out)
 
-        print("Computing energy of {}. N-Mer priority = {}".format(knmer, nmer["priority"]))
+        if verbose >= 2:
+            print("Computing energy of {}".format(knmer))
         
         text = nmer2psimol(nmers, knmer, nmer, verbose)
         mymol = psi4.geometry(text)
@@ -564,7 +565,7 @@ def energies(nmers, verbose=0):
         #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         
-        psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0)
+        #psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
 
         # Get the non-additive n-body contribution, exclusive of all
         # previous-body interactions.
@@ -609,7 +610,7 @@ def print_results(verbose=0):
     """
 
     if verbose >= 1:
-        print("")
+        print("Summary of results:")
         print("---------------------------+---------------+------+---------------+--------------+-----------------")
         print("                           |  Non-Additive | Num. |         N-mer |  Calculation | Minimum Monomer")
         print("N-mer Name                 |     MB Energy | Rep. |  Contribution |     Priority | Separations")
@@ -640,53 +641,57 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def parse(fil_name):
+def input_parser(in_f_name):
     """.
     """
 
-    options = {}
-    options['nmers_up_to'] = 2 
-    options['r_cut_com'] = 10.0 
-    options['r_cut_monomer'] = 12.0 
-    options['r_cut_dimer'] = 10.0 
-    options['r_cut_trimer'] = 8.0
-    options['r_cut_tetramer'] = 6.0 
-    options['r_cut_pentamer'] = 4.0 
-    options['verbose'] = 1
+    keywords = {}
+    keywords['nmers_up_to'] = 2 
+    keywords['read_cif_output'] = "sc.xyz"
+    keywords['read_cif_a'] = 5
+    keywords['read_cif_b'] = 5
+    keywords['read_cif_c'] = 5
+    keywords['r_cut_com'] = 10.0 
+    keywords['r_cut_monomer'] = 12.0 
+    keywords['r_cut_dimer'] = 10.0 
+    keywords['r_cut_trimer'] = 8.0
+    keywords['r_cut_tetramer'] = 6.0 
+    keywords['r_cut_pentamer'] = 4.0 
+    keywords['verbose'] = 1
 
-    with open(fil_name, 'r') as input_file:
+    with open(in_f_name, 'r') as input_file:
     
-        for lin in input_file:
-            split_line = lin.split('=')
-            option_name = split_line[0].lower()
-            option_value = split_line[1].split('\n')[0]
+        for line_inp_f in input_file:
+            split_line = line_inp_f.split('=')
+            keyword_name = split_line[0].lower()
+            keyword_value = split_line[1].split('\n')[0]
         
             try:
-                option_value = float(option_value)
+                keyword_value = float(keyword_value)
             
             except:
                 pass
             
-            options[option_name] = option_value
+            keywords[keyword_name] = keyword_value
     
-    main(options['read_cif_input'], 
-         options['read_cif_output'],
-         options['read_cif_a'], 
-         options['read_cif_b'],
-         options['read_cif_c'], 
-         options['nmers_up_to'], 
-         options['r_cut_com'], 
-         options['r_cut_monomer'], 
-         options['r_cut_dimer'], 
-         options['r_cut_trimer'], 
-         options['r_cut_tetramer'], 
-         options['r_cut_pentamer'], 
-         options['verbose'])
+    main(keywords['read_cif_input'], 
+         keywords['read_cif_output'],
+         keywords['read_cif_a'], 
+         keywords['read_cif_b'],
+         keywords['read_cif_c'], 
+         keywords['nmers_up_to'], 
+         keywords['r_cut_com'], 
+         keywords['r_cut_monomer'], 
+         keywords['r_cut_dimer'], 
+         keywords['r_cut_trimer'], 
+         keywords['r_cut_tetramer'], 
+         keywords['r_cut_pentamer'], 
+         keywords['verbose'])
 # ======================================================================
 
 
 # ======================================================================
-def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, verbose=1):
+def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -764,6 +769,7 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
     # ------------------------------------------------------------------
     
     # Print the final results.
+    print("")
     print_results(verbose)
     
     # Print exit message and timings information.
@@ -774,7 +780,7 @@ def main(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, nm
 if __name__ == "__main__":
 
     # Test with parser
-    parse(sys.argv[-1])
+    input_parser(sys.argv[-1])
 
     # Test with benzene supercell and timings.
 #    import cProfile as profile 
