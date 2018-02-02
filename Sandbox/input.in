@@ -1,8 +1,8 @@
+read_cif_input=bz-138K.cif
 read_cif_output=bz-138K.xyz
 read_cif_a=4
 read_cif_b=4
 read_cif_c=4
-read_cif_input=bz-138K.cif
 nmers_up_to=2
 r_cut_com=9.5
 r_cut_monomer=11.4
