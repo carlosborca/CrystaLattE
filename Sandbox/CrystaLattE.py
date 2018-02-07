@@ -69,7 +69,9 @@ def input_parser(in_f_name):
     keywords["r_cut_trimer"] = 8.0
     keywords["r_cut_tetramer"] = 6.0 
     keywords["r_cut_pentamer"] = 4.0 
-    keywords["keep_psi4_output"] = "No"
+    keywords["cle_run_type"] = "normal"
+    keywords["psi4_method_basis"] = "HF/STO-3G"
+    keywords["psi4_memory"] = "500 MB"
     keywords["verbose"] = 1
 
     with open(in_f_name, "r") as input_file:
@@ -99,7 +101,9 @@ def input_parser(in_f_name):
          keywords["r_cut_trimer"], 
          keywords["r_cut_tetramer"], 
          keywords["r_cut_pentamer"], 
-         keywords["keep_psi4_output"],
+         keywords["cle_run_type"],
+         keywords["psi4_method_basis"],
+         keywords["psi4_memory"],
          keywords["verbose"])
 # ======================================================================
 
@@ -579,7 +583,7 @@ def nmer2psimol(nmers, knmer, nmer, verbose=0):
 
 
 # ======================================================================
-def energies(nmers, keep_psi4_output, verbose=0):
+def energies(nmers, cle_run_type, psi4_method_basis, psi4_memory, verbose=0):
     """.
     """
    
@@ -597,8 +601,11 @@ def energies(nmers, keep_psi4_output, verbose=0):
         if num_monomers == 1:
             continue
 
+        # Find out the number of CPUs in the local system.
+        cpus = multiprocessing.cpu_count()
+
         # If the output is going to be kept, setup the filename.
-        if keep_psi4_output.lower() == "yes":
+        if cle_run_type.lower() == "normal":
             p4out = knmer + ".dat"
             psi4.core.set_output_file(p4out)
         
@@ -609,22 +616,32 @@ def energies(nmers, keep_psi4_output, verbose=0):
         text = nmer2psimol(nmers, knmer, nmer, verbose)
         mymol = psi4.geometry(text)
         
-        psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'freeze_core': 'true'})
-        
-        # Find out the number of CPUs in the local system.
-        cpus = multiprocessing.cpu_count()
-
         # Set the number of threads to run Psi4.
         psi4.core.set_num_threads(cpus)
+
+        # Set Psi4 memory.
+        psi4.set_memory(psi4_memory)
+
+        # Set Psi4 block of options.
+        psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'cc_type': 'df', 'freeze_core': 'true', 'e_convergence': '8'})
         
-        psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'freeze_core': 'true'})
+        # Start wall-clock timer.
+        psi4_start = time.time()
+
+        # Execute Psi4 energy calculations
 
         # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
         #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
         
-        psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
+        psi4.energy(psi4_method_basis, molecule=mymol, bsse_type=['vmfc'], verbose=0)
 
+        # Stop wall-clock timer.
+        psi4_ended = time.time()
+
+        # Calculate execution time.
+        tictoc = psi4_ended - psi4_start
+            
         # Get the non-additive n-body contribution, exclusive of all
         # previous-body interactions.
         varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
@@ -657,9 +674,9 @@ def energies(nmers, keep_psi4_output, verbose=0):
                 rcomseps)
         
         results.append(nmer_result)
-    
+
         if verbose >= 2:
-            print("{} processed. Partial Crystal Lattice Energy = {:9.8f}".format(knmer, crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
+            print("{} elapsed {:.2f} seconds processing on {} threads. Additive Lattice Energy = {:9.8f} KJ/mol".format(knmer, tictoc, cpus, crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
         
     return crystal_lattice_energy
 # ======================================================================
@@ -694,7 +711,7 @@ def print_end_msg(start, verbose=0):
     if verbose >= 1:
         print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
         print("Execution terminated succesfully.")
-        print("Total elapsed wall-clock time: {:11.2f} seconds\n".format(time.time() - start))
+        print("Total elapsed wall-clock time: {:.2f} seconds\n".format(time.time() - start))
         print("Thank you for using CrystaLatte.\n")
         print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 
@@ -702,7 +719,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, keep_psi4_output="No", verbose=1):
+def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type="normal", psi4_method_basis="HF/STO-3G", psi4_memory="500 MB", verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -776,7 +793,7 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
     if verbose >= 2:
         print ("\nComputing interaction energies of N-mers:")
 
-    energies(nmers, keep_psi4_output, verbose)
+    energies(nmers, cle_run_type, psi4_method_basis, psi4_memory, verbose)
     # ------------------------------------------------------------------
     
     # Print the final results.
@@ -790,5 +807,23 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
 
 if __name__ == "__main__":
 
-    # Test with parser
+    # Normal execution using an input file.
     input_parser(sys.argv[-1])
+
+    # Hard-coded Test
+#    main(   read_cif_input="../Tests/Benzene/Benzene.cif",
+#            read_cif_output="../Tests/Benzene/Benzene.xyz",
+#            read_cif_a=2,
+#            read_cif_b=2,
+#            read_cif_c=2,
+#            nmers_up_to=2,
+#            r_cut_com=5.1,
+#            r_cut_monomer=3.3,
+#            r_cut_dimer=2.7,
+#            r_cut_trimer=2.7,
+#            r_cut_tetramer=2.7,
+#            r_cut_pentamer=5.6,
+#            cle_run_type="normal",
+#            psi4_method_basis="HF/STO-3G",
+#            psi4_memory="500 MB",
+#            verbose=2)
