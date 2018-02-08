@@ -639,7 +639,12 @@ def energies(nmers, cle_run_type, psi4_method_basis, psi4_memory, verbose=0):
         #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc']) 
         
         if "test" not in cle_run_type:
-            psi4.energy(psi4_method_basis, molecule=mymol, bsse_type=['vmfc'])
+
+            if num_monomers > 2:
+                psi4.energy(psi4_method_basis, molecule=mymol, bsse_type=['vmfc'])
+
+            else:
+                psi4.energy(psi4_method_basis, molecule=mymol, bsse_type=['cp'])
 
         # Stop wall-clock timer.
         psi4_ended = time.time()
@@ -649,7 +654,10 @@ def energies(nmers, cle_run_type, psi4_method_basis, psi4_memory, verbose=0):
             
         # Get the non-additive n-body contribution, exclusive of all
         # previous-body interactions.
-        varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
+        varstring = "CP-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
+        
+        # This comment and the line above is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer!!
+        # varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
         
         n_body_energy = psi4.core.get_variable(varstring) 
         
