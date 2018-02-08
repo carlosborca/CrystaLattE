@@ -69,7 +69,7 @@ def input_parser(in_f_name):
     keywords["r_cut_trimer"] = 8.0
     keywords["r_cut_tetramer"] = 6.0 
     keywords["r_cut_pentamer"] = 4.0 
-    keywords["cle_run_type"] = "normal"
+    keywords["cle_run_type"] = ["quiet"]
     keywords["psi4_method_basis"] = "HF/STO-3G"
     keywords["psi4_memory"] = "500 MB"
     keywords["verbose"] = 1
@@ -80,15 +80,19 @@ def input_parser(in_f_name):
             split_line = line_inp_f.split("=")
             keyword_name = split_line[0].lower()
             keyword_value = split_line[1].split('\n')[0]
-        
+       
+            if keyword_name == "cle_run_type":
+                keyword_value = keyword_value.lower()
+                keyword_value = keyword_value.replace(" ", "").split("+")
+                
             try:
                 keyword_value = float(keyword_value)
-            
+
             except:
                 pass
-            
+        
             keywords[keyword_name] = keyword_value
-    
+
     main(keywords["read_cif_input"], 
          keywords["read_cif_output"],
          keywords["read_cif_a"], 
@@ -605,13 +609,13 @@ def energies(nmers, cle_run_type, psi4_method_basis, psi4_memory, verbose=0):
         cpus = multiprocessing.cpu_count()
 
         # If the output is going to be kept, setup the filename.
-        if cle_run_type.lower() == "normal":
-            p4out = knmer + ".dat"
-            psi4.core.set_output_file(p4out)
+        if "quiet" in cle_run_type:
+            psi4.core.be_quiet()
         
         # If the output is not kept, do not print to screen.
         else:
-            psi4.core.be_quiet()
+            p4out = knmer + ".dat"
+            psi4.core.set_output_file(p4out)
 
         text = nmer2psimol(nmers, knmer, nmer, verbose)
         mymol = psi4.geometry(text)
@@ -719,7 +723,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type="normal", psi4_method_basis="HF/STO-3G", psi4_memory="500 MB", verbose=1):
+def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["quiet"], psi4_method_basis="HF/STO-3G", psi4_memory="500 MB", verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -823,7 +827,7 @@ if __name__ == "__main__":
 #            r_cut_trimer=2.7,
 #            r_cut_tetramer=2.7,
 #            r_cut_pentamer=5.6,
-#            cle_run_type="normal",
+#            cle_run_type=["quiet"],
 #            psi4_method_basis="HF/STO-3G",
 #            psi4_memory="500 MB",
 #            verbose=2)
