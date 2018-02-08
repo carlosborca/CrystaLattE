@@ -632,13 +632,14 @@ def energies(nmers, cle_run_type, psi4_method_basis, psi4_memory, verbose=0):
         # Start wall-clock timer.
         psi4_start = time.time()
 
-        # Execute Psi4 energy calculations
+        # Execute Psi4 energy calculations, unless running on test mode.
 
         # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
-        #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
-        #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'], verbose=0) 
+        #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc']) 
+        #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc']) 
         
-        psi4.energy(psi4_method_basis, molecule=mymol, bsse_type=['vmfc'], verbose=0)
+        if "test" not in cle_run_type:
+            psi4.energy(psi4_method_basis, molecule=mymol, bsse_type=['vmfc'])
 
         # Stop wall-clock timer.
         psi4_ended = time.time()
@@ -791,9 +792,6 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
         print("\nERROR: The current implementation of CrystaLattE is limited to pentamers.")
         print("       Please use 2 <= nmer_up_to < 5.")
    
-    # ------------------------------------------------------------------
-    # TODO: Run plesantly parallel PSI4 computations on all the final
-    #       list of monomers, dimers, trimers, etc.
     if verbose >= 2:
         print ("\nComputing interaction energies of N-mers:")
 
@@ -811,23 +809,29 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
 
 if __name__ == "__main__":
 
-    # Normal execution using an input file.
-    input_parser(sys.argv[-1])
-
     # Hard-coded Test
-#    main(   read_cif_input="../Tests/Benzene/Benzene.cif",
-#            read_cif_output="../Tests/Benzene/Benzene.xyz",
-#            read_cif_a=2,
-#            read_cif_b=2,
-#            read_cif_c=2,
-#            nmers_up_to=2,
-#            r_cut_com=5.1,
-#            r_cut_monomer=3.3,
-#            r_cut_dimer=2.7,
-#            r_cut_trimer=2.7,
-#            r_cut_tetramer=2.7,
-#            r_cut_pentamer=5.6,
-#            cle_run_type=["quiet"],
-#            psi4_method_basis="HF/STO-3G",
-#            psi4_memory="500 MB",
-#            verbose=2)
+    if "CrystaLattE" in sys.argv[-1]:
+        main(   read_cif_input="../Tests/Benzene/Benzene.cif",
+                read_cif_output="../Tests/Benzene/Benzene.xyz",
+                read_cif_a=2,
+                read_cif_b=2,
+                read_cif_c=2,
+                nmers_up_to=2,
+                r_cut_com=5.1,
+                r_cut_monomer=3.3,
+                r_cut_dimer=2.7,
+                r_cut_trimer=2.7,
+                r_cut_tetramer=2.7,
+                r_cut_pentamer=5.6,
+                cle_run_type=["quiet"],
+                psi4_method_basis="HF/STO-3G",
+                psi4_memory="500 MB",
+                verbose=2)
+
+        print("><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>")
+        print("WARNING: No imput was provided. The previous execution was just a test.")
+        print("><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>\n")
+
+    # Normal execution using an input file.
+    else:
+        input_parser(sys.argv[-1])
