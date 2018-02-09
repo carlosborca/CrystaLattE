@@ -598,7 +598,8 @@ def nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose=0):
     
     psithon_input += "\nmemory {}\n".format(psi4_memory)
     
-    psithon_input += "\nmolecule N-mer-{} {{\n".format(knmer)
+    mymol = knmer.replace("2mer", "Dimer").replace("3mer", "Trimer").replace("4mer", "Tetramer").replace("5mer", "Pentamer").replace("-", "_").replace("+", "_")
+    psithon_input += "\nmolecule {} {{\n".format(mymol)
     
     for at in range(nmer["coords"].shape[0]):
 
@@ -613,6 +614,14 @@ def nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose=0):
     
     psithon_input += "}\n"
 
+    psithon_input += "\nset {\n"
+    psithon_input += "  e_convergence = 8\n"
+    psithon_input += "  scf_type df\n"
+    psithon_input += "  mp2_type df\n" 
+    psithon_input += "  cc_type df\n"
+    psithon_input += "  freeze_core true\n"
+    psithon_input += "}\n"
+
     # Hartree-Fock is called with the 'scf' string in Psithon mode.
     if psi4_method.lower().startswith("hf"):
         psithon_method = "scf" + psi4_method[2:]
@@ -620,7 +629,12 @@ def nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose=0):
     else:
         psithon_method = psi4_method
 
-    psithon_input += "\nenergy('{}')\n".format(psithon_method)
+    # This is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer when doing VMFC!!
+    if len(nmer["monomers"]) > 2:
+        psithon_input += "\nenergy('{}', bsse_type = 'vmfc')\n".format(psithon_method)
+
+    else:
+        psithon_input += "\nenergy('{}', bsse_type = 'cp')\n".format(psithon_method)
 
     print("\nPSI4 Molecule of %s:\n" % knmer)
     print(psithon_input)
@@ -630,7 +644,7 @@ def nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose=0):
 
 
 # ======================================================================
-def psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_method, psi4_memory, verbose=0):
+def psi4_energies(nmers, knmer, nmer, cpus, cle_run_type, psi4_method, psi4_memory, verbose=0):
     """.
     """
 
@@ -663,8 +677,8 @@ def psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_met
     
     if "test" not in cle_run_type:
         
-        # This comment and the line above is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer!!
-        if num_monomers > 2:
+        # This is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer when doing VMFC!!
+        if len(nmer["monomers"]) > 2:
             psi4.energy(psi4_method, molecule=mymol, bsse_type=['vmfc'])
         
         else:
@@ -673,15 +687,15 @@ def psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_met
     
     # Get the non-additive n-body contribution, exclusive of all
     # previous-body interactions.
-    varstring = "CP-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
+    varstring = "CP-CORRECTED " + str(len(nmer["monomers"])) + "-BODY INTERACTION ENERGY"
     
     # This comment and the line above is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer!!
-    # varstring = "VMFC-CORRECTED " + str(num_monomers) + "-BODY INTERACTION ENERGY"
+    # varstring = "VMFC-CORRECTED " + str(len(nmer["monomers"])) + "-BODY INTERACTION ENERGY"
     
     n_body_energy = psi4.core.get_variable(varstring)
     
-    if num_monomers > 2:
-        varstring = "VMFC-CORRECTED " + str(num_monomers-1) + "-BODY INTERACTION ENERGY"
+    if len(nmer["monomers"]) > 2:
+        varstring = "VMFC-CORRECTED " + str(len(nmer["monomers"])-1) + "-BODY INTERACTION ENERGY"
         n_minus_1_body_energy = psi4.core.get_variable(varstring)
         nmer["nambe"] = n_body_energy - n_minus_1_body_energy
 
@@ -702,11 +716,9 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
     results = []
     
     for knmer, nmer in nmers.items():
-        # Determine the number of monomers in the N-mer.
-        num_monomers = len(nmer["monomers"])
 
         # Energies are not calculated for monomers. Rigid body approximation.
-        if num_monomers == 1:
+        if len(nmer["monomers"]) == 1:
             continue
 
         # Find out the number of CPUs in the local system.
@@ -717,7 +729,7 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
             
         # Run energies in PSI4.
         if "psi4" in cle_run_type:
-            psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_method, psi4_memory, verbose)
+            psi4_energies(nmers, knmer, nmer, cpus, cle_run_type, psi4_method, psi4_memory, verbose)
 
         # Stop wall-clock timer.
         energies_end = time.time()
@@ -725,7 +737,7 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
         # Calculate execution time.
         energies_wallclock = energies_end - energies_start
     
-        nmer["contrib"] = nmer["nambe"] * nmer["replicas"] / float(num_monomers)
+        nmer["contrib"] = nmer["nambe"] * nmer["replicas"] / float(len(nmer["monomers"]))
         crystal_lattice_energy += nmer["contrib"]
         
         rcomseps = ""
