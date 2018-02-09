@@ -54,7 +54,12 @@ from psi4.driver.qcdb.periodictable import el2z
 
 # ======================================================================
 def input_parser(in_f_name):
-    """.
+    """Reads a CrystaLattE input file, sets the arguments for the main()
+    function, and calls main() to start the execution of the program.
+    
+    Arguments:
+    <str> in_f_name
+        Input filename.
     """
 
     keywords = {}
@@ -114,11 +119,25 @@ def input_parser(in_f_name):
 
 # ======================================================================
 def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose=1):
-    """Takes strings with the names of a CIF input file and a .xyz 
-    output file, as well as integers for the number of replicas of the
-    rectangular cell in each direction (A, B, and C). It then calls 
+    """Takes the name of a CIF input file and the name of a .xyz output
+    file, as well as the number of replicas of the rectangular cell in
+    each direction (A, B, and C). It then calls 
     Read_CIF() and passes that information as arguments to generate an
     .xyz file of the supercell.
+
+    Arguments:
+    <str> read_cif_input
+        CIF input filename.
+    <str> read_cif_output
+        XYZ output filename.
+    <int> read_cif_a
+        Number of replicas of the cartesian unit cell in `a` direction.
+    <int> read_cif_b
+        Number of replicas of the cartesian unit cell in `b` direction.
+    <int> read_cif_c
+        Number of replicas of the cartesian unit cell in `c` direction.
+    <int> verbose
+        Adjusts the level of detail of the printouts.
     """
 
     read_cif_arguments = ["", "-i", read_cif_input, "-o", read_cif_output, "-b", read_cif_a, read_cif_b, read_cif_c]
@@ -263,6 +282,7 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
             nmers[name]["rmin"] = frag_r_mins[index]
             nmers[name]["delimiters"] = []
             nmers[name]["com"] = center_of_mass(frag_elems[index], frag_geoms[index])
+            nmers[name]["priority"] = 0.0
 
     return nmers
 # ======================================================================
@@ -718,9 +738,18 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
 
     crystal_lattice_energy = 0.0
     results = []
-    
-    for knmer, nmer in nmers.items():
+   
+    # Get the keys of the N-mers dictionary, and put them on a list.
+    nmer_keys = list(nmers.keys())
 
+    # Sort the list in decreasing priority order.
+    nmer_keys.sort(key = lambda x: -nmers[x]['priority'])
+
+    # The next line was replaced to trigger the calculations in order.
+    #for knmer, nmer in nmers.items():
+    for knmer in nmer_keys:
+
+        nmer = nmers[knmer]
         # Energies are not calculated for monomers. Rigid body approximation.
         if len(nmer["monomers"]) == 1:
             continue
