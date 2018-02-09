@@ -69,7 +69,7 @@ def input_parser(in_f_name):
     keywords["r_cut_trimer"] = 8.0
     keywords["r_cut_tetramer"] = 6.0 
     keywords["r_cut_pentamer"] = 4.0 
-    keywords["cle_run_type"] = ["psi4", "quiet"]
+    keywords["cle_run_type"] = ["psi4api", "quiet"]
     keywords["psi4_method"] = "HF/STO-3G"
     keywords["psi4_memory"] = "500 MB"
     keywords["verbose"] = 1
@@ -635,11 +635,15 @@ def nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose=0):
 
     else:
         psithon_input += "\nenergy('{}', bsse_type = 'cp')\n".format(psithon_method)
+   
+    psithon_input += "\n"
 
-    print("\nPSI4 Molecule of %s:\n" % knmer)
-    print(psithon_input)
+    psithon_filename = knmer + ".in"
 
-    return psithon_input
+    with open(psithon_filename, "w") as psithon_f:
+        
+        for line in psithon_input:
+            psithon_f.write(line)
 # ======================================================================
 
 
@@ -682,7 +686,7 @@ def psi4_energies(nmers, knmer, nmer, cpus, cle_run_type, psi4_method, psi4_memo
             psi4.energy(psi4_method, molecule=mymol, bsse_type=['vmfc'])
         
         else:
-            # psi4.energy(psi4_method, molecule=mymol, bsse_type=['vmfc'])
+            #psi4.energy(psi4_method, molecule=mymol, bsse_type=['vmfc'])
             psi4.energy(psi4_method, molecule=mymol, bsse_type=['cp'])
     
     # Get the non-additive n-body contribution, exclusive of all
@@ -690,7 +694,7 @@ def psi4_energies(nmers, knmer, nmer, cpus, cle_run_type, psi4_method, psi4_memo
     varstring = "CP-CORRECTED " + str(len(nmer["monomers"])) + "-BODY INTERACTION ENERGY"
     
     # This comment and the line above is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer!!
-    # varstring = "VMFC-CORRECTED " + str(len(nmer["monomers"])) + "-BODY INTERACTION ENERGY"
+    #varstring = "VMFC-CORRECTED " + str(len(nmer["monomers"])) + "-BODY INTERACTION ENERGY"
     
     n_body_energy = psi4.core.get_variable(varstring)
     
@@ -726,9 +730,13 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
         
         # Start wall-clock timer.
         energies_start = time.time()
-            
+        
+        # Produce Psithon inputs
+        if "psithon" in cle_run_type:
+            nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose)
+
         # Run energies in PSI4.
-        if "psi4" in cle_run_type:
+        else:
             psi4_energies(nmers, knmer, nmer, cpus, cle_run_type, psi4_method, psi4_memory, verbose)
 
         # Stop wall-clock timer.
@@ -804,7 +812,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4", "quiet"], psi4_method="HF/STO-3G", psi4_memory="500 MB", verbose=1):
+def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4api", "quiet"], psi4_method="HF/STO-3G", psi4_memory="500 MB", verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -903,7 +911,7 @@ if __name__ == "__main__":
                 r_cut_trimer=2.7,
                 r_cut_tetramer=2.7,
                 r_cut_pentamer=5.6,
-                cle_run_type=["psi4", "quiet"],
+                cle_run_type=["psi4api", "quiet"],
                 psi4_method="HF/STO-3G",
                 psi4_memory="500 MB",
                 verbose=2)
