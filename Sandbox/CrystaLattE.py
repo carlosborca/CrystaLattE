@@ -70,7 +70,7 @@ def input_parser(in_f_name):
     keywords["r_cut_tetramer"] = 6.0 
     keywords["r_cut_pentamer"] = 4.0 
     keywords["cle_run_type"] = ["psi4", "quiet"]
-    keywords["psi4_method_basis"] = "HF/STO-3G"
+    keywords["psi4_method"] = "HF/STO-3G"
     keywords["psi4_memory"] = "500 MB"
     keywords["verbose"] = 1
 
@@ -106,7 +106,7 @@ def input_parser(in_f_name):
          keywords["r_cut_tetramer"], 
          keywords["r_cut_pentamer"], 
          keywords["cle_run_type"],
-         keywords["psi4_method_basis"],
+         keywords["psi4_method"],
          keywords["psi4_memory"],
          keywords["verbose"])
 # ======================================================================
@@ -563,31 +563,74 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
 
 # ======================================================================
-def nmer2psimol(nmers, knmer, nmer, verbose=0):
-    """.
+def nmer2psiapimol(nmers, knmer, nmer, verbose=0):
+    """Takes the `nmers` dictionary; `knmer`, the key of a given N-mer of
+    the N-mers dictionary; and `nmer`, its corresponding dictionary.
+    Returns a string `psi_api_molecule` that defines a molecule in PSI4
+    API mode. This string starts with three lines specifying the use of
+    atomic units, avoidance of center of mass translation, and
+    avoidance of reorientation. The next lines contain the element
+    symbol and coordinates, for each atom in the N-mer, separating each
+    monomer with lines containing a double hyphen.
     """
 
-    text = "\nunits = au\n"
-    text += "no_com\n"
-    text += "no_reorient\n"
+    psi_api_molecule = "\nunits = au\n"
+    psi_api_molecule += "no_com\n"
+    psi_api_molecule += "no_reorient\n"
+
+    for at in range(nmer["coords"].shape[0]):
+
+        if at in nmer["delimiters"]:
+            psi_api_molecule += "--\n"
+
+        psi_api_molecule += "  {:6} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+
+    return psi_api_molecule
+# ======================================================================
+
+
+# ======================================================================
+def nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose=0):
+    """.
+    """
+    
+    psithon_input =  "# Psi4 Psithon input file for N-mer: {}\n".format(knmer)
+    
+    psithon_input += "\nmemory {}\n".format(psi4_memory)
+    
+    psithon_input += "\nmolecule N-mer-{} {{\n".format(knmer)
     
     for at in range(nmer["coords"].shape[0]):
 
         if at in nmer["delimiters"]:
-            text += "--\n"
+            psithon_input += "--\n"
         
-        text += "  {:6} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+        psithon_input += "  {:6} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
 
-    if verbose >= 3:
-        print("\nPSI4 Molecule of %s:" % knmer)
-        print(text)
+    psithon_input += "units = au\n"
+    psithon_input += "no_com\n"
+    psithon_input += "no_reorient\n"
+    
+    psithon_input += "}\n"
 
-    return text
+    # Hartree-Fock is called with the 'scf' string in Psithon mode.
+    if psi4_method.lower().startswith("hf"):
+        psithon_method = "scf" + psi4_method[2:]
+
+    else:
+        psithon_method = psi4_method
+
+    psithon_input += "\nenergy('{}')\n".format(psithon_method)
+
+    print("\nPSI4 Molecule of %s:\n" % knmer)
+    print(psithon_input)
+
+    return psithon_input
 # ======================================================================
 
 
 # ======================================================================
-def psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_method_basis, psi4_memory, verbose=0):
+def psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_method, psi4_memory, verbose=0):
     """.
     """
 
@@ -600,8 +643,8 @@ def psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_met
         p4out = knmer + ".dat"
         psi4.core.set_output_file(p4out)
 
-    text = nmer2psimol(nmers, knmer, nmer, verbose)
-    mymol = psi4.geometry(text)
+    psi_api_molecule = nmer2psiapimol(nmers, knmer, nmer, verbose)
+    mymol = psi4.geometry(psi_api_molecule)
     
     # Set the number of threads to run Psi4.
     psi4.core.set_num_threads(cpus)
@@ -622,11 +665,11 @@ def psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_met
         
         # This comment and the line above is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer!!
         if num_monomers > 2:
-            psi4.energy(psi4_method_basis, molecule=mymol, bsse_type=['vmfc'])
+            psi4.energy(psi4_method, molecule=mymol, bsse_type=['vmfc'])
         
         else:
-            # psi4.energy(psi4_method_basis, molecule=mymol, bsse_type=['vmfc'])
-            psi4.energy(psi4_method_basis, molecule=mymol, bsse_type=['cp'])
+            # psi4.energy(psi4_method, molecule=mymol, bsse_type=['vmfc'])
+            psi4.energy(psi4_method, molecule=mymol, bsse_type=['cp'])
     
     # Get the non-additive n-body contribution, exclusive of all
     # previous-body interactions.
@@ -648,7 +691,7 @@ def psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_met
 
 
 # ======================================================================
-def cle_manager(nmers, cle_run_type, psi4_method_basis, psi4_memory, verbose=0):
+def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
     """.
     """
 
@@ -674,7 +717,7 @@ def cle_manager(nmers, cle_run_type, psi4_method_basis, psi4_memory, verbose=0):
             
         # Run energies in PSI4.
         if "psi4" in cle_run_type:
-            psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_method_basis, psi4_memory, verbose)
+            psi4_energies(nmers, knmer, nmer, num_monomers, cpus, cle_run_type, psi4_method, psi4_memory, verbose)
 
         # Stop wall-clock timer.
         energies_end = time.time()
@@ -749,7 +792,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4", "quiet"], psi4_method_basis="HF/STO-3G", psi4_memory="500 MB", verbose=1):
+def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4", "quiet"], psi4_method="HF/STO-3G", psi4_memory="500 MB", verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -820,7 +863,7 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
     if verbose >= 2:
         print ("\nComputing interaction energies of N-mers:")
 
-    cle_manager(nmers, cle_run_type, psi4_method_basis, psi4_memory, verbose)
+    cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose)
     # ------------------------------------------------------------------
     
     # Print the final results.
@@ -849,7 +892,7 @@ if __name__ == "__main__":
                 r_cut_tetramer=2.7,
                 r_cut_pentamer=5.6,
                 cle_run_type=["psi4", "quiet"],
-                psi4_method_basis="HF/STO-3G",
+                psi4_method="HF/STO-3G",
                 psi4_memory="500 MB",
                 verbose=2)
 
