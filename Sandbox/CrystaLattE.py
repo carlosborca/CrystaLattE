@@ -153,17 +153,32 @@ def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, rea
 
 # ======================================================================
 def center_supercell(read_cif_output, verbose=0):
-    """Takes a string with the filename of the supercell xyz file 
-    produced by Read_CIF. Then the center of the supercell coordinates 
-    is computed to translate the supercell to the origin.
+    """Takes the filename of the supercell file produced by Read_CIF.
+    Then the center of the supercell coordinates is computed to 
+    translate the supercell to the origin.
     
-    Returns `scell_geom_max_coords`, which is an np.array with 3 
-    numbers: the maximum value of the coordinates x, y, and z of the
-    centered supercell.
+    Returns an array with 3 numbers: the maximum value of the 
+    coordinates x, y, and z of the centered supercell.
 
-    It also returns scell_geom and scell_elem, two Numpy arrays with
-    geometry and element symbols of the centered supercell, 
-    respectively.
+    It also returns two arrays with the geometry and element symbols of
+    the centered supercell, respectively.
+
+    Arguments:
+    <str> read_cif_output
+        Name of the file with the cartesian coordinates of the
+        supercell.
+    <int> verbose
+        Adjusts the level of detail of the printouts.i
+
+    Returns:
+    <numpy.ndarray> scell_geom_max_coords
+        Array of 3 numbers with the maximum value of the coordinates x,
+        y, and z of the centered supercell.
+    <numpy.ndarray> scell_geom
+        3-columns array with the x, y, and z coordinates of the 
+        centered supercell.
+    <numpy.ndarray> scell_elem
+        1-column array with element symbols of the centered supercell.
     """
     
     if verbose >= 2:
@@ -583,8 +598,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
 
 # ======================================================================
-def nmer2psiapimol(nmers, knmer, nmer, verbose=0):
-    """Takes the `nmers` dictionary; `knmer`, the key of a given N-mer of
+def nmer2psiapimol(nmers, keynmer, nmer, verbose=0):
+    """Takes the `nmers` dictionary; `keynmer`, the key of a given N-mer of
     the N-mers dictionary; and `nmer`, its corresponding dictionary.
     Returns a string `psi_api_molecule` that defines a molecule in PSI4
     API mode. This string starts with three lines specifying the use of
@@ -610,15 +625,15 @@ def nmer2psiapimol(nmers, knmer, nmer, verbose=0):
 
 
 # ======================================================================
-def nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose=0):
+def nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_memory, verbose=0):
     """.
     """
     
-    psithon_input =  "# Psi4 Psithon input file for N-mer: {}\n".format(knmer)
+    psithon_input =  "# Psi4 Psithon input file for N-mer: {}\n".format(keynmer)
     
     psithon_input += "\nmemory {}\n".format(psi4_memory)
     
-    mymol = knmer.replace("2mer", "Dimer").replace("3mer", "Trimer").replace("4mer", "Tetramer").replace("5mer", "Pentamer").replace("-", "_").replace("+", "_")
+    mymol = keynmer.replace("2mer", "Dimer").replace("3mer", "Trimer").replace("4mer", "Tetramer").replace("5mer", "Pentamer").replace("-", "_").replace("+", "_")
     psithon_input += "\nmolecule {} {{\n".format(mymol)
     
     for at in range(nmer["coords"].shape[0]):
@@ -635,7 +650,7 @@ def nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose=0):
     psithon_input += "}\n"
 
     psithon_input += "\nset {\n"
-    psithon_input += "  e_convergence = 8\n"
+    psithon_input += "  e_convergence 8\n"
     psithon_input += "  scf_type df\n"
     psithon_input += "  mp2_type df\n" 
     psithon_input += "  cc_type df\n"
@@ -658,7 +673,7 @@ def nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose=0):
    
     psithon_input += "\n"
 
-    psithon_filename = knmer + ".in"
+    psithon_filename = keynmer + ".in"
 
     with open(psithon_filename, "w") as psithon_f:
         
@@ -668,8 +683,10 @@ def nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose=0):
 
 
 # ======================================================================
-def psi4_energies(nmers, knmer, nmer, cpus, cle_run_type, psi4_method, psi4_memory, verbose=0):
-    """.
+def psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_memory, verbose=0):
+    """
+    Arguments:
+    
     """
 
     # If the output is going to be kept, setup the filename.
@@ -678,10 +695,10 @@ def psi4_energies(nmers, knmer, nmer, cpus, cle_run_type, psi4_method, psi4_memo
         
     # If the output is not kept, do not print to screen.
     else:
-        p4out = knmer + ".dat"
+        p4out = keynmer + ".dat"
         psi4.core.set_output_file(p4out)
 
-    psi_api_molecule = nmer2psiapimol(nmers, knmer, nmer, verbose)
+    psi_api_molecule = nmer2psiapimol(nmers, keynmer, nmer, verbose)
     mymol = psi4.geometry(psi_api_molecule)
     
     # Set the number of threads to run Psi4.
@@ -730,7 +747,27 @@ def psi4_energies(nmers, knmer, nmer, cpus, cle_run_type, psi4_method, psi4_memo
 
 # ======================================================================
 def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
-    """.
+    """Manages which mode of calculation will be employed.
+
+    Arguments:
+    <dict> nmers
+        Dictionary containing dictionaries for each N-mer in the 
+        system.
+    <list> cle_run_type
+        List of keywords indicating the modes in which CrystaLattE is
+        going to be run.
+    <str> psi4_method
+        Method and basis set for the energy calculation, separated by a
+        slash.
+    <str> psi4_memory
+        Memory allocation for PSI4, written as `500 MB`, or `60 GB`.
+    <int> verbose
+        Adjusts the level of detail of the printouts.
+
+    Returns:
+    <float> crystal_lattice_energy
+        The value of the accumulated crystal lattice energy in atomic
+        units.
     """
 
     global crystal_lattice_energy
@@ -746,10 +783,10 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
     nmer_keys.sort(key = lambda x: -nmers[x]['priority'])
 
     # The next line was replaced to trigger the calculations in order.
-    #for knmer, nmer in nmers.items():
-    for knmer in nmer_keys:
+    #for keynmer, nmer in nmers.items():
+    for keynmer in nmer_keys:
 
-        nmer = nmers[knmer]
+        nmer = nmers[keynmer]
         # Energies are not calculated for monomers. Rigid body approximation.
         if len(nmer["monomers"]) == 1:
             continue
@@ -762,11 +799,11 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
         
         # Produce Psithon inputs
         if "psithon" in cle_run_type:
-            nmer2psithon(nmers, knmer, nmer, psi4_method, psi4_memory, verbose)
+            nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_memory, verbose)
 
         # Run energies in PSI4.
         else:
-            psi4_energies(nmers, knmer, nmer, cpus, cle_run_type, psi4_method, psi4_memory, verbose)
+            psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_memory, verbose)
 
         # Stop wall-clock timer.
         energies_end = time.time()
@@ -783,7 +820,7 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
             rcomseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
         nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
-                knmer, 
+                keynmer, 
                 nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, 
                 nmer["replicas"], 
                 nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
@@ -794,8 +831,8 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
         results.append(nmer_result)
 
         if verbose >= 2:
-            print("{} elapsed {:.2f} seconds processing on {} threads. Additive Lattice Energy = {:9.8f} KJ/mol".format(
-                knmer, 
+            print("{} elapsed {:.2f} seconds processing on {} threads. Cumulative Lattice Energy = {:9.8f} KJ/mol".format(
+                keynmer, 
                 energies_wallclock, 
                 cpus, 
                 crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
@@ -945,9 +982,9 @@ if __name__ == "__main__":
                 psi4_memory="500 MB",
                 verbose=2)
 
-        print("><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>")
-        print("WARNING: No imput was provided. The previous execution was just a test.")
-        print("><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>\n")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("WARNING: No input was provided. The previous execution was just a test.")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 
     # Normal execution using an input file.
     else:
