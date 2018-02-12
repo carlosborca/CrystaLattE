@@ -168,7 +168,7 @@ def center_supercell(read_cif_output, verbose=0):
         Name of the file with the cartesian coordinates of the
         supercell.
     <int> verbose
-        Adjusts the level of detail of the printouts.i
+        Adjusts the level of detail of the printouts.
 
     Returns:
     <numpy.ndarray> scell_geom_max_coords
@@ -231,6 +231,21 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
 
     Returns a dictionary with all the fragments that are within the
     cutoff criterion.
+    
+    Arguments:
+    <str> read_cif_output
+        Name of the file with the cartesian coordinates of the
+        supercell.
+    <float> r_cut_monomer
+        Cutoff value to include fragments found in the supercell in the
+        dictionary of N-mers.
+    <int> verbose
+        Adjusts the level of detail of the printouts.
+
+    Returns:
+    <dict> nmers
+        A dictionary populated with N-mers (monomers at this time) and
+        their corresponding atributes.
     """
     
     # Centering the supercell.
@@ -243,7 +258,7 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
     if (r_cut_monomer / qcdb.psi_bohr2angstroms) > np.min(scell_geom_max_coords):
         print("\nWARNING: Cutoff (%3.2f A) longer than half the smallest dimension of the supercell (%3.2f A)." \
               % (r_cut_monomer, np.min(scell_geom_max_coords)*qcdb.psi_bohr2angstroms))
-        print("         Please increase the size of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.")
+        print("         Please increase the dimensions of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.")
 
     # Passes the supercell geometry and elements to the breadth-first
     # search algorithm of QCDB to obtain fragments.
@@ -743,7 +758,16 @@ def psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4
 
 # ======================================================================
 def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
-    """Manages which mode of calculation will be employed.
+    """Manages which mode of CrystaLattE calculation will be employed.
+    
+    Global Variables:
+    <float> crystal_lattice_energy
+        The value of the accumulated crystal lattice energy in atomic
+        units.
+    <list> results
+        A summary of the results for all N-mers including energies,
+        replicas, contributions, cumulative lattice energy, priority,
+        and minimum atomic separations; for the print_results function.
 
     Arguments:
     <dict> nmers
@@ -839,7 +863,12 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
 
 # ======================================================================
 def print_results(verbose=0):
-    """.
+    """Prints a summary of the energy results at the end of the
+    execution.
+    
+    Arguments:
+    <int> verbose
+        Adjusts the level of detail of the printouts.
     """
 
     if verbose >= 1:
@@ -960,7 +989,7 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
 if __name__ == "__main__":
 
     # Hard-coded Test
-    if "CrystaLattE" in sys.argv[-1]:
+    if "CrystaLattE.py" in sys.argv[-1]:
         main(   read_cif_input="../Tests/Benzene/Benzene.cif",
                 read_cif_output="../Tests/Benzene/Benzene.xyz",
                 read_cif_a=2,
