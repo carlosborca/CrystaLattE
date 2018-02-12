@@ -76,6 +76,7 @@ def input_parser(in_f_name):
     keywords["r_cut_pentamer"] = 4.0 
     keywords["cle_run_type"] = ["psi4api", "quiet"]
     keywords["psi4_method"] = "HF/STO-3G"
+    keywords["psi4_bsse"] = "cp"
     keywords["psi4_memory"] = "500 MB"
     keywords["verbose"] = 1
 
@@ -112,6 +113,7 @@ def input_parser(in_f_name):
          keywords["r_cut_pentamer"], 
          keywords["cle_run_type"],
          keywords["psi4_method"],
+         keywords["psi4_bsse"],
          keywords["psi4_memory"],
          keywords["verbose"])
 # ======================================================================
@@ -640,7 +642,7 @@ def nmer2psiapimol(nmers, keynmer, nmer, verbose=0):
 
 
 # ======================================================================
-def nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_memory, verbose=0):
+def nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """.
     """
     
@@ -698,7 +700,7 @@ def nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_memory, verbose=0):
 
 
 # ======================================================================
-def psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_memory, verbose=0):
+def psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """
     Arguments:
     
@@ -726,28 +728,22 @@ def psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4
     psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'cc_type': 'df', 'freeze_core': 'true', 'e_convergence': '8'})
     
     # Execute Psi4 energy calculations, unless running on test mode.
-    #
+
     # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
-    #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'])
+    #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['nocp'])
     #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'])
     
     if "test" not in cle_run_type:
-        #NOTE: Temporary fix: N-Body wrapper executes too many calculations!
-        #psi4.energy(psi4_method, molecule=mymol, bsse_type=['vmfc'])
-        psi4.energy(psi4_method, molecule=mymol, bsse_type=['cp'])
+        psi4.energy(psi4_method, molecule=mymol, bsse_type=[psi4_bsse])
     
     # Get the non-additive n-body contribution, exclusive of all
     # previous-body interactions.
-    #NOTE: Temporary fix: N-Body wrapper executes too many calculations!
-    #varstring = "VMFC-CORRECTED " + str(len(nmer["monomers"])) + "-BODY INTERACTION ENERGY"
-    varstring = "CP-CORRECTED " + str(len(nmer["monomers"])) + "-BODY INTERACTION ENERGY"
+    varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
     
     n_body_energy = psi4.core.get_variable(varstring)
     
     if len(nmer["monomers"]) > 2:
-        #NOTE: Temporary fix: N-Body wrapper executes too many calculations!
-        #varstring = "VMFC-CORRECTED " + str(len(nmer["monomers"])-1) + "-BODY INTERACTION ENERGY"
-        varstring = "CP-CORRECTED " + str(len(nmer["monomers"])-1) + "-BODY INTERACTION ENERGY"
+        varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
         n_minus_1_body_energy = psi4.core.get_variable(varstring)
         nmer["nambe"] = n_body_energy - n_minus_1_body_energy
 
@@ -757,7 +753,7 @@ def psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4
 
 
 # ======================================================================
-def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
+def cle_manager(nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """Manages which mode of CrystaLattE calculation will be employed.
     
     Global Variables:
@@ -779,6 +775,8 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
     <str> psi4_method
         Method and basis set for the energy calculation, separated by a
         slash.
+    <str> psi4_bsse
+        Method for correction of the basis set superposition error.
     <str> psi4_memory
         Memory allocation for PSI4, written as `500 MB`, or `60 GB`.
     <int> verbose
@@ -819,11 +817,11 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose=0):
         
         # Produce Psithon inputs
         if "psithon" in cle_run_type:
-            nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_memory, verbose)
+            nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_bsse, psi4_memory, verbose)
 
         # Run energies in PSI4.
         else:
-            psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_memory, verbose)
+            psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
 
         # Stop wall-clock timer.
         energies_end = time.time()
@@ -903,7 +901,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4api", "quiet"], psi4_method="HF/STO-3G", psi4_memory="500 MB", verbose=1):
+def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4api", "quiet"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -974,7 +972,7 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
     if verbose >= 2:
         print ("\nComputing interaction energies of N-mers:")
 
-    cle_manager(nmers, cle_run_type, psi4_method, psi4_memory, verbose)
+    cle_manager(nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
     # ------------------------------------------------------------------
     
     # Print the final results.
@@ -1004,6 +1002,7 @@ if __name__ == "__main__":
                 r_cut_pentamer=5.6,
                 cle_run_type=["psi4api", "quiet"],
                 psi4_method="HF/STO-3G",
+                psi4_bsse="cp",
                 psi4_memory="500 MB",
                 verbose=2)
 
