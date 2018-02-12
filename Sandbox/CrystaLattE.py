@@ -711,32 +711,28 @@ def psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4
     psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'cc_type': 'df', 'freeze_core': 'true', 'e_convergence': '8'})
     
     # Execute Psi4 energy calculations, unless running on test mode.
-    
+    #
     # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
     #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['vmfc'])
     #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'])
     
     if "test" not in cle_run_type:
-        
-        # This is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer when doing VMFC!!
-        if len(nmer["monomers"]) > 2:
-            psi4.energy(psi4_method, molecule=mymol, bsse_type=['vmfc'])
-        
-        else:
-            #psi4.energy(psi4_method, molecule=mymol, bsse_type=['vmfc'])
-            psi4.energy(psi4_method, molecule=mymol, bsse_type=['cp'])
+        #NOTE: Temporary fix: N-Body wrapper executes too many calculations!
+        #psi4.energy(psi4_method, molecule=mymol, bsse_type=['vmfc'])
+        psi4.energy(psi4_method, molecule=mymol, bsse_type=['cp'])
     
     # Get the non-additive n-body contribution, exclusive of all
     # previous-body interactions.
-    varstring = "CP-CORRECTED " + str(len(nmer["monomers"])) + "-BODY INTERACTION ENERGY"
-    
-    # This comment and the line above is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer!!
+    #NOTE: Temporary fix: N-Body wrapper executes too many calculations!
     #varstring = "VMFC-CORRECTED " + str(len(nmer["monomers"])) + "-BODY INTERACTION ENERGY"
+    varstring = "CP-CORRECTED " + str(len(nmer["monomers"])) + "-BODY INTERACTION ENERGY"
     
     n_body_energy = psi4.core.get_variable(varstring)
     
     if len(nmer["monomers"]) > 2:
-        varstring = "VMFC-CORRECTED " + str(len(nmer["monomers"])-1) + "-BODY INTERACTION ENERGY"
+        #NOTE: Temporary fix: N-Body wrapper executes too many calculations!
+        #varstring = "VMFC-CORRECTED " + str(len(nmer["monomers"])-1) + "-BODY INTERACTION ENERGY"
+        varstring = "CP-CORRECTED " + str(len(nmer["monomers"])-1) + "-BODY INTERACTION ENERGY"
         n_minus_1_body_energy = psi4.core.get_variable(varstring)
         nmer["nambe"] = n_body_energy - n_minus_1_body_energy
 
