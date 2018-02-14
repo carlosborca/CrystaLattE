@@ -155,15 +155,9 @@ def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, rea
 
 # ======================================================================
 def center_supercell(read_cif_output, verbose=0):
-    """Takes the filename of the supercell file produced by Read_CIF.
-    Then the center of the supercell coordinates is computed to 
-    translate the supercell to the origin.
-    
-    Returns an array with 3 numbers: the maximum value of the 
-    coordinates x, y, and z of the centered supercell.
-
-    It also returns two arrays with the geometry and element symbols of
-    the centered supercell, respectively.
+    """Takes the supercell file produced by Read_CIF and computes the
+    center of the supercell coordinates to translate the supercell to
+    the origin.
 
     Arguments:
     <str> read_cif_output
@@ -218,21 +212,20 @@ def center_supercell(read_cif_output, verbose=0):
 
 # ======================================================================
 def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
-    """Takes a string with the filename of the supercell xyz file
-    produced by Read_CIF, and passes it to the `center_supercell()`
-    function which translates the supercell to the origin.
+    """Takes the supercell cartesian coordinates file produced by
+    Read_CIF, and passes it to the `center_supercell()` function which
+    translates the supercell to the origin.
 
     The centered supercell geometries and elements arrays are passed to
-    the Breadth-First Search of which returns all fragments found in
-    the supercell.
+    the Breadth-First Search which returns all fragments found in the
+    supercell.
 
-    This function also takes a second argument, a float, with a cutoff
-    distance, measured from the origin, which is then used to decide if
-    a monomer should be considered or not based on its proximity to the
-    origin.
+    This function also takes a cutoff distance, measured from the
+    origin, which is then used to decide if a monomer should be included
+    or not based on its proximity to the origin.
 
-    Returns a dictionary with all the fragments that are within the
-    cutoff criterion.
+    Returns a dictionary with all the fragments (monomers) that are
+    located within the cutoff region.
     
     Arguments:
     <str> read_cif_output
@@ -329,6 +322,17 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
 
     It returns a string `nm_new_name` and a `nm_new` dictionary
     containing the information of the newly generated N-mer.
+
+    Arguments:
+
+    Returns:
+    <str> nm_new_name
+        Name of the new N-mer, typically `n`mer-`i`+`j`+`k`+... where
+        `n` is the order of the N-mer and `i`, `j`, ... the indices of
+        the monomer that compose it.
+    <dict> nm_new
+        Dictionary of the new N-mer containing its corresponding
+        information.
     """
     
     nm_new = {}
