@@ -423,9 +423,18 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
 
 # ======================================================================
 def center_of_mass(elems, geoms):
-    """Takes two Numpy arrays, one with the element symbols and one with
-    coordinates of a set of atoms and returns a Numpy array with the 
-    computed center of mass of the molecule.
+    """Takes the element symbols and coordinates of a set of atoms and
+    computes the center of mass of the molecule.
+    
+    Arguments:
+    <numpy.ndarray> elems
+        Array of 1 column with the atomic symbols of each atom.
+    <numpy.ndarray> geoms
+        Array of 3 columns with the coordinates of the system.
+
+    Returns:
+    <numpy.ndarray> com
+        Array of 3 numbers with the center of mass of the system.
     """
     
     com = np.array([0.0, 0.0, 0.0])
