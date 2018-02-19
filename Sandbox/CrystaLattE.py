@@ -408,7 +408,7 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     priority = 1.0
     
     #for r in nm_new["com_monomer_separations"]:
-    for r in nm_new["com_monomer_separations"]:
+    for r in nm_new["min_monomer_separations"]:
         one_over_r3 = 1.0/r**3
         priority *= one_over_r3
     
