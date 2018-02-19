@@ -1,0 +1,367 @@
+##############################################################################
+###                                                                        ###
+###           CIF-Access Paper (Acta Crystallographica Section C)          ###
+###                                                                        ###
+##############################################################################
+#                                                                            #
+# This paper is published electronically in CIF format. It meets the data-   #
+# validation criteria for publication in Acta Crystallographica Section C.   #
+# The submission has been checked by a Section C Co-editor though the text   #
+# in _publ_section_comments is the responsibility of the authors.            #
+#                                                                            #
+# CIF-access papers are listed in the printed contents pages of an issue of  #
+# Acta Crystallographica Section C within two months of acceptance and are   #
+# available by email and via the online contents pages for that issue.       #
+#                                                                            #
+# Software is freely available for graphical display of the structure(s) in  #
+# this CIF.  For information consult the CIF home page http://www.iucr.org/  #
+# cif/home.html                                                              #
+#                                                                            #
+# This file may be used for bona fide research purposes within the           #
+# scientific community so long as proper attribution is given to the journal # 
+# article from which it was obtained.                                        #
+#                                                                            #
+##############################################################################
+data_global
+_audit_creation_method
+;
+  SHELXL-97 and manual editing of form.cif (version 2.0)
+;
+_journal_data_validation_number     IUC9900001
+_journal_date_recd_electronic     98-12-16
+_journal_date_accepted     98-12-18
+_journal_name_full     ?
+_journal_year     1999
+_journal_volume     C55
+_journal_issue     FEB99
+_journal_paper_category     CO
+_publ_contact_author_name     'Prof. Dr. Roland Boese'
+_publ_contact_author_address
+;
+Institut fur Anorganische Chemie der Universitat-GH Essen
+Universitatsstrasse 3-5
+D-45117 Essen
+Germany
+;
+_publ_contact_author_email     boese@structchem.uni-essen.de
+_publ_contact_author_fax     '049 201 183 2535'
+_publ_contact_author_phone     '049 201 183 2416'
+_publ_section_title
+;
+Acetic acid at 40 K
+;
+loop_
+    _publ_author_name
+    _publ_author_footnote
+    _publ_author_address
+    'Boese, Roland'
+; ?
+;
+;
+   Institut f\"ur Anorganische Chemie der Universit\"at-GH Essen
+   Universit\"atsstrasse 3-5
+   D-45117 Essen
+   Germany
+;
+    'Bl\"aser, Dieter'
+; ?
+;
+;  Institut f\"ur Anorganische Chemie der Universit\"at-GH Essen
+   Universit\"atsstrasse 3-5
+   D-45117 Essen
+   Germany
+;
+    'Latz, R\"udiger'
+; ?
+;
+;  Institut f\"ur Anorganische Chemie der Universit\"at-GH Essen
+   Universit\"atsstrasse 3-5
+   D-45117 Essen
+   Germany
+;
+    'B\"aumen, Anja'
+; ?
+;
+;  Institut f\"ur Anorganische Chemie der Universit\"at-GH Essen
+   Universit\"atsstrasse 3-5
+   D-45117 Essen
+   Germany
+;
+_publ_section_synopsis
+;
+The structure of the title compound was determined
+previously by Jones & Templeton [Acta Cryst. (1958), 11, 484] at T = 278 K
+using the Weissenberg technique, and twice by Nahringbauer [Acta Chem. Scand.
+(1970), 24, 453-462] at T = 278 and 93 K. The present redetermination at
+T = 40 K provides data of higher precision, reflected in s.u.'s
+which are about one third those of Nahringbauer.
+;
+_publ_section_abstract
+;
+The redetermination of the structure of acetic acid at 40 K provides
+higher precision of data, reflected in s.u.'s which are
+about one third of those of Nahringbauer [Acta Chem. Scand.
+(1970), 24, 453-462].
+;
+_publ_section_comment
+;
+The difference in length of the carbonyl C---O bond and the C---O(H) bond is
+0.105\%A, which is significantly higher than the value reported by
+Nahringbauer (1970) (0.09\%A, determined at T = 93 K).
+The packing is characterized by catamers with hydrogen bonds H1---O2'.
+The intermolecular O-O-distance is 2.623(2)\%A. This value corresponds
+to that reported by Nahringbauer (1970) [2.625(4)\%A, determined at
+T = 93 K].
+;
+_publ_section_acknowledgements
+;
+We thank the Fonds der Chemischen Industrie for financial support.
+;
+_publ_section_references
+;
+ Brodalla, D., Mootz, D., Boese, R. & Osswald, W. (1985).
+ J. Appl. Cryst. 18, 316.
+ Jones, R. E. & Templeton, D. H. (1958). Acta Cryst. 11, 484.
+ Nahringbauer, I. (1970). Acta Chem. Scand. 24, 453-462.
+Sheldrick, G. M. (1990). SHELXTL-Plus. Siemens Analytical
+X-ray Instruments Inc., Madison, Wisconsin, USA.
+Sheldrick, G. M. (1997). SHELXL97. Program for the
+Refinement of Crystal Structures. University of G\"ottingen, Germany.
+Siemens (1987). P3-VMS Diffractometer Program. Version 4.1. Siemens
+Analytical X-ray Instruments Inc., Madison, Wisconsin, USA.
+Siemens (1991). XDISK.  Data Reduction Program.  Version 4.20.2PC.
+Siemens Analytical X-ray Instruments Inc., Madison, Wisconsin, USA.
+;
+_publ_section_exptl_prep
+;
+The title compound is a commercial product.
+The crystallization was performed on the diffractometer at a temperature
+of 285 K with a miniature zone melting procedure with focussed infrared
+light, according to Brodalla et al. (1985).
+;
+_publ_section_exptl_refinement
+;
+Refinement of F^2^ against all reflections. The weighted R factor wR and
+goodness-of-fit S are based on F^2^, conventional R factors R are based
+on F, with F set to zero for negative F^2^. The threshold expression of
+F^2^ > 2\s(F^2^) is used only for calculating R factors(gt) etc. and is
+not relevant to the choice of reflections for refinement.  R factors based
+on F^2^ are statistically about twice as large as those based on F, and R
+factors based on all data will be even larger.
+;
+data_qa0082
+_chemical_name_systematic
+;
+ Ethanoic acid
+;
+_chemical_name_common     'Acetic acid'
+_chemical_formula_moiety     'C2 H4 O2'
+_chemical_formula_sum     'C2 H4 O2'
+_chemical_formula_structural     ?
+_chemical_formula_analytical     ?
+_chemical_formula_iupac     ?
+_chemical_formula_weight     60.05
+_chemical_melting_point     289.75
+_symmetry_cell_setting     orthorhombic
+_symmetry_space_group_name_H-M     'P n a 21'
+_symmetry_space_group_name_Hall     ?
+loop_
+    _symmetry_equiv_pos_as_xyz
+    'x, y, z'
+    '-x, -y, z+1/2'
+    'x+1/2, -y+1/2, z'
+    '-x+1/2, y+1/2, z+1/2'
+_cell_length_a     13.151(3)
+_cell_length_b     3.9230(10)
+_cell_length_c     5.7620(10)
+_cell_angle_alpha     90.00
+_cell_angle_beta     90.00
+_cell_angle_gamma     90.00
+_cell_volume     297.27(11)
+_cell_formula_units_Z     4
+_cell_measurement_reflns_used     25
+_cell_measurement_theta_min     10
+_cell_measurement_theta_max     12.5
+_cell_measurement_temperature     40(2)
+_exptl_crystal_description     cylindrical
+_exptl_crystal_colour     colourless
+_exptl_crystal_size_max     3.00
+_exptl_crystal_size_mid     ?
+_exptl_crystal_size_min     ?
+_exptl_crystal_size_rad     0.15
+_exptl_crystal_density_diffrn     1.342
+_exptl_crystal_density_meas     ?
+_exptl_crystal_density_method     'not measured'
+_exptl_crystal_F_000     128
+_exptl_absorpt_coefficient_mu     0.122
+_exptl_absorpt_correction_type     none
+_exptl_absorpt_correction_T_min     ?
+_exptl_absorpt_correction_T_max     ?
+_exptl_special_details
+;
+ The crystallization was performed on the diffractometer at a temperature
+ of 285 K with a miniature zone melting procedure with focussed infrared
+ light, according to Brodalla et al. (1985).
+;
+_diffrn_ambient_temperature     40(2)
+_diffrn_radiation_type     MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_radiation_source     'fine-focus sealed tube'
+_diffrn_radiation_monochromator     graphite
+_diffrn_measurement_device_type     'Nicolet R3m/V four-circle'
+_diffrn_measurement_method     Wyckoff
+_diffrn_detector_area_resol_mean     ?
+_diffrn_reflns_number     649
+_diffrn_reflns_av_R_equivalents     ?
+_diffrn_reflns_av_sigmaI/netI     0.0169
+_diffrn_reflns_theta_min     3.10
+_diffrn_reflns_theta_max     29.91
+_diffrn_reflns_theta_full     ?
+_diffrn_measured_fraction_theta_max     ?
+_diffrn_measured_fraction_theta_full     ?
+_diffrn_reflns_limit_h_min     0
+_diffrn_reflns_limit_h_max     18
+_diffrn_reflns_limit_k_min     0
+_diffrn_reflns_limit_k_max     5
+_diffrn_reflns_limit_l_min     -8
+_diffrn_reflns_limit_l_max     6
+_diffrn_reflns_reduction_process     ?
+_diffrn_standards_number     1
+_diffrn_standards_interval_count     100
+_diffrn_standards_interval_time     ?
+_diffrn_standards_decay_%     <3
+loop_
+    _diffrn_standard_refln_index_h
+    _diffrn_standard_refln_index_k
+    _diffrn_standard_refln_index_l
+    4 0 2
+_reflns_number_total     649
+_reflns_number_gt     620
+_reflns_threshold_expression     I>2\s(I)
+_refine_ls_structure_factor_coef     Fsqd
+_refine_ls_matrix_type     full
+_refine_ls_R_factor_all     0.0413
+_refine_ls_R_factor_gt     0.0397
+_refine_ls_wR_factor_ref     0.0986
+_refine_ls_goodness_of_fit_ref     1.131
+_refine_ls_restrained_S_all     1.130
+_refine_ls_number_reflns     649
+_refine_ls_number_parameters     53
+_refine_ls_number_restraints     1
+_refine_ls_hydrogen_treatment     refall
+_refine_ls_weighting_scheme
+     'calc w = 1/[\s^2^(Fo^2^)+(0.0755P)^2^+0.0047P] where P = (Fo^2^+2Fc^2^)/3'
+_refine_ls_shift/su_max     <0.001
+_refine_ls_shift/su_mean     0.000
+_refine_diff_density_max     0.305
+_refine_diff_density_min     -0.220
+_refine_ls_extinction_method     none
+_refine_ls_extinction_coef     ?
+_refine_ls_abs_structure_details     '?'
+_refine_ls_abs_structure_Flack     ?
+loop_
+    _atom_type_symbol
+    _atom_type_description
+    _atom_type_scat_dispersion_real
+    _atom_type_scat_dispersion_imag
+    _atom_type_scat_source
+    'C' 'C' 0.0033 0.0016
+                         'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+    'H' 'H' 0.0000 0.0000
+                         'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+    'O' 'O' 0.0106 0.0060
+                         'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+_computing_data_collection     'P3-VMS (Siemens 1987)'
+_computing_cell_refinement     'P3-VMS'
+_computing_data_reduction     'XDISK (Siemens, 1991)'
+_computing_structure_solution     'SHELXTL-Plus (Sheldrick, 1990)'
+_computing_structure_refinement     'SHELXL97 (Sheldrick, 1997)'
+_computing_molecular_graphics     'SHELXL97'
+_computing_publication_material     'SHELXL97'
+loop_
+    _atom_site_label
+    _atom_site_fract_x
+    _atom_site_fract_y
+    _atom_site_fract_z
+    _atom_site_U_iso_or_equiv
+    _atom_site_adp_type
+    _atom_site_calc_flag
+    _atom_site_refinement_flags
+    _atom_site_occupancy
+    _atom_site_disorder_assembly
+    _atom_site_disorder_group
+    _atom_site_type_symbol
+    O1 0.37352(7) 0.8885(2) 0.00000(19) 0.0209(3) Uani d . 1 . . O
+    H1 0.323(2) 0.941(6) -0.079(5) 0.043(7) Uiso d . 1 . . H
+    O2 0.24694(7) 0.6109(2) 0.1702(2) 0.0204(3) Uani d . 1 . . O
+    C1 0.33529(9) 0.7020(3) 0.1697(2) 0.0160(3) Uani d . 1 . . C
+    C2 0.41068(10) 0.6160(3) 0.3537(2) 0.0190(3) Uani d . 1 . . C
+    H2A 0.377(2) 0.503(8) 0.482(6) 0.045(6) Uiso d . 1 . . H
+    H2B 0.465(2) 0.502(8) 0.298(6) 0.058(7) Uiso d . 1 . . H
+    H2C 0.4420(19) 0.823(5) 0.421(4) 0.038(6) Uiso d . 1 . . H
+loop_
+    _atom_site_aniso_label
+    _atom_site_aniso_U_11
+    _atom_site_aniso_U_22
+    _atom_site_aniso_U_33
+    _atom_site_aniso_U_12
+    _atom_site_aniso_U_13
+    _atom_site_aniso_U_23
+    O1 0.0185(4) 0.0283(5) 0.0160(5) -0.0010(4) 0.0004(4) 0.0090(4)
+    O2 0.0205(5) 0.0272(5) 0.0137(5) -0.0029(3) -0.0018(4) 0.0044(6)
+    C1 0.0209(5) 0.0162(5) 0.0109(5) 0.0012(4) 0.0006(5) 0.0016(6)
+    C2 0.0195(5) 0.0233(6) 0.0142(6) 0.0000(5) -0.0032(6) 0.0033(5)
+_geom_special_details
+;
+ All esds (except the esd in the dihedral angle between two l.s. planes)
+ are estimated using the full covariance matrix.  The cell esds are taken
+ into account individually in the estimation of esds in distances, angles
+ and torsion angles; correlations between esds in cell parameters are only
+ used when they are defined by crystal symmetry.  An approximate (isotropic)
+ treatment of cell esds is used for estimating esds involving l.s. planes.
+;
+loop_
+    _geom_bond_atom_site_label_1
+    _geom_bond_atom_site_label_2
+    _geom_bond_site_symmetry_2
+    _geom_bond_distance
+    _geom_bond_publ_flag
+    O1 C1 . 1.3208(16) ?
+    O1 H1 . 0.83(3) ?
+    O2 C1 . 1.2156(16) ?
+    C1 C2 . 1.4903(18) ?
+    C2 H2A . 0.97(3) ?
+    C2 H2B . 0.91(3) ?
+    C2 H2C . 0.99(2) ?
+loop_
+    _geom_angle_atom_site_label_1
+    _geom_angle_atom_site_label_2
+    _geom_angle_atom_site_label_3
+    _geom_angle_site_symmetry_1
+    _geom_angle_site_symmetry_3
+    _geom_angle
+    _geom_angle_publ_flag
+    C1 O1 H1 . . 104(2) ?
+    O2 C1 O1 . . 121.90(13) ?
+    O2 C1 C2 . . 124.59(12) ?
+    O1 C1 C2 . . 113.51(11) ?
+    C1 C2 H2A . . 109.8(17) ?
+    C1 C2 H2B . . 113(2) ?
+    H2A C2 H2B . . 114(3) ?
+    C1 C2 H2C . . 111.7(13) ?
+    H2A C2 H2C . . 106(2) ?
+    H2B C2 H2C . . 102(3) ?
+loop_
+    _geom_torsion_atom_site_label_1
+    _geom_torsion_atom_site_label_2
+    _geom_torsion_atom_site_label_3
+    _geom_torsion_atom_site_label_4
+    _geom_torsion_site_symmetry_1
+    _geom_torsion_site_symmetry_2
+    _geom_torsion_site_symmetry_3
+    _geom_torsion_site_symmetry_4
+    _geom_torsion
+    _geom_torsion_publ_flag
+    H1 O1 C1 C2 . . . . -172.2(18) ?
+    H1 O1 C1 O2 . . . . 8.2(19) ?
+
