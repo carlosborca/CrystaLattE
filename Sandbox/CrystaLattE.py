@@ -81,23 +81,57 @@ def input_parser(in_f_name):
     keywords["verbose"] = 1
 
     with open(in_f_name, "r") as input_file:
-    
+        
+        non_blank_lines = []
+
         for line_inp_f in input_file:
-            split_line = line_inp_f.split("=")
-            keyword_name = split_line[0].lower()
+
+            if line_inp_f == "\n":
+                continue
+
+            elif line_inp_f.startswith("#"):
+                continue
+            
+            else:
+                non_blank_lines.append(line_inp_f)
+
+        for non_blank_line in non_blank_lines:
+            
+            split_line = non_blank_line.split("=")
+            keyword_name = split_line[0].lower().strip()
             keyword_value = split_line[1].split('\n')[0]
-       
+           
             if keyword_name == "cle_run_type":
                 keyword_value = keyword_value.lower()
                 keyword_value = keyword_value.replace(" ", "").split("+")
-                
-            try:
-                keyword_value = float(keyword_value)
+                   
+            if keyword_name in ["read_cif_a", "read_cif_b", "read_cif_c", "verbose"]:
+                keyword_value = int(keyword_value)
 
-            except:
-                pass
-        
+            if keyword_name in ["psi4_bsse", "psi4_memory", "psi4_method", "read_cif_input", "read_cif_output"]:
+                keyword_value = keyword_value.strip()
+
+            else:
+                try:
+                    keyword_value = float(keyword_value)
+
+                except:
+                    pass
+
             keywords[keyword_name] = keyword_value
+
+    if keywords["verbose"] >= 2:
+
+        print("\nCrystaLattE execution setup:\n")
+        
+        # Get the keys of the keywords dictionary, and put them on a list.
+        kw_keys = list(keywords.keys())
+
+        # Sort the list in decreasing priority order.
+        kw_keys.sort()
+        
+        for kw_key in kw_keys:
+            print("  {:15} = {}".format(kw_key, str(keywords[kw_key])))
 
     main(keywords["read_cif_input"], 
          keywords["read_cif_output"],
@@ -713,7 +747,7 @@ def nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_bsse, psi4_memory, verb
 
 
 # ======================================================================
-def psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+def psi4api_energies(read_cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """
     Arguments:
     
@@ -725,8 +759,21 @@ def psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4
         
     # If the output is not kept, do not print to screen.
     else:
+        owd = os.getcwd()
+
+        p4folder = read_cif_output[:-4]
+        
+        try:
+            os.mkdir(p4folder)
+        except FileExistsError:
+            pass
+
+        os.chdir(p4folder)
+        
         p4out = keynmer + ".dat"
         psi4.core.set_output_file(p4out)
+        
+        os.chdir(owd)
 
     psi_api_molecule = nmer2psiapimol(nmers, keynmer, nmer, verbose)
     mymol = psi4.geometry(psi_api_molecule)
@@ -766,7 +813,7 @@ def psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4
 
 
 # ======================================================================
-def cle_manager(nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+def cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """Manages which mode of CrystaLattE calculation will be employed.
     
     Global Variables:
@@ -834,7 +881,7 @@ def cle_manager(nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbos
 
         # Run energies in PSI4.
         else:
-            psi4api_energies(nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
+            psi4api_energies(read_cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
 
         # Stop wall-clock timer.
         energies_end = time.time()
@@ -985,7 +1032,7 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
     if verbose >= 2:
         print ("\nComputing interaction energies of N-mers:")
 
-    cle_manager(nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
+    cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
     # ------------------------------------------------------------------
     
     # Print the final results.

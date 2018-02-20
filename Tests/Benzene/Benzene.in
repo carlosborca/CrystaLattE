@@ -1,16 +1,19 @@
-read_cif_input=Benzene.cif
-read_cif_output=Benzene.xyz
-read_cif_a=4
-read_cif_b=4
-read_cif_c=4
-nmers_up_to=2
-r_cut_com=9.5
-r_cut_monomer=11.4
-r_cut_dimer=11.4
-r_cut_trimer=11.4
-r_cut_tetramer=11.4
-r_cut_pentamer=11.4
-cle_run_type=Normal
-psi4_method_basis=MP2/aug-cc-pV[TQ]Z + D:FNO-CCSD(T)/cc-pVDZ
-psi4_memory=60 GB
-verbose=2
+# Test job to reproduce A. L. Ringer and C. D. Sherrill, Chem. Eur. J., 2008, 14, pp 2542–2547.
+
+read_cif_input  = Benzene.cif
+read_cif_output = Benzene.xyz
+read_cif_a      = 4
+read_cif_b      = 4
+read_cif_c      = 4
+nmers_up_to     = 2
+r_cut_com       = 9.5
+r_cut_monomer   = 11.4
+r_cut_dimer     = 11.4
+r_cut_trimer    = 11.4
+r_cut_tetramer  = 11.4
+r_cut_pentamer  = 11.4
+cle_run_type    = psi4api + quiet
+psi4_method     = MP2/aug-cc-pV[TQ]Z + D:fno-ccsd(t)/cc-pVDZ
+psi4_bsse       = cp
+psi4_memory     = 60 GB
+verbose         =2
