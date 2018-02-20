@@ -1,0 +1,95 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-10-14 23:18:49 +0300 (Sat, 14 Oct 2017) $
+#$Revision: 202019 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/9/00/76/9007643.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided the American Mineralogist Crystal Structure Database,
+# http://rruff.geo.arizona.edu/AMS/amcsd.php
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_9007643
+loop_
+_publ_author_name
+'Simon, A.'
+'Peters, K.'
+_publ_section_title
+;
+ Single-crystal refinement of the structure of carbon dioxide
+ Sample: T = 150 K
+;
+_journal_name_full               'Acta Crystallographica, Section B'
+_journal_page_first              2750
+_journal_page_last               2751
+_journal_paper_doi               10.1107/S0567740880009879
+_journal_volume                  36
+_journal_year                    1980
+_chemical_formula_structural     CO2
+_chemical_formula_sum            'C O2'
+_space_group_IT_number           205
+_symmetry_space_group_name_Hall  '-P 2ac 2ab 3'
+_symmetry_space_group_name_H-M   'P a -3'
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_length_a                   5.624
+_cell_length_b                   5.624
+_cell_length_c                   5.624
+_cell_volume                     177.884
+_diffrn_ambient_temperature      150
+_exptl_crystal_density_diffrn    1.643
+_cod_original_sg_symbol_H-M      'P a 3'
+_cod_database_code               9007643
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+1/2+z,x,1/2-y
+z,1/2-x,1/2+y
+1/2-z,1/2+x,y
+-z,-x,-y
+1/2+y,1/2-z,-x
+1/2-y,-z,1/2+x
+-y,1/2+z,1/2-x
+y,z,x
+x,1/2-y,1/2+z
+1/2-x,1/2+y,z
+1/2+x,y,1/2-z
+-x,-y,-z
+1/2-z,-x,1/2+y
+-z,1/2+x,1/2-y
+1/2+z,1/2-x,-y
+z,x,y
+1/2-y,1/2+z,x
+1/2+y,z,1/2-x
+y,1/2-z,1/2+x
+-y,-z,-x
+-x,1/2+y,1/2-z
+1/2+x,1/2-y,-z
+1/2-x,-y,1/2+z
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+C 0.02154 0.02154 0.02154 0.00253 0.00253 0.00253
+O 0.02913 0.02913 0.02913 -0.00405 -0.00405 -0.00405
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C 0.00000 0.00000 0.00000
+O 0.11850 0.11850 0.11850
+loop_
+_cod_related_entry_id
+_cod_related_entry_database
+_cod_related_entry_code
+1 ChemSpider 274

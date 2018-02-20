@@ -576,13 +576,13 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
             new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, other_monomers, verbose)
 
-            max_mon_sep = max(new_nmer["min_monomer_separations"])
+            max_mon_sep = min(new_nmer["min_monomer_separations"])
             max_com_sep = min(new_nmer["com_monomer_separations"])
 
             if max_mon_sep > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
                 if verbose >= 2: 
-                    print("%s discarded: Atomic separation %3.2f A, longer than cutoff %3.2f A" \
+                    print("%s discarded: Separation between closest pair of atoms belonging to different monomers is %3.2f A, longer than cutoff %3.2f A" \
                           % (new_nmer_name, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
                         
                     counter_dscrd_sep += 1
@@ -590,7 +590,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
             elif max_com_sep > (coms_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
                 if verbose >= 2:
-                    print("%s discarded: Centers of mass separation %3.2f A, longer than cutoff %3.2f A" \
+                    print("%s discarded: Separation between closest centers of mass of different monomers is %3.2f A, longer than cutoff %3.2f A" \
                           % (new_nmer_name, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff))
 
                     counter_dscrd_com += 1
