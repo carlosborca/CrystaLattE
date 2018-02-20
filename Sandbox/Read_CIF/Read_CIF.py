@@ -155,7 +155,7 @@ def read_cif(fNameIn):
             stripped = line.strip()
             if (len(stripped) > 0):  lines.append(stripped)
     except:
-        print('Failed to open CIF file "{0}".format(fNameIn)') # Carlos Borca (2017-09-19-1431)
+        print("Failed to open CIF file '{0}'".format(fNameIn)) # Carlos Borca (2018-02-20)
         sys.exit()
 
     # Use the CifFile parser to extract the data.  Although there might be
@@ -234,8 +234,7 @@ def read_cif(fNameIn):
     
     except KeyError as e:
         print('Error!  Missing item in file.') # Carlos Borca (2017-09-19-1427)
-        print('e') # Carlos Borca (2017-09-19-1427)
-
+        print(e) # Carlos Borca (2018-02-20)
         sys.exit()
 
 
@@ -395,11 +394,6 @@ def main(args):
 	    zn = (zn + 10.0) % 1.0
 	    name = extract_element(name)
 	    atoms[i] = (name,xn,yn,zn)
-	
-	
-	# Update the user.
-	#CrystaLattE VERBOSE print('Loaded a CIF file with %d atom coordinates and %d symmetry operations.' % (len(atoms), len(ops))) # Carlos Borca (2017-09-19-1429)
-	#CrystaLattE VERBOSE print('') # Carlos Borca (2017-12-06-1554)
 	
 	# Just for reference, here is a typical example of a CIF file:
 	"""
