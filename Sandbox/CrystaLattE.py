@@ -39,10 +39,6 @@ import os
 import sys
 import time
 
-# Import outsourced code.
-sys.path.insert(0, "Read_CIF")
-import Read_CIF
-
 # Import parts of Psi4.
 import psi4
 from psi4.driver import qcdb
@@ -50,6 +46,12 @@ from psi4.driver.qcdb.align import B787
 from psi4.driver.qcdb.bfs import BFS
 from psi4.driver.qcdb.periodictable import el2mass
 from psi4.driver.qcdb.periodictable import el2z
+
+# Import outsourced code.
+cle_path = os.path.dirname(os.path.realpath(__file__))
+read_cif_path = cle_path + "/Read_CIF"
+sys.path.insert(0, read_cif_path)
+import Read_CIF
 
 
 # ======================================================================
@@ -931,14 +933,14 @@ def print_results(verbose=0):
 
     if verbose >= 1:
         print("Summary of results:")
-        print("---------------------------+--------------+------+--------------+---------------+--------------+-----------------")
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
         print("N-mer Name                 |    MB Energy | Rep. | Contribution | Lattice Ener. |     Priority | Separations")
         print("                           |     (KJ/mol) |  (#) |     (KJ/mol) |      (KJ/mol) | (Arb. Units) | (A)")
-        print("---------------------------+--------------+------+--------------+---------------+--------------+-----------------")
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         for result in results:
             print(result)
-        print("---------------------------+--------------+------+--------------+---------------+--------------+-----------------")
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         print("\nCrystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy))
         print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
         print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
