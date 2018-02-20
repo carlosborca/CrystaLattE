@@ -105,11 +105,11 @@ def input_parser(in_f_name):
                 keyword_value = keyword_value.lower()
                 keyword_value = keyword_value.replace(" ", "").split("+")
                    
-            if keyword_name in ["read_cif_a", "read_cif_b", "read_cif_c", "verbose"]:
-                keyword_value = int(keyword_value)
-
-            if keyword_name in ["psi4_bsse", "psi4_memory", "psi4_method", "read_cif_input", "read_cif_output"]:
+            elif keyword_name in ["psi4_bsse", "psi4_memory", "psi4_method", "read_cif_input", "read_cif_output"]:
                 keyword_value = keyword_value.strip()
+
+            elif keyword_name in ["nmers_up_to", "read_cif_a", "read_cif_b", "read_cif_c", "verbose"]:
+                keyword_value = int(keyword_value)
 
             else:
                 try:
@@ -754,7 +754,7 @@ def psi4api_energies(read_cif_output, nmers, keynmer, nmer, cpus, cle_run_type, 
     """
 
     # If the output is going to be kept, setup the filename.
-    if "quiet" in cle_run_type:
+    if "quiet" or "test" in cle_run_type:
         psi4.core.be_quiet()
         
     # If the output is not kept, do not print to screen.
