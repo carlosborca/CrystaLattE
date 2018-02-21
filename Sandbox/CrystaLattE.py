@@ -33,6 +33,7 @@
 
 # Import standard Python modules.
 import itertools
+import math
 import multiprocessing
 import numpy as np
 import os
@@ -48,8 +49,7 @@ from psi4.driver.qcdb.periodictable import el2mass
 from psi4.driver.qcdb.periodictable import el2z
 
 # Import parts of PyCIFRW
-from CifFile import CifFile, CifBlock
-from math import *
+from CifFile import CifFile
 
 # ======================================================================
 def input_parser(in_f_name):
@@ -158,16 +158,10 @@ def input_parser(in_f_name):
 
 # ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-# Shows an error message and the usage.
-def print_error(msg):
-
-    print('')
-    print('    ERROR:  %s' % msg)
-    print('')
-
-
-# Converts an "_atom_type_label" into an element name.
+# ======================================================================
 def extract_element(label):
+    """Converts an "_atom_type_label" into an element name.
+    """
 
     elem2 = ['He','Li','Be','Ne','Na','Mg','Al','Si','Cl','Ar','Ca','Sc','Ti',
              'Cr','Mn','Fe','Co','Ni','Cu','Zn','Ga','Ge','As','Se','Br','Kr',
@@ -187,9 +181,13 @@ def extract_element(label):
 
     print('WARNING: could not convert "%s" into element name!' % label)
     return label
+# ======================================================================
 
-# Basic XYZ format.
+
+# ======================================================================
 def write_xyz(atoms, box, f):
+    """Basic XYZ format.
+    """
 
     # Write the number of atoms.
     N = len(atoms)
@@ -221,21 +219,24 @@ def write_xyz(atoms, box, f):
 
 # =============================================================================
 
-# Read CIF file, and extract the necessary info in the form of a dictionary.
-# E.g., the value of "_cell_volume" can be found with data['_cell_volume'].
 def read_cif(fNameIn):
-
+    """Read CIF file, and extract the necessary info in the form of a 
+    dictionary. E.g., the value of "_cell_volume" can be found with 
+    data['_cell_volume'].
+    """
     data = {}
 
     # Open the CIF file and read all the lines into a list of strings.
     try:
         f = open(fNameIn, 'r')
         lines = []
+
         for line in f:
             stripped = line.strip()
+
             if (len(stripped) > 0):  lines.append(stripped)
     except:
-        print("Failed to open CIF file '{0}'".format(fNameIn)) # Carlos Borca (2018-02-20)
+        print("\nERROR: Failed to open CIF file '{0}'".format(fNameIn)) # Carlos Borca (2018-02-20)
         sys.exit()
 
     # Use the CifFile parser to extract the data.  Although there might be
@@ -247,7 +248,6 @@ def read_cif(fNameIn):
         break
 
     try:
-
         # Extract some parameters, and convert them to floats.
         data['_cell_length_a']    = float(data_block['_cell_length_a'])
         data['_cell_length_b']    = float(data_block['_cell_length_b'])
@@ -277,12 +277,13 @@ def read_cif(fNameIn):
             xyz = data_block["_symmetry_equiv_pos_as_xyz"]
 
         except KeyError:
+        
             try:
                 xyz = data_block["_space_group_symop_operation_xyz"]
+            
             except KeyError:
-                print('Missing item in CIF file: need either \'_symmetry_equiv_pos_as_xyz\' or \'_space_group_symop_operation_xyz\'.') # Carlos Borca (2017-09-19-1424)
+                print('\nERROR: Missing item in CIF file: need either \'_symmetry_equiv_pos_as_xyz\' or \'_space_group_symop_operation_xyz\'.') # Carlos Borca (2017-09-19-1424)
                 sys.exit()
-
 
         # Copy the x,y,z symmetry group operations.  Remove the quotes if there
         # are any.
@@ -290,6 +291,7 @@ def read_cif(fNameIn):
 
             if (op_xyz[0] == '\''):
                 data['_symmetry_equiv_pos_as_xyz'].append(op_xyz[1:-1])
+            
             else:
                 data['_symmetry_equiv_pos_as_xyz'].append(op_xyz)
 
@@ -299,20 +301,23 @@ def read_cif(fNameIn):
         data['_atom_site_label'] = data_block['_atom_site_label']
 
         data['_atom_site_fract_x'] = []
+        
         for str_x in data_block['_atom_site_fract_x']:
             data['_atom_site_fract_x'].append( float(str_x.split('(')[0]) )
 
         data['_atom_site_fract_y'] = []
+        
         for str_y in data_block['_atom_site_fract_y']:
             data['_atom_site_fract_y'].append( float(str_y.split('(')[0]) )
 
         data['_atom_site_fract_z'] = []
+        
         for str_z in data_block['_atom_site_fract_z']:
             data['_atom_site_fract_z'].append( float(str_z.split('(')[0]) )
 
     
     except KeyError as e:
-        print('Error!  Missing item in file.') # Carlos Borca (2017-09-19-1427)
+        print('\nERROR: Missing item in file.') # Carlos Borca (2017-09-19-1427)
         print(e) # Carlos Borca (2018-02-20)
         sys.exit()
 
@@ -337,24 +342,22 @@ def read_cif_main(args):
     i = 1
     while (i < len(args)):
     
-    
         # Check if the name of the input file was given.
         if (args[i] == '-i'):
             
             # Make sure a file name is given.
             if (i+1 == len(args)):
-                print_error('no input file name given')
+                print('\nERROR: no input file name given')
             
             fNameIn = args[i+1]
             i = i + 2
-    
     
         # Check if the name of the output file was given.
         elif (args[i] == '-o'):
     
             # Make sure a file name is given.
             if (i+1 == len(args)):
-                print_error('no output file name given')
+                print('\nERROR: no output file name given')
     
             # Check we have a valid file extension.
             fNameOut = args[i+1]
@@ -365,27 +368,25 @@ def read_cif_main(args):
                     unknown = False
     
             if (unknown):
-                print_error('unknown file extension of output file')
+                print('\nERROR: unknown file extension of output file')
     
             i = i + 2
-    
     
         # Check if the box size was given.
         elif (args[i] == '-b'):
     
             # Make sure 3 integers are given.
             if (i+3 >= len(args)):
-                print_error('need 3 integers to indicate box size')
+                print('\nERROR: need 3 integers to indicate box size')
     
             Nx = int(args[i+1])
             Ny = int(args[i+2])
             Nz = int(args[i+3])
     
             if (Nx == 0  or  Ny == 0  or  Nz == 0):
-                print_error('box size integers need to be larger than zero')
+                print('\nERROR: box size integers need to be larger than zero')
     
             i = i + 4
-    
     
         # Check if the final configuration should be in a rectangular shape, or in
         # the same shape as the unit cell.
@@ -397,14 +398,14 @@ def read_cif_main(args):
     
         # Anything else is wrong.
         else:
-            print_error('invalid argument "%s"' % args[i])
+            print('\nERROR: invalid argument "%s"' % args[i])
     
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Read input file.
     
     # Make sure an input file was given.
     if (fNameIn == ''):
-        print_error('no input file given.  Use:  -i filename')
+        print('\nERROR: no input file given.  Use:  -i filename')
     
     # Open the CIF file and read the data.
     data = read_cif(fNameIn)
@@ -413,9 +414,9 @@ def read_cif_main(args):
     La = float(data['_cell_length_a'])
     Lb = float(data['_cell_length_b'])
     Lc = float(data['_cell_length_c'])
-    alpha = radians(float(data['_cell_angle_alpha']))
-    beta = radians(float(data['_cell_angle_beta']))
-    gamma = radians(float(data['_cell_angle_gamma']))
+    alpha = math.radians(float(data['_cell_angle_alpha']))
+    beta = math.radians(float(data['_cell_angle_beta']))
+    gamma = math.radians(float(data['_cell_angle_gamma']))
     volume = float(data['_cell_volume'])
     
     # Extract the symmetry operations.  This will be a list of strings such as:
@@ -495,7 +496,7 @@ def read_cif_main(args):
     
                     # Check that this is the same atom type.
                     if (at[0] != label):
-                        print_error('invalid CIF file: atom of type %s overlaps with atom of type %s' % (at[0],label))
+                        print('\nERROR: invalid CIF file: atom of type %s overlaps with atom of type %s' % (at[0],label))
     
             # If the atom is new, add it to the list!
             if (new_atom):
@@ -538,7 +539,7 @@ def read_cif_main(args):
         
         write_cif(fNameIn, atoms, fNameOut)
     
-        print('Done writing extended CIF file (%d atoms in total).' % len(atoms))
+        print('\nERROR: Done writing extended CIF file (%d atoms in total).' % len(atoms))
         exit(0)
     
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -555,12 +556,12 @@ def read_cif_main(args):
     #   b = bx*xhat + by*yhat
     #   c = cx*xhat + cy*yhat + cz*zhat
     #
-    cosa = cos(alpha)
-    sina = sin(alpha)
-    cosb = cos(beta)
-    sinb = sin(beta)
-    cosg = cos(gamma)
-    sing = sin(gamma)
+    cosa = math.cos(alpha)
+    sina = math.sin(alpha)
+    cosb = math.cos(beta)
+    sinb = math.sin(beta)
+    cosg = math.cos(gamma)
+    sing = math.sin(gamma)
     
     cosa2 = cosa * cosa
     cosb2 = cosb * cosb
@@ -573,12 +574,13 @@ def read_cif_main(args):
     
     cx = Lc * cosb
     cy = Lc * (cosa - cosg*cosb) / sing
-    cz = Lc * sqrt( 1 - (cosa2 + cosb2 - 2*cosg*cosb*cosa) / sing2 )
+    cz = Lc * math.sqrt( 1 - (cosa2 + cosb2 - 2*cosg*cosb*cosa) / sing2 )
     
     # Use the volume to check if we did the vectors right.
     V = ax*by*cz
+    
     if ( abs(V - volume) > 0.1):
-        print_error('volume does not match that calculated from primitive vectors')
+        print('\nERROR: volume does not match that calculated from primitive vectors')
     
     # Check if we have a rectangular box.
     if (bx < eps  and  cx < eps  and cy < eps):
@@ -621,6 +623,7 @@ def read_cif_main(args):
     # Determine the box-vector.
     if (make_rect_box):
         box = (Lx, Ly, Lz)
+    
     else:
         box = (Lx, Ly, Lz, Nx*cx, Ny*cy, Nz*cz)
     
@@ -637,7 +640,7 @@ def read_cif_main(args):
             write_gro(atoms, box, fOut)
     
     except:
-        print_error('Failed to write to output file')
+        print('\nERROR: Failed to write to output file')
     
     fOut.close()
     
