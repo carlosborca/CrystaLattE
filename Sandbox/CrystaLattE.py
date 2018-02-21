@@ -47,12 +47,6 @@ from psi4.driver.qcdb.bfs import BFS
 from psi4.driver.qcdb.periodictable import el2mass
 from psi4.driver.qcdb.periodictable import el2z
 
-# Import outsourced code.
-cle_path = os.path.dirname(os.path.realpath(__file__))
-read_cif_path = cle_path + "/Read_CIF"
-sys.path.insert(0, read_cif_path)
-import Read_CIF
-
 # Import parts of PyCIFRW
 from CifFile import CifFile, CifBlock
 from math import *
@@ -1076,13 +1070,13 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
             new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, other_monomers, verbose)
 
-            max_mon_sep = min(new_nmer["min_monomer_separations"])
-            max_com_sep = min(new_nmer["com_monomer_separations"])
+            max_mon_sep = max(new_nmer["min_monomer_separations"])
+            max_com_sep = max(new_nmer["com_monomer_separations"])
 
             if max_mon_sep > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
                 if verbose >= 2: 
-                    print("%s discarded: Separation between closest pair of atoms belonging to different monomers is %3.2f A, longer than cutoff %3.2f A" \
+                    print("%s discarded: Maximum separation between closest pair of atoms belonging to different monomers is %3.2f A, longer than cutoff %3.2f A" \
                           % (new_nmer_name, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
                         
                     counter_dscrd_sep += 1
@@ -1090,7 +1084,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
             elif max_com_sep > (coms_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
                 if verbose >= 2:
-                    print("%s discarded: Separation between closest centers of mass of different monomers is %3.2f A, longer than cutoff %3.2f A" \
+                    print("%s discarded: Maximum separation between closest centers of mass of different monomers is %3.2f A, longer than cutoff %3.2f A" \
                           % (new_nmer_name, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff))
 
                     counter_dscrd_com += 1
@@ -1488,7 +1482,6 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
 
     # Read a CIF file and generate the unit cell.
     read_cif_arguments = read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose)
-    #Read_CIF.main(read_cif_arguments)
     read_cif_main(read_cif_arguments)
     
     # Read the output of the automatic fragmentation.

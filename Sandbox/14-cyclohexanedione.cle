@@ -5,14 +5,14 @@
 
 read_cif_input  = ../Tests/14-cyclohexanedione/14-cyclohexanedione.cif
 read_cif_output = ../Tests/14-cyclohexanedione/14-cyclohexanedione.xyz
-read_cif_a      = 2
-read_cif_b      = 2
-read_cif_c      = 2
+read_cif_a      = 3
+read_cif_b      = 3
+read_cif_c      = 3
 nmers_up_to     = 3
-r_cut_com       = 5.7
-r_cut_monomer   = 3.5
-r_cut_dimer     = 2.7
-r_cut_trimer    = 2.545
+r_cut_com       = 8.8 
+r_cut_monomer   = 7.0
+r_cut_dimer     = 2.4
+r_cut_trimer    = 2.6
 r_cut_tetramer  = 2.8
 r_cut_pentamer  = 4.9
 cle_run_type    = psi4api + quiet
