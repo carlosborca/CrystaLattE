@@ -1393,8 +1393,11 @@ def cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, ps
         crystal_lattice_energy += nmer["contrib"]
         
         rminseps = ""
-
-        for r in nmer["min_monomer_separations"]:
+       
+        nmer_min_monomer_separations = nmer["min_monomer_separations"]
+        nmer_min_monomer_separations.sort()
+        
+        for r in nmer_min_monomer_separations:
             rminseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
         nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
