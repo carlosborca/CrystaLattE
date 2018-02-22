@@ -1,0 +1,90 @@
+####################################################################### 
+# 
+# This file contains crystal structure data downloaded from the 
+# Cambridge Structural Database (CSD) hosted by the Cambridge 
+# Crystallographic Data Centre (CCDC).
+# 
+# Full information about CCDC data access policies and citation 
+# guidelines are available at http://www.ccdc.cam.ac.uk/access/V1 
+# 
+# Audit and citation data items may have been added by the CCDC. 
+# Please retain this information to preserve the provenance of 
+# this file and to allow appropriate attribution of the data. 
+# 
+#######################################################################
+
+data_ANTCEN09
+#This CIF has been generated from an entry in the Cambridge Structural Database
+_database_code_depnum_ccdc_archive 'CCDC 1103069'
+_database_code_CSD               ANTCEN09
+loop_
+_citation_id
+_citation_doi
+_citation_year
+1 10.1107/S0108768190008382 1990
+_audit_creation_method           'Created from the CSD'
+_audit_update_record             
+;
+2018-02-19 downloaded from the CCDC.
+;
+_database_code_NBS               599014
+_chemical_formula_moiety         'C14 H10'
+_chemical_name_systematic        Anthracene
+_chemical_absolute_configuration unk
+_diffrn_ambient_temperature      94
+_exptl_crystal_density_diffrn    1.297
+#These two values have been output from a single CSD field.
+_refine_ls_R_factor_gt           0.041
+_refine_ls_wR_factor_gt          0.041
+_diffrn_radiation_probe          x-ray
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/a'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2yab'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,1/2+y,-z
+3 -x,-y,-z
+4 1/2+x,1/2-y,z
+_cell_length_a                   8.4144(20)
+_cell_length_b                   5.9903(14)
+_cell_length_c                   11.0953(17)
+_cell_angle_alpha                90
+_cell_angle_beta                 125.293(18)
+_cell_angle_gamma                90
+_cell_volume                     456.469
+_cell_formula_units_Z            2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.0861(3) 0.0266(3) 0.3681(2)
+C2 C 0.1172(2) 0.1555(3) 0.2830(2)
+C3 C 0.0585(2) 0.0814(3) 0.1398(2)
+C4 C 0.0870(2) 0.2111(3) 0.0491(2)
+C5 C -0.0307(2) -0.1343(3) 0.0896(2)
+C6 C -0.0602(2) -0.2643(3) 0.1834(2)
+C7 C -0.0049(3) -0.1863(3) 0.3174(2)
+H1 H 0.123(3) 0.076(3) 0.466(2)
+H2 H 0.184(2) 0.302(3) 0.319(2)
+H3 H 0.151(3) 0.354(3) 0.085(2)
+H4 H -0.124(2) -0.410(3) 0.145(2)
+H5 H -0.033(2) -0.276(3) 0.380(2)
+C5B C 0.0307(2) 0.1343(3) -0.0896(2)
+C4B C -0.0870(2) -0.2111(3) -0.0491(2)
+C3B C -0.0585(2) -0.0814(3) -0.1398(2)
+C6B C 0.0602(2) 0.2643(3) -0.1834(2)
+H3B H -0.151(3) -0.354(3) -0.085(2)
+C2B C -0.1172(2) -0.1555(3) -0.2830(2)
+C7B C 0.0049(3) 0.1863(3) -0.3174(2)
+H4B H 0.124(2) 0.410(3) -0.145(2)
+C1B C -0.0861(3) -0.0266(3) -0.3681(2)
+H2B H -0.184(2) -0.302(3) -0.319(2)
+H5B H 0.033(2) 0.276(3) -0.380(2)
+H1B H -0.123(3) -0.076(3) -0.466(2)
+
+#END

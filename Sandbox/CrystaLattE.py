@@ -241,22 +241,23 @@ def read_cif(fNameIn):
 
     # Use the CifFile parser to extract the data.  Although there might be
     # multiple data blocks, we'll only use the first one.
-    cif_file = CifFile(fNameIn)
     
+    #TODO: Known bug: Sometimes not all the blocks in the CIF files are read, and the following extraction fails.
+    cif_file = CifFile(fNameIn)
+
     for db in cif_file:
         data_block = db
         break
 
     try:
         # Extract some parameters, and convert them to floats.
-        data['_cell_length_a']    = float(data_block['_cell_length_a'])
-        data['_cell_length_b']    = float(data_block['_cell_length_b'])
-        data['_cell_length_c']    = float(data_block['_cell_length_c'])
-        data['_cell_angle_alpha'] = float(data_block['_cell_angle_alpha'])
-        data['_cell_angle_beta']  = float(data_block['_cell_angle_beta'])
-        data['_cell_angle_gamma'] = float(data_block['_cell_angle_gamma'])
-        data['_cell_volume']      = float(data_block['_cell_volume'])
-
+        data['_cell_length_a']    = float(data_block['_cell_length_a'].replace("(", "").replace(")", ""))
+        data['_cell_length_b']    = float(data_block['_cell_length_b'].replace("(", "").replace(")", ""))
+        data['_cell_length_c']    = float(data_block['_cell_length_c'].replace("(", "").replace(")", ""))
+        data['_cell_angle_alpha'] = float(data_block['_cell_angle_alpha'].replace("(", "").replace(")", ""))
+        data['_cell_angle_beta']  = float(data_block['_cell_angle_beta'].replace("(", "").replace(")", ""))
+        data['_cell_angle_gamma'] = float(data_block['_cell_angle_gamma'].replace("(", "").replace(")", ""))
+        data['_cell_volume']      = float(data_block['_cell_volume'].replace("(", "").replace(")", ""))
 
         # Get the symbolic operations that define the space group.  In a CIF file
         # that's the part that looks like:
@@ -580,7 +581,7 @@ def read_cif_main(args):
     V = ax*by*cz
     
     if ( abs(V - volume) > 0.1):
-        print('\nERROR: volume does not match that calculated from primitive vectors')
+        print('WARNING: Volume of the unit cell declared in CIF ({:.2f} A^3) is different than the calculated from primitive vectors ({:.2f} A^3).\n'.format(volume, V))
     
     # Check if we have a rectangular box.
     if (bx < eps  and  cx < eps  and cy < eps):
@@ -1391,10 +1392,10 @@ def cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, ps
         nmer["contrib"] = nmer["nambe"] * nmer["replicas"] / float(len(nmer["monomers"]))
         crystal_lattice_energy += nmer["contrib"]
         
-        rcomseps = ""
+        rminseps = ""
 
         for r in nmer["min_monomer_separations"]:
-            rcomseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
+            rminseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
 
         nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
                 keynmer, 
@@ -1403,7 +1404,7 @@ def cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, ps
                 nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
                 crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
                 nmer["priority"],
-                rcomseps)
+                rminseps)
         
         results.append(nmer_result)
 

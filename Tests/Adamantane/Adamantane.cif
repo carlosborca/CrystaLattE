@@ -1,0 +1,99 @@
+####################################################################### 
+# 
+# This file contains crystal structure data downloaded from the 
+# Cambridge Structural Database (CSD) hosted by the Cambridge 
+# Crystallographic Data Centre (CCDC).
+# 
+# Full information about CCDC data access policies and citation 
+# guidelines are available at http://www.ccdc.cam.ac.uk/access/V1 
+# 
+# Audit and citation data items may have been added by the CCDC. 
+# Please retain this information to preserve the provenance of 
+# this file and to allow appropriate attribution of the data. 
+# 
+#######################################################################
+
+data_ADAMAN08
+#This CIF has been generated from an entry in the Cambridge Structural Database
+_database_code_depnum_ccdc_archive 'CCDC 1101170'
+_database_code_CSD               ADAMAN08
+loop_
+_citation_id
+_citation_doi
+_citation_year
+1 10.1107/S0108768187097465 1987
+_audit_creation_method           'Created from the CSD'
+_audit_update_record             
+;
+2018-02-19 downloaded from the CCDC.
+;
+_database_code_NBS               569770
+_chemical_name_common            'PDB Chemical Component code: AAC'
+_chemical_formula_moiety         'C10 H16'
+_chemical_name_systematic        Adamantane
+_chemical_absolute_configuration unk
+_diffrn_ambient_temperature      188
+_exptl_crystal_density_diffrn    1.151
+#These two values have been output from a single CSD field.
+_refine_ls_R_factor_gt           0.024
+_refine_ls_wR_factor_gt          0.024
+_diffrn_radiation_probe          x-ray
+_refine_special_details          'Frenkel refinement'
+_symmetry_cell_setting           tetragonal
+_symmetry_space_group_name_H-M   'P -4 21 c'
+_symmetry_Int_Tables_number      114
+_space_group_name_Hall           'P -4 2n'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -y,x,-z
+3 -x,-y,z
+4 y,-x,-z
+5 1/2-x,1/2+y,1/2-z
+6 1/2+y,1/2+x,1/2+z
+7 1/2+x,1/2-y,1/2-z
+8 1/2-y,1/2-x,1/2+z
+_cell_length_a                   6.639(7)
+_cell_length_b                   6.639(7)
+_cell_length_c                   8.918(9)
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_volume                     393.073
+_chemical_melting_point          541K
+_cell_formula_units_Z            2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.0000 0.0000 0.1980(3)
+C2 C -0.0262(4) 0.1862(4) 0.0992(3)
+C3 C 0.1600(4) 0.2122(4) 0.0000
+H1 H 0.1156(40) 0.0099(73) 0.2688(27)
+H2 H -0.0355(50) 0.3016(46) 0.1590(32)
+H3 H 0.2817(53) 0.2303(48) 0.0626(33)
+H4 H 0.1427(48) 0.3286(47) -0.0570(33)
+C2B C 0.0262(4) -0.1862(4) 0.0992(3)
+H1B H -0.1156(40) -0.0099(73) 0.2688(27)
+C3A C -0.2122(4) 0.1600(4) 0.0000
+C2C C 0.1862(4) 0.0262(4) -0.0992(3)
+C3B C -0.1600(4) -0.2122(4) 0.0000
+C3C C 0.2122(4) -0.1600(4) 0.0000
+H2B H 0.0355(50) -0.3016(46) 0.1590(32)
+C2A C -0.1862(4) -0.0262(4) -0.0992(3)
+H3A H -0.2303(48) 0.2817(53) -0.0626(33)
+H4A H -0.3286(47) 0.1427(48) 0.0570(33)
+C1A C 0.0000 0.0000 -0.1980(3)
+H2C H 0.3016(46) 0.0355(50) -0.1590(32)
+H3B H -0.2817(53) -0.2303(48) 0.0626(33)
+H4B H -0.1427(48) -0.3286(47) -0.0570(33)
+H3C H 0.2303(48) -0.2817(53) -0.0626(33)
+H4C H 0.3286(47) -0.1427(48) 0.0570(33)
+H2A H -0.3016(46) -0.0355(50) -0.1590(32)
+H1A H -0.0099(73) 0.1156(40) -0.2688(27)
+H1C H 0.0099(73) -0.1156(40) -0.2688(27)
+
+#END

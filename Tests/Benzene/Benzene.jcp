@@ -16,4 +16,4 @@ cle_run_type    = psi4api + quiet
 psi4_method     = MP2/aug-cc-pV[TQ]Z + D:fno-ccsd(t)/cc-pVDZ
 psi4_bsse       = cp
 psi4_memory     = 60 GB
-verbose         =2
+verbose         = 2
