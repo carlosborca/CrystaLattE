@@ -727,11 +727,11 @@ def center_supercell(read_cif_output, verbose=0):
     scell_cntr = (np.max(scell_geom, axis=0) - np.min(scell_geom, axis=0))/2.0
     
     if verbose >= 2:
-        print("\nCenter of the supercell located at:")
+        print("\nCurrently, the center of the supercell is located at:")
         print("x = %10.5f" % (scell_cntr[0]))
         print("y = %10.5f" % (scell_cntr[1]))
         print("z = %10.5f" % (scell_cntr[2]))
-        print("\nThe supercell will be translated to the origin.")
+        print("\nThe supercell coordinates will be translated and centered on the origin.")
 
     # Translate the supercell to the origin.
     scell_geom -= scell_cntr
@@ -789,9 +789,15 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
               % (r_cut_monomer, np.min(scell_geom_max_coords)*qcdb.psi_bohr2angstroms))
         print("         Please increase the dimensions of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.")
 
+    # Start the BFS timer.
+    bfs_start_time = time.time()
+    
     # Passes the supercell geometry and elements to the breadth-first
     # search algorithm of QCDB to obtain fragments.
     fragments = BFS(scell_geom, scell_elem)
+
+    # Stop the BFS timer.
+    bfs_stop_time = time.time() - bfs_start_time
     
     # Two lists containing geometries and elements of a fragment.
     frag_geoms = [scell_geom[fr] for fr in fragments]
@@ -843,6 +849,9 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
             nmers[name]["com"] = center_of_mass(frag_elems[index], frag_geoms[index])
             nmers[name]["priority"] = 0.0
 
+    total_number_of_monomers = len(nmers.keys())
+    print("\nThe BFS algorithm found {} monomers in the supercell in {:.2f} s".format(total_number_of_monomers, bfs_stop_time))
+    
     return nmers
 # ======================================================================
 
@@ -1032,6 +1041,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     """
 
     # Function reused for different types of N-mers.
+    
+    build_nmers_start_time = time.time()
 
     if nmer_type == "dimers":
         nm_dictname_pattern = "1mer-"
@@ -1150,7 +1161,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     counter_new_nmers += 1
     
     if verbose >= 2:
-        print("\n{} unique {} were found and generated.".format(counter_new_nmers, nmer_type))
+        build_nmers_stop_time = time.time() - build_nmers_start_time
+        print("\n{} unique {} were found and generated in {:.1f} s.".format(counter_new_nmers, nmer_type, build_nmers_stop_time))
 
     if verbose >= 2:
         print("\n{} {} did not meet the atomic separation cutoff and were discarded.".format(counter_dscrd_sep, nmer_type))
