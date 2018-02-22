@@ -1072,6 +1072,9 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
         for other_monomers in itertools.combinations(range(ref_monomer_idx+1, total_monomers), num_monomers-1):
 
+            # Start N-mer building timer.
+            nmer_start_time = time.time()
+
             new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, other_monomers, verbose)
 
             max_mon_sep = max(new_nmer["min_monomer_separations"])
@@ -1079,17 +1082,24 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
             if max_mon_sep > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
-                if verbose >= 2: 
-                    print("%s discarded: Maximum separation between closest pair of atoms belonging to different monomers is %3.2f A, longer than cutoff %3.2f A" \
-                          % (new_nmer_name, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
+                if verbose >= 2:
+                    # Stop N-mer building timer.
+                    nmer_stop_time = time.time() - nmer_start_time
+
+                    print(
+                        "{} discarded: Maximum separation between closest pair of atoms of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A. {:.2f} s".format(
+                            new_nmer_name, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff, nmer_stop_time))
                         
                     counter_dscrd_sep += 1
             
             elif max_com_sep > (coms_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
                 if verbose >= 2:
-                    print("%s discarded: Maximum separation between closest centers of mass of different monomers is %3.2f A, longer than cutoff %3.2f A" \
-                          % (new_nmer_name, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff))
+                    # Stop N-mer building timer.
+                    nmer_stop_time = time.time() - nmer_start_time
+                    print(
+                        "{} discarded: Maximum separation between closest centers of mass of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A. {:.2f} s".format(
+                            new_nmer_name, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff, nmer_stop_time))
 
                     counter_dscrd_com += 1
 
@@ -1101,24 +1111,10 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     # Nuclear repulsion energy filter.
                     if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5:
 
-                        if verbose >= 3:
-                            print(kexisting)
-                            print(existing["elem"])
-                            print(existing["coords"])
-                        
-                        if verbose >= 3:
-                            print(new_nmer_name)
-                            print(new_nmer["elem"])
-                            print(new_nmer["coords"])
-                        
-                        # Redirect B787 output.
-                        #B787out = kexisting + "-B787.dat"
-                        #sys.stdout = open(B787out, 'w')
-
                         # Block B787 printout
                         sys.stdout = open(os.devnull, 'w')
                         
-                        # Block NumPy divide over zero warning printout.
+                        #TODO: (Double-check) Block NumPy divide over zero warning printout.
                         np.seterr(divide='ignore')
 
                         # Call the dreamliner from QCDB.
@@ -1131,7 +1127,12 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                             found_duplicate = True
 
                             if verbose >= 2:
-                                print("%s discarded: This is a replica of %s." % (new_nmer_name, kexisting))
+                                nre_diff = abs(existing["nre"] - new_nmer["nre"])
+                                
+                                # Stop N-mer building timer.
+                                nmer_stop_time = time.time() - nmer_start_time
+                                print("{} discarded: Replica of {}. NRE difference is {:.1e} and RMSD is {:.1e}. {:.2f} s".format(
+                                    new_nmer_name, kexisting, nre_diff, rmsd, nmer_stop_time))
 
                             existing["replicas"] += 1
                             counter_dscrd_rep += 1
@@ -1142,8 +1143,9 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     new_nmers[new_nmer_name] = new_nmer
 
                     if verbose >= 2:
-                        print("%s generated: NRE = %.12f au." \
-                                % (new_nmer_name, new_nmer["nre"]))
+                        # Stop N-mer building timer.
+                        nmer_stop_time = time.time() - nmer_start_time
+                        print("{} generated: New N-mer NRE is {:.12f}. {:.2f} s".format(new_nmer_name, new_nmer["nre"], nmer_stop_time))
 
                     counter_new_nmers += 1
     
@@ -1412,7 +1414,7 @@ def cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, ps
         results.append(nmer_result)
 
         if verbose >= 2:
-            print("{} elapsed {:.2f} seconds processing on {} threads. Cumulative Lattice Energy = {:9.8f} KJ/mol".format(
+            print("{} elapsed {:.2f} s processing on {} threads. Cumulative Lattice Energy = {:9.8f} KJ/mol".format(
                 keynmer, 
                 energies_wallclock, 
                 cpus, 
@@ -1456,7 +1458,7 @@ def print_end_msg(start, verbose=0):
     if verbose >= 1:
         print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
         print("Execution terminated succesfully.")
-        print("Total elapsed wall-clock time: {:.2f} seconds\n".format(time.time() - start))
+        print("Total elapsed wall-clock time: {:.2f} s\n".format(time.time() - start))
         print("Thank you for using CrystaLatte.\n")
         print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 
