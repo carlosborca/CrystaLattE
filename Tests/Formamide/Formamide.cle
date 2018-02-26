@@ -1,0 +1,22 @@
+# CrystaLattE Input Template:
+
+# Blank lines and lines starting with the hash character are omitted.
+# Padding blank spaces are also ignored.
+
+read_cif_input  = Formamide.cif
+read_cif_output = Formamide.xyz
+read_cif_a      = 3
+read_cif_b      = 3
+read_cif_c      = 3
+nmers_up_to     = 5
+r_cut_com       = 8.6
+r_cut_monomer   = 4.0
+r_cut_dimer     = 2.6
+r_cut_trimer    = 3.1
+r_cut_tetramer  = 3.3
+r_cut_pentamer  = 5.1
+cle_run_type    = psi4api + quiet
+psi4_method     = HF/STO-3G
+psi4_bsse       = cp
+psi4_memory     = 500 MB
+verbose         = 2
