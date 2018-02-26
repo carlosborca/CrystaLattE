@@ -1,0 +1,78 @@
+####################################################################### 
+# 
+# This file contains crystal structure data downloaded from the 
+# Cambridge Structural Database (CSD) hosted by the Cambridge 
+# Crystallographic Data Centre (CCDC).
+# 
+# Full information about CCDC data access policies and citation 
+# guidelines are available at http://www.ccdc.cam.ac.uk/access/V1 
+# 
+# Audit and citation data items may have been added by the CCDC. 
+# Please retain this information to preserve the provenance of 
+# this file and to allow appropriate attribution of the data. 
+# 
+#######################################################################
+
+data_OXALAC03
+#This CIF has been generated from an entry in the Cambridge Structural Database
+_database_code_depnum_ccdc_archive 'CCDC 1226344'
+_database_code_CSD               OXALAC03
+loop_
+_citation_id
+_citation_doi
+_citation_year
+1 10.1107/S0567740874006820 1974
+_audit_creation_method           'Created from the CSD'
+_audit_update_record             
+;
+2018-02-19 downloaded from the CCDC.
+;
+_database_code_NBS               520654
+_chemical_formula_moiety         'C2 H2 O4'
+_chemical_name_systematic        'Oxalic acid'
+_chemical_absolute_configuration unk
+_diffrn_ambient_temperature      295
+_exptl_crystal_density_diffrn    1.913
+#These two values have been output from a single CSD field.
+_refine_ls_R_factor_gt           0.053
+_refine_ls_wR_factor_gt          0.053
+_diffrn_radiation_probe          x-ray
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_H-M   'P c a b'
+_symmetry_Int_Tables_number      61
+_space_group_name_Hall           '-P 2bc 2ac'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,y,1/2+z
+3 1/2+x,1/2-y,z
+4 -x,1/2-y,1/2+z
+5 -x,-y,-z
+6 1/2+x,-y,1/2-z
+7 1/2-x,1/2+y,-z
+8 x,1/2+y,1/2-z
+_cell_length_a                   6.548(5)
+_cell_length_b                   7.844(5)
+_cell_length_c                   6.086(5)
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_volume                     312.592
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.05698 0.05521 -0.08441
+H1 H 0.09100 0.27700 -0.15600
+O1 O 0.15613 -0.00540 -0.23224
+O2 O 0.02909 0.21693 -0.04328
+C1D C -0.05698 -0.05521 0.08441
+O1D O -0.15613 0.00540 0.23224
+O2D O -0.02909 -0.21693 0.04328
+H1D H -0.09100 -0.27700 0.15600
+
+#END
