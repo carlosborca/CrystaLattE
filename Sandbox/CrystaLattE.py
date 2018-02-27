@@ -1169,8 +1169,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     nmer_stop_time = time.time() - nmer_start_time
 
                     print(
-                        "{} discarded: Maximum separation between closest pair of atoms of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A. {:.2f} s".format(
-                            new_nmer_name, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff, nmer_stop_time))
+                        "{} discarded in {:.2f} s. Maximum separation between closest atoms of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
+                            new_nmer_name, nmer_stop_time, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
                         
                     counter_dscrd_sep += 1
             
@@ -1180,8 +1180,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     # Stop N-mer building timer.
                     nmer_stop_time = time.time() - nmer_start_time
                     print(
-                        "{} discarded: Maximum separation between closest centers of mass of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A. {:.2f} s".format(
-                            new_nmer_name, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff, nmer_stop_time))
+                        "{} discarded in {:.2f} s: Maximum separation between closest COMs of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
+                            new_nmer_name, nmer_stop_time, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff))
 
                     counter_dscrd_com += 1
 
@@ -1193,10 +1193,10 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     # Nuclear repulsion energy filter.
                     if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5:
                         
-                        chemical_space = True
-                        #chemical_space = False
-                        dreamliner = False
-                        #dreamliner = True
+                        #chemical_space = True
+                        chemical_space = False
+                        #dreamliner = False
+                        dreamliner = True
 
                         if chemical_space == True:
 
@@ -1211,8 +1211,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                                     # Stop N-mer building timer.
                                     nmer_stop_time = time.time() - nmer_start_time
-                                    print("{} discarded: Replica of {}. NRE difference is {:.1e} and CHSEV difference is {:.1e}. {:.2f} s".format(
-                                        new_nmer_name, kexisting, nre_diff, chsev_diff, nmer_stop_time))
+                                    print("{} discarded in {:.2f} s: Replica of {}. NRE difference is {:.1e} and ChSEV difference is {:.1e}.".format(
+                                        new_nmer_name, nmer_stop_time, kexisting, nre_diff, chsev_diff))
 
                                 existing["replicas"] += 1
                                 counter_dscrd_rep += 1
@@ -1241,8 +1241,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                                     
                                     # Stop N-mer building timer.
                                     nmer_stop_time = time.time() - nmer_start_time
-                                    print("{} discarded: Replica of {}. NRE difference is {:.1e} and RMSD is {:.1e}. {:.2f} s".format(
-                                        new_nmer_name, kexisting, nre_diff, rmsd, nmer_stop_time))
+                                    print("{} discarded in {:.2f} s: Replica of {}. NRE difference is {:.1e} and RMSD is {:.1e}.".format(
+                                        new_nmer_name, nmer_stop_time, kexisting, nre_diff, rmsd))
 
                                 existing["replicas"] += 1
                                 counter_dscrd_rep += 1
@@ -1255,7 +1255,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     if verbose >= 2:
                         # Stop N-mer building timer.
                         nmer_stop_time = time.time() - nmer_start_time
-                        print("{} generated: New N-mer NRE is {:.12f}. {:.2f} s".format(new_nmer_name, new_nmer["nre"], nmer_stop_time))
+                        print("{} generated in {:.2f} s: New N-mer NRE is {:.12f}.".format(new_nmer_name, nmer_stop_time, new_nmer["nre"]))
 
                     counter_new_nmers += 1
     
