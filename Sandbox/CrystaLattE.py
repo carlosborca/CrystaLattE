@@ -32,6 +32,7 @@
 #
 
 # Import standard Python modules.
+import cProfile as profile
 import itertools
 import math
 import multiprocessing
@@ -131,24 +132,43 @@ def input_parser(in_f_name):
         
         for kw_key in kw_keys:
             print("  {:15} = {}".format(kw_key, str(keywords[kw_key])))
+    
+    if "timings" in keywords["cle_run_type"]:
+        
+        func_str = "main("
 
-    main(keywords["read_cif_input"], 
-         keywords["read_cif_output"],
-         keywords["read_cif_a"], 
-         keywords["read_cif_b"],
-         keywords["read_cif_c"], 
-         keywords["nmers_up_to"], 
-         keywords["r_cut_com"], 
-         keywords["r_cut_monomer"], 
-         keywords["r_cut_dimer"], 
-         keywords["r_cut_trimer"], 
-         keywords["r_cut_tetramer"], 
-         keywords["r_cut_pentamer"], 
-         keywords["cle_run_type"],
-         keywords["psi4_method"],
-         keywords["psi4_bsse"],
-         keywords["psi4_memory"],
-         keywords["verbose"])
+        for kw_key in kw_keys:
+            
+            if type(keywords[kw_key]) == str:
+                func_str = func_str + "{}='{}', ".format(kw_key, str(keywords[kw_key]))
+            
+            else:
+                func_str = func_str + "{}={}, ".format(kw_key, str(keywords[kw_key])) 
+        
+        func_str = func_str[:-2] + ")"
+        
+        profile.run(func_str)
+        
+    else:
+        main(
+            keywords["read_cif_input"], 
+            keywords["read_cif_output"],
+            keywords["read_cif_a"], 
+            keywords["read_cif_b"],
+            keywords["read_cif_c"], 
+            keywords["nmers_up_to"], 
+            keywords["r_cut_com"], 
+            keywords["r_cut_monomer"], 
+            keywords["r_cut_dimer"], 
+            keywords["r_cut_trimer"], 
+            keywords["r_cut_tetramer"], 
+            keywords["r_cut_pentamer"], 
+            keywords["cle_run_type"],
+            keywords["psi4_method"],
+            keywords["psi4_bsse"],
+            keywords["psi4_memory"],
+            keywords["verbose"])
+    
 # ======================================================================
 
 
