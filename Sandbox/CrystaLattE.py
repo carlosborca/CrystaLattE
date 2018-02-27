@@ -1443,7 +1443,7 @@ def nmer2psiapimol(nmers, keynmer, nmer, verbose=0):
 
 
 # ======================================================================
-def nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+def nmer2psithon(read_cif_output, nmers, keynmer, nmer, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """.
     """
     
@@ -1491,12 +1491,24 @@ def nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_bsse, psi4_memory, verb
    
     psithon_input += "\n"
 
+    owd = os.getcwd()
+    psithon_folder = read_cif_output[:-4]
+
+    try:
+        os.mkdir(psithon_folder)
+    
+    except FileExistsError:
+        pass
+
+    os.chdir(psithon_folder)
     psithon_filename = keynmer + ".in"
 
     with open(psithon_filename, "w") as psithon_f:
         
         for line in psithon_input:
             psithon_f.write(line)
+
+    os.chdir(owd)
 # ======================================================================
 
 
@@ -1631,7 +1643,7 @@ def cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, ps
         
         # Produce Psithon inputs
         if "psithon" in cle_run_type:
-            nmer2psithon(nmers, keynmer, nmer, psi4_method, psi4_bsse, psi4_memory, verbose)
+            nmer2psithon(read_cif_output, nmers, keynmer, nmer, psi4_method, psi4_bsse, psi4_memory, verbose)
 
         # Run energies in PSI4.
         else:
