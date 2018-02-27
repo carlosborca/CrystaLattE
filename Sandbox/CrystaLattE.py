@@ -1149,9 +1149,6 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
         monomer_key = "1mer-" + str(ref_monomer_idx)
         ref_monomer = nmers[monomer_key]
 
-        # A list for chemical space eigenvalues.
-        #chsev_list = []
-
         for other_monomers in itertools.combinations(range(ref_monomer_idx+1, total_monomers), num_monomers-1):
 
             # Start N-mer building timer.
@@ -1165,6 +1162,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
             if max_mon_sep > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
                 if verbose >= 2:
+                    
                     # Stop N-mer building timer.
                     nmer_stop_time = time.time() - nmer_start_time
 
@@ -1177,6 +1175,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
             elif max_com_sep > (coms_separation_cutoff / qcdb.psi_bohr2angstroms):
                 
                 if verbose >= 2:
+                    
                     # Stop N-mer building timer.
                     nmer_stop_time = time.time() - nmer_start_time
                     print(
@@ -1201,7 +1200,6 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                         if chemical_space == True:
 
                             chsev_diff = np.linalg.norm(existing["chsev"] - new_nmer["chsev"])
-                            #chsev_list.append(chsev_diff)
 
                             if chsev_diff < 1.e-3:
                                 found_duplicate = True
@@ -1253,9 +1251,23 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     new_nmers[new_nmer_name] = new_nmer
 
                     if verbose >= 2:
+
                         # Stop N-mer building timer.
                         nmer_stop_time = time.time() - nmer_start_time
-                        print("{} generated in {:.2f} s: New N-mer NRE is {:.12f}.".format(new_nmer_name, nmer_stop_time, new_nmer["nre"]))
+
+                        try:
+                            print("{} generated in {:.2f} s: New N-mer NRE is {:.12f}, lowest ChSEV difference found is {:.1e}.".format(
+                                new_nmer_name, nmer_stop_time, new_nmer["nre"], chsev_diff))
+
+                        except:
+
+                            try:
+                                print("{} generated in {:.2f} s: New N-mer NRE is {:.12f}, lowest RMSD found is {:.1e}.".format(
+                                    new_nmer_name, nmer_stop_time, new_nmer["nre"], rmsd))
+
+                            except UnboundLocalError:
+                                print("{} generated in {:.2f} s: New N-mer NRE is {:.12f}.".format(
+                                    new_nmer_name, nmer_stop_time, new_nmer["nre"]))
 
                     counter_new_nmers += 1
     
