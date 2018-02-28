@@ -1167,7 +1167,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     nmer_stop_time = time.time() - nmer_start_time
 
                     print(
-                        "{} discarded in {:.2f} s. Maximum separation between closest atoms of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
+                        "{} discarded in {:.2f} s: Maximum separation between closest atoms of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
                             new_nmer_name, nmer_stop_time, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
                         
                     counter_dscrd_sep += 1
@@ -1186,29 +1186,42 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
             else:
                 found_duplicate = False
+                
+                chemical_space = True
+                #chemical_space = False
+                dreamliner = False
+                #dreamliner = True
+
+                nre_filter_ran = False
+                chsev_filter_ran = False
+                rmsd_filter_ran = False
 
                 for kexisting, existing in new_nmers.items():
 
                     # Nuclear repulsion energy filter.
-                    if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5:
-                        
-                        #chemical_space = True
-                        chemical_space = False
-                        #dreamliner = False
-                        dreamliner = True
+                    nre_diff = abs(existing["nre"] - new_nmer["nre"])
+                    nre_filter_ran = True
 
+                    if nre_diff > 1.e-5:
+
+                        chsev_filter_ran = False
+                        rmsd_filter_ran = False                        
+
+                    else:
+                        # Chemical space eigenvalues filter.
                         if chemical_space == True:
 
                             chsev_diff = np.linalg.norm(existing["chsev"] - new_nmer["chsev"])
+                            chsev_filter_ran = True
 
                             if chsev_diff < 1.e-3:
                                 found_duplicate = True
 
                                 if verbose >= 2:
-                                    nre_diff = abs(existing["nre"] - new_nmer["nre"])
 
                                     # Stop N-mer building timer.
                                     nmer_stop_time = time.time() - nmer_start_time
+
                                     print("{} discarded in {:.2f} s: Replica of {}. NRE difference is {:.1e} and ChSEV difference is {:.1e}.".format(
                                         new_nmer_name, nmer_stop_time, kexisting, nre_diff, chsev_diff))
 
@@ -1217,6 +1230,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                                 break
 
+                        # RMSD filter.
                         if dreamliner == True:
                         
                             # Block B787 printout
@@ -1227,6 +1241,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                             # Call the dreamliner from QCDB.
                             rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], run_mirror=True, verbose=2)
+                            rmsd_filter_ran = True
 
                             # Reanable printout
                             sys.stdout = sys.__stdout__
@@ -1235,10 +1250,10 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                                 found_duplicate = True
 
                                 if verbose >= 2:
-                                    nre_diff = abs(existing["nre"] - new_nmer["nre"])
                                     
                                     # Stop N-mer building timer.
                                     nmer_stop_time = time.time() - nmer_start_time
+
                                     print("{} discarded in {:.2f} s: Replica of {}. NRE difference is {:.1e} and RMSD is {:.1e}.".format(
                                         new_nmer_name, nmer_stop_time, kexisting, nre_diff, rmsd))
 
@@ -1255,19 +1270,21 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                         # Stop N-mer building timer.
                         nmer_stop_time = time.time() - nmer_start_time
 
-                        try:
-                            print("{} generated in {:.2f} s: New N-mer NRE is {:.12f}, lowest ChSEV difference found is {:.1e}.".format(
-                                new_nmer_name, nmer_stop_time, new_nmer["nre"], chsev_diff))
+                        if nre_filter_ran == True:
+                            
+                            if chsev_filter_ran == True:
+                                print("{} generated in {:.2f} s: New N-mer NRE difference is {:.1e}, lowest ChSEV difference found is {:.1e}.".format(
+                                    new_nmer_name, nmer_stop_time, nre_diff, chsev_diff))
+                        
+                            if rmsd_filter_ran == True:
+                                print("{} generated in {:.2f} s: New N-mer NRE difference is {:.1e}, lowest RMSD found is {:.1e}.".format(
+                                    new_nmer_name, nmer_stop_time, nre_diff, rmsd))
 
-                        except:
+                            if chsev_filter_ran == False and rmsd_filter_ran == False:
+                                print("{} generated in {:.2f} s: New N-mer NRE difference is {:.1e}.".format(new_nmer_name, nmer_stop_time, nre_diff))
 
-                            try:
-                                print("{} generated in {:.2f} s: New N-mer NRE is {:.12f}, lowest RMSD found is {:.1e}.".format(
-                                    new_nmer_name, nmer_stop_time, new_nmer["nre"], rmsd))
-
-                            except UnboundLocalError:
-                                print("{} generated in {:.2f} s: New N-mer NRE is {:.12f}.".format(
-                                    new_nmer_name, nmer_stop_time, new_nmer["nre"]))
+                        else:
+                            print("{} generated in {:.2f} s: New N-mer NRE is {:.12f}.".format(new_nmer_name, nmer_stop_time, new_nmer["nre"]))
 
                     counter_new_nmers += 1
     
