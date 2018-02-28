@@ -32,7 +32,6 @@
 #
 
 # Import standard Python modules.
-import cProfile as profile
 import itertools
 import math
 import multiprocessing
@@ -147,6 +146,7 @@ def input_parser(in_f_name):
         
         func_str = func_str[:-2] + ")"
         
+        import cProfile as profile
         profile.run(func_str)
         
     else:
