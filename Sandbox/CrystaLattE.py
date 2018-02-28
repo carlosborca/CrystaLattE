@@ -1202,11 +1202,15 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     nre_diff = abs(existing["nre"] - new_nmer["nre"])
                     nre_filter_ran = True
 
+                    # If NRE difference is large, this is a new N-mer.
+                    # Threfore reset posterior filters ran flags, there
+                    # is no need to run further filters than NRE.
                     if nre_diff > 1.e-5:
 
                         chsev_filter_ran = False
                         rmsd_filter_ran = False                        
-
+                    
+                    # The NRE is small, proceed to next filters.
                     else:
                         # Chemical space eigenvalues filter.
                         if chemical_space == True:
@@ -1300,147 +1304,6 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     nmers.update(new_nmers)
 
     return nmers
-# ======================================================================
-
-
-# ======================================================================
-"""def good_old_build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_separation_cutoff, verbose=1):
-    ""Takes a float indicating a cutoff distance in Angstroms.
-    Returns dimer files that pass through the filter.
-    ""
-
-    # Function reused for different types of N-mers.
-    
-    build_nmers_start_time = time.time()
-
-    if nmer_type == "dimers":
-        nm_dictname_pattern = "1mer-"
-        num_monomers = 2
-
-    elif nmer_type == "trimers":
-        nm_dictname_pattern = "2mer-"
-        num_monomers = 3
-
-    elif nmer_type == "tetramers":
-        nm_dictname_pattern = "3mer-"
-        num_monomers = 4
-
-    elif nmer_type == "pentamers":
-        nm_dictname_pattern = "4mer-"
-        num_monomers = 5
-    
-    else:
-        print("\nERROR: The N-mer type must be defined as 'dimers', 'trimers', 'tetramers', or 'pentamer'.")
-
-    if verbose >= 2:
-        print("")
-
-    counter_new_nmers = 0 # Number of new N-mers generated
-    counter_dscrd_sep = 0 # N-mers filtered out by atomic separation
-    counter_dscrd_com = 0 # N-mers filtered out by COM separation
-    counter_dscrd_rep = 0 # N-mers filtered out as a replicas
-
-    new_nmers = {}
-
-    # TODO: Support for crystals with more than one molecule in the
-    #       primitive unit cell.
-    num_ref_monomers = 1
-
-    for ref_monomer_idx in range(num_ref_monomers):
-        monomer_key = "1mer-" + str(ref_monomer_idx)
-        ref_monomer = nmers[monomer_key]
-
-        for other_monomers in itertools.combinations(range(ref_monomer_idx+1, total_monomers), num_monomers-1):
-
-            # Start N-mer building timer.
-            nmer_start_time = time.time()
-
-            new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, other_monomers, verbose)
-
-            max_mon_sep = max(new_nmer["min_monomer_separations"])
-            max_com_sep = max(new_nmer["com_monomer_separations"])
-
-            if max_mon_sep > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms):
-                
-                if verbose >= 2:
-                    # Stop N-mer building timer.
-                    nmer_stop_time = time.time() - nmer_start_time
-
-                    print(
-                        "{} discarded: Maximum separation between closest pair of atoms of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A. {:.2f} s".format(
-                            new_nmer_name, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff, nmer_stop_time))
-                        
-                    counter_dscrd_sep += 1
-            
-            elif max_com_sep > (coms_separation_cutoff / qcdb.psi_bohr2angstroms):
-                
-                if verbose >= 2:
-                    # Stop N-mer building timer.
-                    nmer_stop_time = time.time() - nmer_start_time
-                    print(
-                        "{} discarded: Maximum separation between closest centers of mass of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A. {:.2f} s".format(
-                            new_nmer_name, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff, nmer_stop_time))
-
-                    counter_dscrd_com += 1
-
-            else:
-                found_duplicate = False
-
-                for kexisting, existing in new_nmers.items():
-
-                    # Nuclear repulsion energy filter.
-                    if abs(existing["nre"] - new_nmer["nre"]) < 1.e-5:
-
-                        # Block B787 printout
-                        sys.stdout = open(os.devnull, 'w')
-                        
-                        #TODO: (Double-check) Block NumPy divide over zero warning printout.
-                        np.seterr(divide='ignore')
-
-                        # Call the dreamliner from QCDB.
-                        rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], run_mirror=True, verbose=2)
-
-                        # Reanable printout
-                        sys.stdout = sys.__stdout__
-
-                        if rmsd < 1.e-3:
-                            found_duplicate = True
-
-                            if verbose >= 2:
-                                nre_diff = abs(existing["nre"] - new_nmer["nre"])
-                                
-                                # Stop N-mer building timer.
-                                nmer_stop_time = time.time() - nmer_start_time
-                                print("{} discarded: Replica of {}. NRE difference is {:.1e} and RMSD is {:.1e}. {:.2f} s".format(
-                                    new_nmer_name, kexisting, nre_diff, rmsd, nmer_stop_time))
-
-                            existing["replicas"] += 1
-                            counter_dscrd_rep += 1
-
-                            break
-
-                if not found_duplicate:
-                    new_nmers[new_nmer_name] = new_nmer
-
-                    if verbose >= 2:
-                        # Stop N-mer building timer.
-                        nmer_stop_time = time.time() - nmer_start_time
-                        print("{} generated: New N-mer NRE is {:.12f}. {:.2f} s".format(new_nmer_name, new_nmer["nre"], nmer_stop_time))
-
-                    counter_new_nmers += 1
-    
-    if verbose >= 2:
-        build_nmers_stop_time = time.time() - build_nmers_start_time
-        print("\n{} unique {} were found and generated in {:.1f} s.".format(counter_new_nmers, nmer_type, build_nmers_stop_time))
-
-    if verbose >= 2:
-        print("\n{} {} did not meet the atomic separation cutoff and were discarded.".format(counter_dscrd_sep, nmer_type))
-        print("{} {} did not meet the center of mass separation cutoff and were discarded.".format(counter_dscrd_com, nmer_type))
-        print("{} {} were duplicates of another dimer and were discarded.".format(counter_dscrd_rep, nmer_type))
-    
-    nmers.update(new_nmers)
-
-    return nmers"""
 # ======================================================================
 
 
