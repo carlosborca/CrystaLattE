@@ -1061,41 +1061,50 @@ def nre(elem, geom):
 def chemical_space(elem, geom):
     """.
     """
-    # get number of atoms
+    # Get the number of atoms in the N-mer
     natoms = geom.shape[0]
-    # make numpy matrix
+    
+    # Create a NumPy matrix
     M = np.zeros((natoms,natoms))
-    # iterate over atoms
+
+    # Iterate over atoms
     for i in range(natoms):
    
-        # Grab charge of atom i
+        # Get the charge of atom i
         charge_i = el2z[elem[i]]
-        # for diagonal, use special polynomial from DOI: 10.1103/PhysRevLett.108.058301     
+        
+        # Fill the diagonal with the special polynomial from of:
+        # DOI: 10.1103/PhysRevLett.108.058301     
         M[i,i] = 0.5 * np.power(charge_i, 2.4)
     
         for j in range(i):
             
-            # Grab charge of atom j
+            # Get the charge of atom j
             charge_j = el2z[elem[j]]
+            
             # Compute distance between i and j
             dist = np.linalg.norm(geom[i] - geom[j])
+            
             # Compute Coulomb interaction between i and j
-            nre = charge_i * charge_j / dist
+            ij_elem = charge_i * charge_j / dist
 
-            M[i,j] = nre
+            M[i,j] = ij_elem
             # Symmetric Matrix 
-            M[j,i] = nre
+            M[j,i] = ij_elem
     
+    # Solve the eigenvalue problem
     eigenvalues, eigenvectors = np.linalg.eig(M)
 
-    # eigenvalues must be in list to use 'sort'
+    # Eigenvalues must be in list to use 'sort'
     sorted_eigenvalues = list(eigenvalues)
-    # sort in order of "decreasing absolute value"
+    
+    # Sort the eigenvalues in order of "decreasing absolute value".
     # This first sort is done to guarantee the same sort in the case 
-    # that two eigenvalues are the same magnitude but different sign
+    # that two eigenvalues are the same magnitude but different sign.
     sorted_eigenvalues.sort(key = lambda x: -x)
     sorted_eigenvalues.sort(key = lambda x: -abs(x))
-    # cast back to numpy array, a little silly
+    
+    # Cast back to a NumPy array.
     chem_spc_eigenv = np.array(sorted_eigenvalues)
 
     return chem_spc_eigenv
