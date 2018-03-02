@@ -1059,8 +1059,23 @@ def nre(elem, geom):
 
 # ======================================================================
 def chemical_space(elem, geom):
-    """.
+    """Takes the element symbols and coordinates of a set of atoms and
+    computes the chemical space matrix, eigenvalues, and eigenvectors
+    of the chemical system and returns a list with the sorted
+    eigenvalues.
+
+    Arguments:
+    <numpy.ndarray> elems
+        Array of 1 column with the atomic symbols of each atom.
+    <numpy.ndarray> geoms
+        Array of 3 columns with the coordinates of the system.
+
+    Returns:
+    <numpy.ndarray> chem_spc_eigenv
+        Array of x numbers with the sorted eigenvalues of the molecular
+        system, where x is the number of atoms in the system.
     """
+
     # Get the number of atoms in the N-mer
     natoms = geom.shape[0]
     
