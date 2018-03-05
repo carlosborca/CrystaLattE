@@ -1,0 +1,7 @@
+host: 192.168.2.106
+port: 27017
+name: fireworks
+username: null
+password: null
+logdir: /theoryfs2/ds/cborca/Fireworks/log
+strm_lvl: INFO

@@ -1,0 +1,13 @@
+molecule h2o {
+O
+H 1 1.0
+H 1 1.0 2 104.5
+}
+
+memory 512 mb
+set {
+   basis 6-31g
+   geom_maxiter 6
+}
+
+energy('scf')

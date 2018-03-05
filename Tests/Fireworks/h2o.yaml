@@ -1,0 +1,7 @@
+spec:
+  _pass_job_info: true
+  _tasks:
+  - _fw_name: Psi4Task
+  inputfile: 2mer-0+2.in
+  ncores: 6
+  _launch_dir: /theoryfs2/ds/cborca/Projects/CrystaLattE/Tests/Fireworks/Benzene

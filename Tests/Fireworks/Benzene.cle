@@ -1,0 +1,22 @@
+# CrystaLattE Input Template:
+
+# Blank lines and lines starting with the hash character are omitted.
+# Padding blank spaces are also ignored.
+
+read_cif_input  = Benzene.cif
+read_cif_output = Benzene.xyz
+read_cif_a      = 2
+read_cif_b      = 2
+read_cif_c      = 2
+nmers_up_to     = 5
+r_cut_com       = 8.4
+r_cut_monomer   = 4.43
+r_cut_dimer     = 2.6
+r_cut_trimer    = 2.7
+r_cut_tetramer  = 2.7
+r_cut_pentamer  = 5.1
+cle_run_type    = psithon
+psi4_method     = HF/STO-3G
+psi4_bsse       = cp
+psi4_memory     = 500 MB
+verbose         = 2

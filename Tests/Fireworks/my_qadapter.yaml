@@ -1,0 +1,20 @@
+_fw_name: CommonAdapter
+_fw_q_type: PBS
+rocket_launch: /theoryfs2/ds/nascimento/miniconda2/bin/rlaunch singleshot
+nnodes: 1
+ppnode: 1
+walltime: '00:02:00'
+queue: batch
+account: nascimento
+job_name: Fireworks
+logdir: /theoryfs2/ds/nascimento/chem/fireworks/log
+pre_rocket: null
+post_rocket: null
+
+# You can override commands by uncommenting and changing the following lines:
+# _q_commands_override:
+#    submit_cmd: my_qsubmit
+#    status_cmd: my_qstatus
+
+#You can also supply your own template by uncommenting and changing the following line:
+#template_file: /full/path/to/template
