@@ -933,7 +933,8 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     nm_new["nre"] = nre(nm_new["elem"], nm_new["coords"])
 
     # Chemical space eigenvalues of the new N-mer.
-    nm_new["chsev"] = chemical_space(nm_new["elem"], nm_new["coords"])
+    #nm_new["chsev"] = chemical_space(nm_new["elem"], nm_new["coords"])
+    nm_new["chsev"], nm_new["matrix"] = chemical_space(nm_new["elem"], nm_new["coords"])
 
     # Non additive N-body energy of the N-mer.
     nm_new["nambe"] = 0.0
@@ -1106,7 +1107,7 @@ def chemical_space(elem, geom):
             M[i,j] = ij_elem
             # Symmetric Matrix 
             M[j,i] = ij_elem
-    
+
     # Solve the eigenvalue problem
     eigenvalues, eigenvectors = np.linalg.eig(M)
 
@@ -1120,9 +1121,10 @@ def chemical_space(elem, geom):
     sorted_eigenvalues.sort(key = lambda x: -abs(x))
     
     # Cast back to a NumPy array.
-    chem_spc_eigenv = np.array(sorted_eigenvalues)
+    chem_spc_eigen_values = np.array(sorted_eigenvalues)
 
-    return chem_spc_eigenv
+    #return chem_spc_eigenv
+    return chem_spc_eigen_values, M
 # ======================================================================
 
 
@@ -1241,6 +1243,10 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                             chsev_diff = np.linalg.norm(existing["chsev"] - new_nmer["chsev"])
                             chsev_filter_ran = True
+
+                            #print("\n" + kexisting + " Matrix =\n" + str(existing["matrix"]))
+                            #print("\n" + new_nmer_name + " Matrix =\n" + str(new_nmer["matrix"]))
+                            #print("")
 
                             if chsev_diff < 1.e-3:
                                 found_duplicate = True
