@@ -3,19 +3,19 @@
 # Blank lines and lines starting with the hash character are omitted.
 # Padding blank spaces are also ignored.
 
-read_cif_input  = Carbon_Dioxide.cif
-read_cif_output = Carbon_Dioxide.xyz
+read_cif_input  = Hexamine.cif
+read_cif_output = Hexamine.xyz
 read_cif_a      = 3
 read_cif_b      = 3
 read_cif_c      = 3
-nmers_up_to     = 3
-r_cut_com       = 10.0
-r_cut_monomer   = 3.5
-r_cut_dimer     = 10.0
-r_cut_trimer    = 10.0
-r_cut_tetramer  = 10.0
-r_cut_pentamer  = 10.0
-cle_run_type    = psi4api + test
+nmers_up_to     = 5
+r_cut_com       = 20.0
+r_cut_monomer   = 4.1
+r_cut_dimer     = 2.9
+r_cut_trimer    = 5.8
+r_cut_tetramer  = 5.8
+r_cut_pentamer  = 5.8
+cle_run_type    = psi4api + quiet
 psi4_method     = HF/STO-3G
 psi4_bsse       = cp
 psi4_memory     = 500 MB
