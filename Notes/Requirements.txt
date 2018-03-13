@@ -11,8 +11,6 @@
 
     2. CrystaLattE Conda Environment:
 
-        ?. conda install psi4 -c psi4/label/dev -c psi4
-
         a. conda info --envs
 
         b. Create the CrystaLattE environment: conda create -n CrystaLattE psi4-dev python=3.6 -c psi4
@@ -24,8 +22,6 @@
         e. Install PyCifRW using: conda install -c conda-forge pycifrw
 
         f. Install NetworkX using: conda install networkx
-
-        g. Install Decorator using: conda install decorator
 
     
     5. Hungarian Algorithm

@@ -1212,8 +1212,9 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                 found_duplicate = False
                 
                 chemical_space = True
-                #chemical_space = False
                 dreamliner = False
+                
+                #chemical_space = False
                 #dreamliner = True
 
                 nre_filter_ran = False
@@ -1471,7 +1472,7 @@ def psi4api_energies(read_cif_output, nmers, keynmer, nmer, cpus, cle_run_type, 
     
     # Execute Psi4 energy calculations, unless running on test mode.
 
-    # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=he_tetramer, bsse_type=['cp', 'nocp', 'vmfc'])
+    # Example:  psi4.energy('MP2/aug-cc-pV[D,T]Z', molecule=mymol, bsse_type=['cp', 'nocp', 'vmfc'])
     #           psi4.energy('HF/STO-3G', molecule=mymol, bsse_type=['nocp'])
     #           psi4.energy('MP2/aug-cc-pVDZ', molecule=mymol, bsse_type=['vmfc'])
     
