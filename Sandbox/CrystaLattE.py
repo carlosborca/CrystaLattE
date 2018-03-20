@@ -1360,11 +1360,16 @@ def nmer2psiapimol(nmers, keynmer, nmer, verbose=0):
 
 
 # ======================================================================
-def nmer2psithon(read_cif_output, nmers, keynmer, nmer, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+def nmer2psithon(read_cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """.
     """
     
-    psithon_input =  "# Psi4 Psithon input file for N-mer: {}\n".format(keynmer)
+    psithon_input =  "# PSI4 file produced by CrystaLattE\n\n"
+    psithon_input += "# Psithon input for N-mer:     {}\n".format(keynmer)
+    psithon_input += "# Number of replicas:          {}\n".format(nmer["replicas"])
+    psithon_input += "# Priority index for input:    {:12.8e}\n".format(nmer["priority"])
+    psithon_input += "# Minimum monomer separations: {}\n".format(rminseps.lstrip(" "))
+    psithon_input += "# Minimum COM separations:     {}\n".format(rcomseps.lstrip(" "))
     
     psithon_input += "\nmemory {}\n".format(psi4_memory)
     
@@ -1400,11 +1405,8 @@ def nmer2psithon(read_cif_output, nmers, keynmer, nmer, psi4_method, psi4_bsse, 
         psithon_method = psi4_method
 
     # This is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer when doing VMFC!!
-    if len(nmer["monomers"]) > 2:
-        psithon_input += "\nenergy('{}', bsse_type = 'vmfc')\n".format(psithon_method)
-
-    else:
-        psithon_input += "\nenergy('{}', bsse_type = 'cp')\n".format(psithon_method)
+    psithon_input += "\nenergy('{}', bsse_type = 'cp')\n".format(psithon_method)
+    #psithon_input += "\nenergy('{}', bsse_type = '{}')\n".format(psithon_method, psi4_bsse}
    
     psithon_input += "\n"
 
@@ -1558,9 +1560,32 @@ def cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, ps
         # Start wall-clock timer.
         energies_start = time.time()
         
+        nmer["contrib"] = nmer["nambe"] * nmer["replicas"] / float(len(nmer["monomers"]))
+        crystal_lattice_energy += nmer["contrib"]
+        
+        # Generate a string with an ordered list of minimum separations
+        # between atoms belonging to different monomers.
+        rminseps = ""
+       
+        nmer_min_monomer_separations = nmer["min_monomer_separations"]
+        nmer_min_monomer_separations.sort()
+        
+        for r in nmer_min_monomer_separations:
+            rminseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
+        
+        # Generate a string with an ordered list of minimum separations
+        # between the center of masses of the monomers.
+        rcomseps = ""
+       
+        nmer_min_com_separations = nmer["com_monomer_separations"]
+        nmer_min_com_separations.sort()
+        
+        for r in nmer_min_com_separations:
+            rcomseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
+
         # Produce Psithon inputs
         if "psithon" in cle_run_type:
-            nmer2psithon(read_cif_output, nmers, keynmer, nmer, psi4_method, psi4_bsse, psi4_memory, verbose)
+            nmer2psithon(read_cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose)
 
         # Run energies in PSI4.
         else:
@@ -1572,17 +1597,6 @@ def cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, ps
         # Calculate execution time.
         energies_wallclock = energies_end - energies_start
     
-        nmer["contrib"] = nmer["nambe"] * nmer["replicas"] / float(len(nmer["monomers"]))
-        crystal_lattice_energy += nmer["contrib"]
-        
-        rminseps = ""
-       
-        nmer_min_monomer_separations = nmer["min_monomer_separations"]
-        nmer_min_monomer_separations.sort()
-        
-        for r in nmer_min_monomer_separations:
-            rminseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
-
         nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
                 keynmer, 
                 nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, 
