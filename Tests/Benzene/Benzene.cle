@@ -5,9 +5,9 @@
 
 read_cif_input  = Benzene.cif
 read_cif_output = Benzene.xyz
-read_cif_a      = 2
-read_cif_b      = 2
-read_cif_c      = 2
+read_cif_a      = 5
+read_cif_b      = 5
+read_cif_c      = 5
 nmers_up_to     = 5
 r_cut_com       = 8.4
 r_cut_monomer   = 4.43
