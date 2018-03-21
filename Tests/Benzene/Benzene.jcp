@@ -1,10 +1,10 @@
 # Test job to reproduce A. L. Ringer and C. D. Sherrill, Chem. Eur. J., 2008, 14, pp 2542–2547.
 
-read_cif_input  = Benzene.cif
-read_cif_output = Benzene.xyz
-read_cif_a      = 5
-read_cif_b      = 5
-read_cif_c      = 5
+cif_input       = Benzene.cif
+cif_output      = Benzene.xyz
+cif_a           = 5
+cif_b           = 5
+cif_c           = 5
 nmers_up_to     = 2
 r_cut_com       = 9.5
 r_cut_monomer   = 11.4

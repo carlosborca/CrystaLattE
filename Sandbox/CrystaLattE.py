@@ -7,7 +7,10 @@
 # energies.
 #
 # Copyright (c) 2017-2018 
-# Carlos H. Borca, Lori A. Burns, and C. David Sherrill.
+# Carlos H. Borca
+# Brandon W. Bakr
+# Lori A. Burns
+# C. David Sherrill
 #
 # The copyrights for code used from other parties are included in
 # the corresponding files.
@@ -63,10 +66,10 @@ def input_parser(in_f_name):
 
     keywords = {}
     keywords["nmers_up_to"] = 2 
-    keywords["read_cif_output"] = "sc.xyz"
-    keywords["read_cif_a"] = 5
-    keywords["read_cif_b"] = 5
-    keywords["read_cif_c"] = 5
+    keywords["cif_output"] = "sc.xyz"
+    keywords["cif_a"] = 5
+    keywords["cif_b"] = 5
+    keywords["cif_c"] = 5
     keywords["r_cut_com"] = 10.0 
     keywords["r_cut_monomer"] = 12.0 
     keywords["r_cut_dimer"] = 10.0 
@@ -104,10 +107,10 @@ def input_parser(in_f_name):
                 keyword_value = keyword_value.lower()
                 keyword_value = keyword_value.replace(" ", "").split("+")
                    
-            elif keyword_name in ["psi4_bsse", "psi4_memory", "psi4_method", "read_cif_input", "read_cif_output"]:
+            elif keyword_name in ["psi4_bsse", "psi4_memory", "psi4_method", "cif_input", "cif_output"]:
                 keyword_value = keyword_value.strip()
 
-            elif keyword_name in ["nmers_up_to", "read_cif_a", "read_cif_b", "read_cif_c", "verbose"]:
+            elif keyword_name in ["nmers_up_to", "cif_a", "cif_b", "cif_c", "verbose"]:
                 keyword_value = int(keyword_value)
 
             else:
@@ -151,11 +154,11 @@ def input_parser(in_f_name):
         
     else:
         main(
-            keywords["read_cif_input"], 
-            keywords["read_cif_output"],
-            keywords["read_cif_a"], 
-            keywords["read_cif_b"],
-            keywords["read_cif_c"], 
+            keywords["cif_input"], 
+            keywords["cif_output"],
+            keywords["cif_a"], 
+            keywords["cif_b"],
+            keywords["cif_c"], 
             keywords["nmers_up_to"], 
             keywords["r_cut_com"], 
             keywords["r_cut_monomer"], 
@@ -345,7 +348,7 @@ def read_cif(fNameIn):
     # Return the extracted data.
     return data
 
-def read_cif_main(args):
+def cif_main(args):
 
     # Default settings.
     fNameIn = ''
@@ -674,7 +677,7 @@ def read_cif_main(args):
 
 
 # ======================================================================
-def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose=1):
+def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose=1):
     """Takes the name of a CIF input file and the name of a .xyz output
     file, as well as the number of replicas of the rectangular cell in
     each direction (A, B, and C). It then calls 
@@ -682,39 +685,39 @@ def read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, rea
     .xyz file of the supercell.
 
     Arguments:
-    <str> read_cif_input
+    <str> cif_input
         CIF input filename.
-    <str> read_cif_output
+    <str> cif_output
         XYZ output filename.
-    <int> read_cif_a
+    <int> cif_a
         Number of replicas of the cartesian unit cell in `a` direction.
-    <int> read_cif_b
+    <int> cif_b
         Number of replicas of the cartesian unit cell in `b` direction.
-    <int> read_cif_c
+    <int> cif_c
         Number of replicas of the cartesian unit cell in `c` direction.
     <int> verbose
         Adjusts the level of detail of the printouts.
     """
 
-    read_cif_arguments = ["", "-i", read_cif_input, "-o", read_cif_output, "-b", read_cif_a, read_cif_b, read_cif_c]
+    cif_arguments = ["", "-i", cif_input, "-o", cif_output, "-b", cif_a, cif_b, cif_c]
 
     if verbose >= 2:
         print("\nGenerating the supercell .xyz file.")
         print("\nThe following arguments will be passed to the CIF reader script:")
-        print("./Read_CIF.py" + " ".join(str(read_cif_argument) for read_cif_argument in read_cif_arguments) + "\n")
+        print("./Read_CIF.py" + " ".join(str(cif_argument) for cif_argument in cif_arguments) + "\n")
     
-    return read_cif_arguments
+    return cif_arguments
 # ======================================================================
 
 
 # ======================================================================
-def center_supercell(read_cif_output, verbose=0):
+def center_supercell(cif_output, verbose=0):
     """Takes the supercell file produced by Read_CIF and computes the
     center of the supercell coordinates to translate the supercell to
     the origin.
 
     Arguments:
-    <str> read_cif_output
+    <str> cif_output
         Name of the file with the cartesian coordinates of the
         supercell.
     <int> verbose
@@ -736,8 +739,8 @@ def center_supercell(read_cif_output, verbose=0):
 
     # Creates two NumPy arrays: one with the coordinates of atoms in the
     # supercell and other with the element symbols of the atoms in it.
-    scell_geom = np.loadtxt(read_cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64)
-    scell_elem = np.loadtxt(read_cif_output, skiprows=2, usecols=(0), dtype="str")
+    scell_geom = np.loadtxt(cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64)
+    scell_elem = np.loadtxt(cif_output, skiprows=2, usecols=(0), dtype="str")
     
     # Distnaces will be handled in Bohr.
     scell_geom = scell_geom / qcdb.psi_bohr2angstroms
@@ -765,7 +768,7 @@ def center_supercell(read_cif_output, verbose=0):
 
 
 # ======================================================================
-def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
+def supercell2monomers(cif_output, r_cut_monomer, verbose=1):
     """Takes the supercell cartesian coordinates file produced by
     Read_CIF, and passes it to the `center_supercell()` function which
     translates the supercell to the origin.
@@ -782,7 +785,7 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
     located within the cutoff region.
     
     Arguments:
-    <str> read_cif_output
+    <str> cif_output
         Name of the file with the cartesian coordinates of the
         supercell.
     <float> r_cut_monomer
@@ -798,7 +801,7 @@ def supercell2monomers(read_cif_output, r_cut_monomer, verbose=1):
     """
     
     # Centering the supercell.
-    scell_geom_max_coords, scell_geom, scell_elem = center_supercell(read_cif_output, verbose)
+    scell_geom_max_coords, scell_geom, scell_elem = center_supercell(cif_output, verbose)
 
     # Check if each of dimensions of the supercell satisfies the 
     # condition of being the twice as long as the cutoff. This helps
@@ -1360,7 +1363,7 @@ def nmer2psiapimol(nmers, keynmer, nmer, verbose=0):
 
 
 # ======================================================================
-def nmer2psithon(read_cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """.
     """
     
@@ -1411,7 +1414,7 @@ def nmer2psithon(read_cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4
     psithon_input += "\n"
 
     owd = os.getcwd()
-    psithon_folder = read_cif_output[:-4]
+    psithon_folder = cif_output[:-4]
 
     try:
         os.mkdir(psithon_folder)
@@ -1432,7 +1435,7 @@ def nmer2psithon(read_cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4
 
 
 # ======================================================================
-def psi4api_energies(read_cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """
     Arguments:
     
@@ -1446,7 +1449,7 @@ def psi4api_energies(read_cif_output, nmers, keynmer, nmer, cpus, cle_run_type, 
     else:
         owd = os.getcwd()
 
-        p4folder = read_cif_output[:-4]
+        p4folder = cif_output[:-4]
         
         try:
             os.mkdir(p4folder)
@@ -1498,7 +1501,7 @@ def psi4api_energies(read_cif_output, nmers, keynmer, nmer, cpus, cle_run_type, 
 
 
 # ======================================================================
-def cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """Manages which mode of CrystaLattE calculation will be employed.
     
     Global Variables:
@@ -1585,11 +1588,11 @@ def cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, ps
 
         # Produce Psithon inputs
         if "psithon" in cle_run_type:
-            nmer2psithon(read_cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose)
+            nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose)
 
         # Run energies in PSI4.
         else:
-            psi4api_energies(read_cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
+            psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
 
         # Stop wall-clock timer.
         energies_end = time.time()
@@ -1661,7 +1664,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, read_cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4api", "quiet"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
+def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4api", "quiet"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -1670,8 +1673,8 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
     start = time.time()
     
     # Check proper input filename.
-    if read_cif_input.endswith(".cif"):
-        outf = read_cif_input[:-4] + ".out"
+    if cif_input.endswith(".cif"):
+        outf = cif_input[:-4] + ".out"
     
     else:
         print("CrystaLattE needs a .cif file as input file.")
@@ -1685,11 +1688,11 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
         print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 
     # Read a CIF file and generate the unit cell.
-    read_cif_arguments = read_cif_driver(read_cif_input, read_cif_output, read_cif_a, read_cif_b, read_cif_c, verbose)
-    read_cif_main(read_cif_arguments)
+    cif_arguments = cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose)
+    cif_main(cif_arguments)
     
     # Read the output of the automatic fragmentation.
-    nmers = supercell2monomers(read_cif_output, r_cut_monomer, verbose)
+    nmers = supercell2monomers(cif_output, r_cut_monomer, verbose)
     total_monomers = len(nmers)
 
     # Loop through all monomers and monomers in the central unit cell
@@ -1732,7 +1735,7 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
     if verbose >= 2:
         print ("\nComputing interaction energies of N-mers:")
 
-    cle_manager(read_cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
+    cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
     # ------------------------------------------------------------------
     
     # Print the final results.
@@ -1741,6 +1744,7 @@ def main(read_cif_input, read_cif_output="sc.xyz", read_cif_a=5, read_cif_b=5, r
     
     # Print exit message and timings information.
     print_end_msg(start, verbose)
+
 # ======================================================================
 
 
@@ -1748,11 +1752,11 @@ if __name__ == "__main__":
 
     # Hard-coded Test
     if "CrystaLattE.py" in sys.argv[-1]:
-        main(   read_cif_input="../Tests/Benzene/Benzene.cif",
-                read_cif_output="../Tests/Benzene/Benzene.xyz",
-                read_cif_a=2,
-                read_cif_b=2,
-                read_cif_c=2,
+        main(   cif_input="../Tests/Benzene/Benzene.cif",
+                cif_output="../Tests/Benzene/Benzene.xyz",
+                cif_a=2,
+                cif_b=2,
+                cif_c=2,
                 nmers_up_to=2,
                 r_cut_com=5.1,
                 r_cut_monomer=3.3,

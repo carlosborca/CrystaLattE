@@ -3,11 +3,11 @@
 # Blank lines and lines starting with the hash character are omitted.
 # Padding blank spaces are also ignored.
 
-read_cif_input  = Ice.cif
-read_cif_output = Ice.xyz
-read_cif_a      = 3
-read_cif_b      = 3
-read_cif_c      = 3
+cif_input       = Ice.cif
+cif_output      = Ice.xyz
+cif_a           = 3
+cif_b           = 3
+cif_c           = 3
 nmers_up_to     = 5
 r_cut_com       = 5.3
 r_cut_monomer   = 3.7
