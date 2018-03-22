@@ -1,0 +1,22 @@
+# CrystaLattE Input Template:
+
+# Blank lines and lines starting with the hash character are omitted.
+# Padding blank spaces are also ignored.
+
+cif_input       = Hydroxyurea.cif
+cif_output      = Hydroxyurea.xyz
+cif_a           = 3
+cif_b           = 3
+cif_c           = 3
+nmers_up_to     = 5
+r_cut_com       = 8.6
+r_cut_monomer   = 3.6
+r_cut_dimer     = 1.6
+r_cut_trimer    = 2.5
+r_cut_tetramer  = 3.0
+r_cut_pentamer  = 4.5
+cle_run_type    = psi4api + quiet
+psi4_method     = HF/STO-3G
+psi4_bsse       = cp
+psi4_memory     = 500 MB
+verbose         = 2
