@@ -259,13 +259,14 @@ def read_cif(fNameIn):
 
             if (len(stripped) > 0):  lines.append(stripped)
     except:
-        print("\nERROR: Failed to open CIF file '{0}'".format(fNameIn)) # Carlos Borca (2018-02-20)
+        print("\nERROR: Failed to open CIF file '{0}'".format(fNameIn))
         sys.exit()
 
-    # Use the CifFile parser to extract the data.  Although there might be
-    # multiple data blocks, we'll only use the first one.
+    # Use the CifFile parser to extract the data. Although there might
+    # be multiple data blocks, we'll only use the first one.
     
-    #TODO: Known bug: Sometimes not all the blocks in the CIF files are read, and the following extraction fails.
+    #TODO: Known bug: Sometimes not all the blocks in the CIF files are
+    #      read, and the following extraction fails.
     cif_file = CifFile(fNameIn)
 
     for db in cif_file:
@@ -282,9 +283,9 @@ def read_cif(fNameIn):
         data['_cell_angle_gamma'] = float(data_block['_cell_angle_gamma'].replace("(", "").replace(")", ""))
         data['_cell_volume']      = float(data_block['_cell_volume'].replace("(", "").replace(")", ""))
 
-        # Get the symbolic operations that define the space group.  In a CIF file
-        # that's the part that looks like:
-        #
+        # Get the symbolic operations that define the space group. In
+        # a CIF file that's the part that looks like:
+        
         # loop_
         # _symmetry_equiv_pos_as_xyz
         #   'x,y,z'
@@ -293,8 +294,9 @@ def read_cif(fNameIn):
         #   '-x,-x+y,1/3-z'
         #   '-x+y,-x,1/3+z'
         #   'x-y,-y,-z'
-        #
-        # In some cases it's called "_space_group_symop_operation_xyz" apparently?!?!
+        
+        # In some cases it is called:
+        # "_space_group_symop_operation_xyz".
         data['_symmetry_equiv_pos_as_xyz'] = []
 
         try:
@@ -306,11 +308,11 @@ def read_cif(fNameIn):
                 xyz = data_block["_space_group_symop_operation_xyz"]
             
             except KeyError:
-                print('\nERROR: Missing item in CIF file: need either \'_symmetry_equiv_pos_as_xyz\' or \'_space_group_symop_operation_xyz\'.') # Carlos Borca (2017-09-19-1424)
+                print('\nERROR: Missing item in CIF file: need either \'_symmetry_equiv_pos_as_xyz\' or \'_space_group_symop_operation_xyz\'.')
                 sys.exit()
 
-        # Copy the x,y,z symmetry group operations.  Remove the quotes if there
-        # are any.
+        # Copy the x,y,z symmetry group operations. Remove the quotes 
+        # if there are any.
         for op_xyz in xyz:
 
             if (op_xyz[0] == '\''):
@@ -341,8 +343,8 @@ def read_cif(fNameIn):
 
     
     except KeyError as e:
-        print('\nERROR: Missing item in file.') # Carlos Borca (2017-09-19-1427)
-        print(e) # Carlos Borca (2018-02-20)
+        print('\nERROR: Missing item in file.')
+        print(e)
         sys.exit()
 
     # Return the extracted data.
@@ -359,7 +361,7 @@ def cif_main(args):
     make_rect_box = False
     
     
-    # Read the arguments.  We expect at least 4.
+    # Read the arguments. We expect at least 4.
     if (len(args) <= 4):
         print_usage()
     
@@ -412,8 +414,8 @@ def cif_main(args):
     
             i = i + 4
     
-        # Check if the final configuration should be in a rectangular shape, or in
-        # the same shape as the unit cell.
+        # Check if the final configuration should be in a rectangular
+        # shape, or in the same shape as the unit cell.
         elif (args[i] == '-r'):
     
             make_rect_box = True
@@ -424,7 +426,7 @@ def cif_main(args):
         else:
             print('\nERROR: invalid argument "%s"' % args[i])
     
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Read input file.
     
     # Make sure an input file was given.
@@ -443,12 +445,13 @@ def cif_main(args):
     gamma = math.radians(float(data['_cell_angle_gamma']))
     volume = float(data['_cell_volume'])
     
-    # Extract the symmetry operations.  This will be a list of strings such as:
+    # Extract the symmetry operations.  This will be a list of strings
+    # such as:
     #    ['x,y,z', 'y,x,2/3-z', '-y,x-y,2/3+z', '-x,-x+y,1/3-z', ... ]
     ops = data['_symmetry_equiv_pos_as_xyz']
     
-    # For proper evaluation, we need to convert "2/3" into "2./3", etc. to prevent
-    # integer division which would turn e.g. 2/3 into 0.
+    # For proper evaluation, we need to convert "2/3" into "2./3", etc.
+    # to prevent integer division which would turn e.g. 2/3 into 0.
     for i in range(len(ops)):
         ops[i] = ops[i].replace("0/", "0./") # also for e.g. 10/9
         ops[i] = ops[i].replace("1/", "1./")
@@ -472,8 +475,8 @@ def cif_main(args):
     #   [ ('Si', 0.4697, 0.0, 0.0),  ('O', 0.4135, 0.2669, 0.1191),  ... ]
     atoms = [ (labels[i], fX[i], fY[i], fZ[i]) for i in range(len(labels)) ]
     
-    # Make sure that all atoms lie within the unit cell.  Also convert names such
-    # as 'Oa1' into 'O'.
+    # Make sure that all atoms lie within the unit cell.  Also convert 
+    # names such as 'Oa1' into 'O'.
     for i in range(len(atoms)):
         (name,xn,yn,zn) = atoms[i]
         xn = (xn + 10.0) % 1.0
@@ -482,7 +485,7 @@ def cif_main(args):
         name = extract_element(name)
         atoms[i] = (name,xn,yn,zn)
     
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Use symmetry operations to create the unit cell.
     
     # The CIF file consists of a few atom positions plus several "symmetry
@@ -1363,6 +1366,56 @@ def nmer2psiapimol(nmers, keynmer, nmer, verbose=0):
 
 
 # ======================================================================
+def monomer2makefp(cif_output, nmer, verbose=0):
+    """.
+    """
+
+    makefp_input =  "! CrystaLattE: GAMESS input for generation of EFP parameters\n"
+    makefp_input += " $contrl units=angs local=boys runtyp=makefp\n"
+    makefp_input += "   mult=1 icharg=0 coord=cart icut=11 $end\n"
+    makefp_input += " $system timlim=99999 mwords=200 $end\n"
+    makefp_input += " $scf dirscf=.t. soscf=.f. diis=.t. conv=1.0d-06 $end\n"
+    makefp_input += " $basis gbasis=n311 ngauss=6 npfunc=2 ndfunc=3 nffunc=1\n"
+    makefp_input += "   diffs=.t. diffsp=.t. $end\n"
+    makefp_input += " $makefp pol=.t. disp=.t. exrep=.t. chtr=.f. $end\n"
+    makefp_input += " $stone\n"
+    makefp_input += "   bigexp=0.0\n"
+    makefp_input += " $end\n"
+    makefp_input += " $data\n"
+    makefp_input += "  {}\n".format(cif_output.split(".")[0])
+    makefp_input += "c1\n"
+
+    for at in range(nmer["coords"].shape[0]):
+
+        if at in nmer["delimiters"]:
+            makefp_input += "--\n"
+        
+        makefp_input += " {:6} {:4.1f} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at] + str(at + 1), el2z[nmer["elem"][at]], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+
+    makefp_input += " $end"
+
+    owd = os.getcwd()
+    makefp_folder = cif_output[:-4]
+
+    try:
+        os.mkdir(makefp_folder)
+    
+    except FileExistsError:
+        pass
+
+    os.chdir(makefp_folder)
+    makefp_filename = cif_output.split(".")[0] + "-makefp.inp"
+
+    with open(makefp_filename, "w") as makefp_f:
+        
+        for line in makefp_input:
+            makefp_f.write(line)
+
+    os.chdir(owd)
+# ======================================================================
+
+
+# ======================================================================
 def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """.
     """
@@ -1541,6 +1594,10 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
 
     crystal_lattice_energy = 0.0
     results = []
+    
+    # Produce a MAKEFP input file for gamess.
+    if "makefp" in cle_run_type:
+        monomer2makefp(cif_output, nmers["1mer-0"], verbose)
    
     # Get the keys of the N-mers dictionary, and put them on a list.
     nmer_keys = list(nmers.keys())
