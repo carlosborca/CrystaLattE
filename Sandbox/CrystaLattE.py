@@ -129,7 +129,7 @@ def input_parser(in_f_name):
         # Get the keys of the keywords dictionary, and put them on a list.
         kw_keys = list(keywords.keys())
 
-        # Sort the list in decreasing priority order.
+        # Sort the list in decreasing order.
         kw_keys.sort()
         
         for kw_key in kw_keys:
@@ -873,7 +873,8 @@ def supercell2monomers(cif_output, r_cut_monomer, verbose=1):
             nmers[name]["rmin"] = frag_r_mins[index]
             nmers[name]["delimiters"] = []
             nmers[name]["com"] = center_of_mass(frag_elems[index], frag_geoms[index])
-            nmers[name]["priority"] = 0.0
+            nmers[name]["priority_min"] = 0.0
+            nmers[name]["priority_com"] = 0.0
 
     total_number_of_monomers = len(nmers.keys())
     print("\nThe BFS algorithm found {} monomers in the supercell in {:.2f} s".format(total_number_of_monomers, bfs_stop_time))
@@ -970,21 +971,30 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
 
             distm, r_min = distance_matrix(nmers[a_name]["coords"], nmers[b_name]["coords"]) 
             nm_new["min_monomer_separations"].append(r_min)
-
             nm_new["com_monomer_separations"].append(np.linalg.norm(nmers[a_name]["com"] - nmers[b_name]["com"]))
     
     
     # Criterion to launch energy calculations.
-    nm_new["priority"] = 0.0
+    nm_new["priority_min"] = 0.0
 
-    priority = 1.0
+    priority_min = 1.0
     
-    #for r in nm_new["com_monomer_separations"]:
-    for r in nm_new["min_monomer_separations"]:
-        one_over_r3 = 1.0/r**3
-        priority *= one_over_r3
+    for rmin in nm_new["min_monomer_separations"]:
+        one_over_rmin3 = 1.0/rmin**3
+        priority_min *= one_over_rmin3
     
-    nm_new["priority"] = priority
+    nm_new["priority_min"] = priority_min
+
+    # Alternative criterion to launch energy calculations.
+    nm_new["priority_com"] = 0.0
+
+    priority_com = 1.0
+    
+    for rcom in nm_new["com_monomer_separations"]:
+        one_over_rcom3 = 1.0/rcom**3
+        priority_com *= one_over_rcom3
+    
+    nm_new["priority_com"] = priority_com
 
     # Key of the new N-mer in the nmers dictionary.
     nm_new_name = str(len(nm_new_monomers)) + "mer-" + "+".join(map(str, nm_new_monomers))
@@ -1421,11 +1431,12 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     """
     
     psithon_input =  "# PSI4 file produced by CrystaLattE\n\n"
-    psithon_input += "# Psithon input for N-mer:     {}\n".format(keynmer)
-    psithon_input += "# Number of replicas:          {}\n".format(nmer["replicas"])
-    psithon_input += "# Priority index for input:    {:12.8e}\n".format(nmer["priority"])
-    psithon_input += "# Minimum monomer separations: {}\n".format(rminseps.lstrip(" "))
-    psithon_input += "# Minimum COM separations:     {}\n".format(rcomseps.lstrip(" "))
+    psithon_input += "# Psithon input for N-mer:      {}\n".format(keynmer)
+    psithon_input += "# Number of replicas:           {}\n".format(nmer["replicas"])
+    psithon_input += "# Priority index for input:     {:12.8e}\n".format(nmer["priority_min"])
+    psithon_input += "# Minimum monomer separations:  {}\n".format(rminseps.lstrip(" "))
+    psithon_input += "# COM priority index for input: {:12.8e}\n".format(nmer["priority_com"])
+    psithon_input += "# Minimum COM separations:      {}\n".format(rcomseps.lstrip(" "))
     
     psithon_input += "\nmemory {}\n".format(psi4_memory)
     
@@ -1603,7 +1614,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
     nmer_keys = list(nmers.keys())
 
     # Sort the list in decreasing priority order.
-    nmer_keys.sort(key = lambda x: -nmers[x]['priority'])
+    nmer_keys.sort(key = lambda x: -nmers[x]['priority_min'])
 
     # The next line was replaced to trigger the calculations in order.
     #for keynmer, nmer in nmers.items():
@@ -1663,7 +1674,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
                 nmer["replicas"], 
                 nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
                 crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
-                nmer["priority"],
+                nmer["priority_min"],
                 rminseps)
         
         results.append(nmer_result)
