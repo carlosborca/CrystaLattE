@@ -1414,7 +1414,7 @@ def monomer2makefp(cif_output, nmer, verbose=0):
         pass
 
     os.chdir(makefp_folder)
-    makefp_filename = cif_output.split(".")[0] + "-makefp.inp"
+    makefp_filename = cif_output.split(".")[0] + "-makefp-lb.inp"
 
     with open(makefp_filename, "w") as makefp_f:
         
