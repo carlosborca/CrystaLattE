@@ -36,31 +36,43 @@
 import os
 import subprocess
 
+# A dictionary for storing N-mers will be created.
+nmers = {}
+
 d = os.getcwd()
 
 for f in os.listdir(d):
 
     # Find output files using the default extension.
+    # WARNING: This is prone to error if the extension was changed.
     if f.endswith(".out"):
         
         print(os.path.join(d, f))
-        
+
+        # Check if Psi4 exited successfully.
+        # Why bothering analyzing a file otherwise?
+        beer = False
         with open(f, 'r') as outf:
 
-            # Check if Psi4 exited successfully.
-            # Why bothering analyzing a file otherwise?
-            beer = False
             for line in outf:
                 if "Psi4 exiting successfully. Buy a developer a beer!" in line:
                     beer = True
                     break
                 else:
                     continue
-
-            if beer:
-                print("Success!")
-            else:
-                print("Failure!")
+        
+        # If the output was ran successufully, get the data.
+        if beer:
+            with open(f, 'r') as outf:
+                print(f)
+                for line in outf:
+                    if "Psithon input for N-mer:" in line:
+                        print(line)
+            
+            print("Success!")
+            
+        else:
+            print("Failure!")
 
     else:
         continue
