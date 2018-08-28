@@ -1564,8 +1564,6 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
 
     else:
         nmer["nambe"] = n_body_energy
-
-    print("nmer[nambe]=", nmer["nambe"]) #DEBUG
 # ======================================================================
 
 
@@ -1665,10 +1663,6 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
             psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
 
         nmer["contrib"] = nmer["nambe"] * nmer["replicas"] / float(len(nmer["monomers"]))
-        print(nmer["contrib"]) #DEBUG
-        print(nmer["nambe"]) #DEBUG
-        print(nmer["replicas"]) #DEBUG
-        print(float(len(nmer["monomers"]))) #DEBUG
         crystal_lattice_energy += nmer["contrib"]
 
         # Stop wall-clock timer.
