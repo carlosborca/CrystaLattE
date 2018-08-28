@@ -1518,6 +1518,9 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
         try:
             os.mkdir(p4folder)
         except FileExistsError:
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print("WARNING: A folder with the same name as the CIF file already exists.")
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
             pass
 
         os.chdir(p4folder)
@@ -1561,6 +1564,8 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
 
     else:
         nmer["nambe"] = n_body_energy
+
+    print("nmer[nambe]=", nmer["nambe"]) #DEBUG
 # ======================================================================
 
 
@@ -1631,9 +1636,6 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         # Start wall-clock timer.
         energies_start = time.time()
         
-        nmer["contrib"] = nmer["nambe"] * nmer["replicas"] / float(len(nmer["monomers"]))
-        crystal_lattice_energy += nmer["contrib"]
-        
         # Generate a string with an ordered list of minimum separations
         # between atoms belonging to different monomers.
         rminseps = ""
@@ -1658,9 +1660,16 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         if "psithon" in cle_run_type:
             nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose)
 
-        # Run energies in PSI4.
+        # Run energies in PSI4 API.
         else:
             psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
+
+        nmer["contrib"] = nmer["nambe"] * nmer["replicas"] / float(len(nmer["monomers"]))
+        print(nmer["contrib"]) #DEBUG
+        print(nmer["nambe"]) #DEBUG
+        print(nmer["replicas"]) #DEBUG
+        print(float(len(nmer["monomers"]))) #DEBUG
+        crystal_lattice_energy += nmer["contrib"]
 
         # Stop wall-clock timer.
         energies_end = time.time()
