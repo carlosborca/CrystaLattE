@@ -94,6 +94,49 @@ def get_nmer_key(fname, verbose=0):
 # ======================================================================
 
 
+# ======================================================================
+def get_nmer_data(fname, verbose=0):
+    """.
+    
+    Arguments:
+    <str> fname
+        Name of the Psi4 output file to check.
+    <int> verbose
+        Adjusts the level of detail of the printouts.
+    
+    Returns:
+    """
+
+    with open(fname, 'r') as outf:
+        for line in outf:
+            
+            # Find the number of replicas of the N-mer.
+            if "Number of replicas:" in line:
+                splt = line[:-1].split(":")
+                replicas = int(splt[-1].strip())
+
+            # Find the number of replicas of the N-mer.
+            if "Priority index for input:" in line:
+                splt = line[:-1].split(":")
+                priority_min = float(splt[-1].strip())
+
+            # Find the list of minimum monomer separations of the N-mer.
+            if "Minimum monomer separations:" in line:
+                splt = line[:-1].split(":")
+                msps = splt[-1].strip()
+                min_monomer_separations = msps.split()
+
+            # Find the list of minimum monomer separations of the N-mer.
+            if "Minimum COM separations:" in line:
+                splt = line[:-1].split(":")
+                csps = splt[-1].strip()
+                com_monomer_separations = csps.split()
+
+    return replicas, priority_min, min_monomer_separations, com_monomer_separations
+    
+# ======================================================================
+
+
 if __name__ == "__main__":
 
     # A dictionary for storing N-mers will be created.
@@ -104,7 +147,7 @@ if __name__ == "__main__":
     for f in os.listdir(d):
     
         # Find output files using the default extension.
-        # WARNING: This is prone to error if the extension was changed.
+        #NOTE: This is prone to error if the extension was changed.
         if f.endswith(".out"):
             
             print(os.path.join(d, f)) #debug
@@ -114,10 +157,23 @@ if __name__ == "__main__":
             success = success_check(f)
             print(success) #debug
     
-            # If the output was ran successufully, get the N-mer name
-            # to create a key for its soon-to-be created dictionary..
-            keynmer = get_nmer_key(f)
-            print(keynmer) #debug
+            if success:
+                # If the output was ran successufully, get the N-mer name
+                # to create a key for its soon-to-be created dictionary.
+                keynmer = get_nmer_key(f)
+                print(keynmer) #debug
+
+                # Create a new dictionary for the current N-mer.
+                nmers[keynmer]= {}
+                print(nmers) #debug
+
+                # Populate the current N-mer dictionary with the data
+                # from the Psi4 output file.
+                replicas, priority_min, min_monomer_separations, com_monomer_separations = get_nmer_data(f)
+                print(replicas) #debug
+                print(priority_min) #debug
+                print(min_monomer_separations) #debug
+                print(com_monomer_separations) #debug
 
         else:
             continue
