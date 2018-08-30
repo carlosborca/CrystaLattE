@@ -34,6 +34,7 @@
 
 # Import standard Python modules.
 import os
+import time
 
 
 # ======================================================================
@@ -162,7 +163,7 @@ def get_nmer_data(fname, verbose=0):
 # ======================================================================
 
 # ======================================================================
-def print_results(results, crystal_lattice_energy, verbose=1):
+def print_results(results, crystal_lattice_energy, verbose=0):
     """Prints a summary of the energy results at the end of the
     execution.
     
@@ -172,6 +173,12 @@ def print_results(results, crystal_lattice_energy, verbose=1):
     """
     
     if verbose >= 1:
+        print("") 
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+        print("                              CrystaLattE                              \n")
+        print("  The tool for the automated calculation of crystal lattice energies.  \n")
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+        print("CrystaLattE is being executed in Psithon analysis mode.\n")
         print("Summary of results:")
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
@@ -181,23 +188,51 @@ def print_results(results, crystal_lattice_energy, verbose=1):
         for result in results:
             print(result)
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
-        print("\nCrystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy * 2625.500))
+        print("\nCrystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy * 2625.500)) # Same value as in psi_hartree2kJmol
         print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy))
-        print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy / 4.184))
+        print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy / 4.184)) # Same value as in psi_cal2J
 # ======================================================================
 
 
 # ======================================================================
-def main(verbose=1):
+def print_end_msg(start, verbose=0):
+    """.
+    """
 
+    if verbose >= 1:
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+        print("Execution terminated succesfully.")
+        print("Total elapsed wall-clock time: {:.2f} s\n".format(time.time() - start))
+        print("Thank you for using CrystaLatte.\n")
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+# ======================================================================
+
+
+# ======================================================================
+def main(verbose=0):
+
+    # Start counting execution time.
+    start = time.time()
+
+    d = os.getcwd()
+    
     # A dictionary for storing N-mers will be created.
     nmers = {}
 
     crystal_lattice_energy = 0.0
     results = []
+    csv_lines = []
     
-    d = os.getcwd()
-    
+    csv_header = "N-mer Name,"\
+            + "Non-Additive MB Energy (KJ/mol),"\
+            + "Num. Rep. (#), N-mer Contribution (KJ/mol),"\
+            + "Partial Crys. Lattice Ener. (KJ/mol),"\
+            + "Calculation Priority (Arb. Units),"\
+            + "Minimum Monomer Separations (A)"
+
+    csv_lines.append(csv_header)
+    #print(csv_header) #degub
+
     for f in os.listdir(d):
     
         # Find output files using the default extension.
@@ -255,18 +290,39 @@ def main(verbose=1):
                         crystal_lattice_energy,
                         nmers[keynmer]["priority_min"],
                         rminseps)
-
-                #print(nmer_result)
                 
+                #print(nmer_result) #debug
                 results.append(nmer_result)
+
+                nmer_csv = "{:26} , {:>12.8f} , {:>4} , {:>12.8f} , {:>13.8f} , {:12.6e} , {}".format(
+                        keynmer,
+                        nmers[keynmer]["nambe"],
+                        nmers[keynmer]["replicas"],
+                        nmers[keynmer]["contrib"],
+                        crystal_lattice_energy,
+                        nmers[keynmer]["priority_min"],
+                        rminseps)
+                
+                #print(nmer_csv) #debug
+                csv_lines.append(nmer_csv) #debug
 
         else:
             continue
     
-    print_results(results, crystal_lattice_energy)
+    print_results(results, crystal_lattice_energy, verbose)
+    print_end_msg(start, verbose)
 
+    #TODO: This should be the CIF file name, when that is inclued in 
+    #      the Psi4 output
+    csvname = "Results.csv"
+
+    with open(csvname, 'w') as csvf:
+        for line in csv_lines:
+            #print(line) #debug
+            csvf.write(line + "\n")
+    
     #print("\nThe N-mers Dictionary looks like this:\n") #debug
     #print(nmers) #debug
 
 if __name__ == "__main__":
-    main()
+    main(1)
