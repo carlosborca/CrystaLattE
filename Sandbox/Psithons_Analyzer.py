@@ -107,7 +107,7 @@ def get_nmer_data(fname, verbose=0):
             # the key for its entry in the nmers dictionary.
             if "Psithon input for N-mer:" in line:
                 splt = line[:-1].split(":")
-                keynmer = splt[-1].strip()
+                key = splt[-1].strip()
             
             # Find the number of replicas of the N-mer.
             if "Number of replicas:" in line:
@@ -158,7 +158,7 @@ def get_nmer_data(fname, verbose=0):
                     n_body_energy = float(lastl[-1]) * 4.184 # Same value as in qcdb.psi_cal2J
                     #print(line[:-1]) #debug
             
-    return keynmer, number_of_monomers, replicas, priority_min, min_monomer_separations, com_monomer_separations, n_body_energy
+    return key, number_of_monomers, replicas, priority_min, min_monomer_separations, com_monomer_separations, n_body_energy
     
 # ======================================================================
 
@@ -250,65 +250,75 @@ def main(verbose=0):
                 # If the output was ran successufully, get the N-mer name
                 # to create a key for its soon-to-be created dictionary
                 # and get the data to populate such N-mer dictionary.
-                keynmer, number_of_monomers, replicas, priority_min, min_monomer_separations, com_monomer_separations, n_body_energy = get_nmer_data(f)
+                key, number_of_monomers, replicas, priority_min, min_monomer_separations, com_monomer_separations, n_body_energy = get_nmer_data(f)
 
                 # Create a new dictionary for the current N-mer.
-                nmers[keynmer]= {}
+                nmers[key]= {}
 
                 # Populate the current N-mer dictionary with the data
                 # from the Psi4 output file.
-                nmers[keynmer]["replicas"] = replicas
-                nmers[keynmer]["priority_min"] = priority_min
-                nmers[keynmer]["min_monomer_separations"] = min_monomer_separations
-                nmers[keynmer]["com_monomer_separations"] = com_monomer_separations
-                nmers[keynmer]["nambe"] = n_body_energy 
-                nmers[keynmer]["contrib"] = n_body_energy * replicas / number_of_monomers
+                nmers[key]["replicas"] = replicas
+                nmers[key]["priority_min"] = priority_min
+                nmers[key]["min_monomer_separations"] = min_monomer_separations
+                nmers[key]["com_monomer_separations"] = com_monomer_separations
+                nmers[key]["nambe"] = n_body_energy 
+                nmers[key]["contrib"] = n_body_energy * replicas / number_of_monomers
                 
-                crystal_lattice_energy += nmers[keynmer]["contrib"]
+                crystal_lattice_energy += nmers[key]["contrib"]
 
                 #print(n_body_energy) #debug
                 #print(replicas) #debug
                 #print(number_of_monomers) #debug
-                #print(nmers[keynmer]["contrib"]) #debug
+                #print(nmers[key]["contrib"]) #debug
                 #print(crystal_lattice_energy) #debug
                 
-                # Generate a string with an ordered list of minimum separations
-                # between atoms belonging to different monomers.
-                rminseps = ""
-                
-                nmer_min_monomer_separations = nmers[keynmer]["min_monomer_separations"] 
-                nmer_min_monomer_separations.sort()
-                
-                for r in nmer_min_monomer_separations:
-                    rminseps += "{:6.3f} ".format(float(r))
-
-                nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
-                        keynmer,
-                        nmers[keynmer]["nambe"],
-                        nmers[keynmer]["replicas"],
-                        nmers[keynmer]["contrib"],
-                        crystal_lattice_energy,
-                        nmers[keynmer]["priority_min"],
-                        rminseps)
-                
-                #print(nmer_result) #debug
-                results.append(nmer_result)
-
-                nmer_csv = "{:26} , {:>12.8f} , {:>4} , {:>12.8f} , {:>13.8f} , {:12.6e} , {}".format(
-                        keynmer,
-                        nmers[keynmer]["nambe"],
-                        nmers[keynmer]["replicas"],
-                        nmers[keynmer]["contrib"],
-                        crystal_lattice_energy,
-                        nmers[keynmer]["priority_min"],
-                        rminseps)
-                
-                #print(nmer_csv) #debug
-                csv_lines.append(nmer_csv) #debug
-
         else:
             continue
-    
+
+    # Get the keys of the N-mers dictionary, and put them on a list.
+    nmer_keys = list(nmers.keys())
+
+    # Sort the list in decreasing priority order.
+    nmer_keys.sort(key = lambda x: -nmers[x]['priority_min'])
+
+    # The next line was replaced to trigger the calculations in order.
+    for keynmer in nmer_keys:
+        nmer = nmers[keynmer]
+
+        # Generate a string with an ordered list of minimum separations
+        # between atoms belonging to different monomers.
+        rminseps = ""
+        
+        nmer_min_monomer_separations = nmers[keynmer]["min_monomer_separations"] 
+        nmer_min_monomer_separations.sort()
+        
+        for r in nmer_min_monomer_separations:
+            rminseps += "{:6.3f} ".format(float(r))
+
+        nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
+                keynmer,
+                nmers[keynmer]["nambe"],
+                nmers[keynmer]["replicas"],
+                nmers[keynmer]["contrib"],
+                crystal_lattice_energy,
+                nmers[keynmer]["priority_min"],
+                rminseps)
+        
+        #print(nmer_result) #debug
+        results.append(nmer_result)
+
+        nmer_csv = "{:26} , {:>12.8f} , {:>4} , {:>12.8f} , {:>13.8f} , {:12.6e} , {}".format(
+                keynmer,
+                nmers[keynmer]["nambe"],
+                nmers[keynmer]["replicas"],
+                nmers[keynmer]["contrib"],
+                crystal_lattice_energy,
+                nmers[keynmer]["priority_min"],
+                rminseps)
+        
+        #print(nmer_csv) #debug
+        csv_lines.append(nmer_csv) #debug
+
     print_results(results, crystal_lattice_energy, verbose)
     print_end_msg(start, verbose)
 
