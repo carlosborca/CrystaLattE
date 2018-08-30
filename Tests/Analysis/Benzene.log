@@ -1,0 +1,118 @@
+
+CrystaLattE execution setup:
+
+  cif_a           = 5
+  cif_b           = 5
+  cif_c           = 5
+  cif_input       = Benzene.cif
+  cif_output      = Benzene.xyz
+  cle_run_type    = ['psiapi']
+  nmers_up_to     = 3
+  psi4_bsse       = cp
+  psi4_memory     = 500 MB
+  psi4_method     = HF/STO-3G
+  r_cut_com       = 8.4
+  r_cut_dimer     = 2.6
+  r_cut_monomer   = 4.43
+  r_cut_pentamer  = 5.1
+  r_cut_tetramer  = 2.7
+  r_cut_trimer    = 2.7
+  verbose         = 2
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+                              CrystaLattE
+
+  The tool for the automated calculation of crystal lattice energies.
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+Generating the supercell .xyz file.
+
+The following arguments will be passed to the CIF reader script:
+./Read_CIF.py -i Benzene.cif -o Benzene.xyz -b 5 5 5
+
+Generating monomers for all complete molecules in the supercell:
+
+Currently, the center of the supercell is located at:
+x =   34.06501
+y =   43.70734
+z =   32.08379
+
+The supercell coordinates will be translated and centered on the origin.
+
+The BFS algorithm found 7 monomers in the supercell in 2.90 s
+
+Merging monomers with monomers to obtain dimers.
+
+2mer-0+1 generated in 0.02 s: New N-mer NRE is 564.797879615786.
+2mer-0+2 discarded in 0.02 s: Maximum separation between closest atoms of different monomers is 2.63 A, longer than cutoff 2.60 A.
+2mer-0+3 discarded in 0.02 s: Maximum separation between closest atoms of different monomers is 2.63 A, longer than cutoff 2.60 A.
+2mer-0+4 discarded in 0.02 s: Replica of 2mer-0+1. NRE difference is 3.4e-13 and ChSEV difference is 1.7e-13.
+2mer-0+5 discarded in 0.01 s: Maximum separation between closest atoms of different monomers is 4.96 A, longer than cutoff 2.60 A.
+2mer-0+6 discarded in 0.01 s: Maximum separation between closest atoms of different monomers is 2.68 A, longer than cutoff 2.60 A.
+
+1 unique dimers were found and generated in 0.1 s.
+
+4 dimers did not meet the atomic separation cutoff and were discarded.
+0 dimers did not meet the center of mass separation cutoff and were discarded.
+1 dimers were duplicates of another dimer and were discarded.
+
+Merging dimers with monomers to obtain trimers.
+
+3mer-0+1+2 generated in 0.03 s: New N-mer NRE is 1112.571842743621.
+3mer-0+1+3 generated in 0.03 s: New N-mer NRE difference is 6.8e-13, lowest ChSEV difference found is 8.7e-01.
+3mer-0+1+4 discarded in 0.03 s: Maximum separation between closest atoms of different monomers is 5.06 A, longer than cutoff 2.70 A.
+3mer-0+1+5 discarded in 0.03 s: Maximum separation between closest atoms of different monomers is 4.96 A, longer than cutoff 2.70 A.
+3mer-0+1+6 generated in 0.03 s: New N-mer NRE difference is 4.5e-13, lowest ChSEV difference found is 6.2e-01.
+3mer-0+2+3 discarded in 0.03 s: Maximum separation between closest atoms of different monomers is 4.72 A, longer than cutoff 2.70 A.
+3mer-0+2+4 generated in 0.03 s: New N-mer NRE difference is 1.6e-12, lowest ChSEV difference found is 3.5e-01.
+3mer-0+2+5 discarded in 0.03 s: Maximum separation between closest atoms of different monomers is 4.96 A, longer than cutoff 2.70 A.
+3mer-0+2+6 discarded in 0.03 s: Replica of 3mer-0+1+3. NRE difference is 2.3e-13 and ChSEV difference is 2.9e-13.
+3mer-0+3+4 discarded in 0.03 s: Replica of 3mer-0+1+6. NRE difference is 6.8e-13 and ChSEV difference is 4.6e-13.
+3mer-0+3+5 discarded in 0.03 s: Maximum separation between closest atoms of different monomers is 4.96 A, longer than cutoff 2.70 A.
+3mer-0+3+6 discarded in 0.03 s: Maximum separation between closest atoms of different monomers is 5.38 A, longer than cutoff 2.70 A.
+3mer-0+4+5 discarded in 0.03 s: Maximum separation between closest atoms of different monomers is 4.96 A, longer than cutoff 2.70 A.
+3mer-0+4+6 discarded in 0.03 s: Maximum separation between closest atoms of different monomers is 5.16 A, longer than cutoff 2.70 A.
+3mer-0+5+6 discarded in 0.03 s: Maximum separation between closest atoms of different monomers is 6.75 A, longer than cutoff 2.70 A.
+
+4 unique trimers were found and generated in 0.5 s.
+
+9 trimers did not meet the atomic separation cutoff and were discarded.
+0 trimers did not meet the center of mass separation cutoff and were discarded.
+2 trimers were duplicates of another dimer and were discarded.
+
+Computing interaction energies of N-mers:
+2mer-0+1 elapsed 19.75 s processing on 4 threads. Cumulative Lattice Energy = 2.61851090 KJ/mol
+3mer-0+1+3 elapsed 106.66 s processing on 4 threads. Cumulative Lattice Energy = 2.51820414 KJ/mol
+3mer-0+1+2 elapsed 106.38 s processing on 4 threads. Cumulative Lattice Energy = 2.49434046 KJ/mol
+3mer-0+2+4 elapsed 105.35 s processing on 4 threads. Cumulative Lattice Energy = 2.49511083 KJ/mol
+3mer-0+1+6 elapsed 107.00 s processing on 4 threads. Cumulative Lattice Energy = 2.44369884 KJ/mol
+
+Summary of results:
+---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------
+                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer
+N-mer Name                 |    MB Energy | Rep. | Contribution | Lattice Ener. |     Priority | Separations
+                           |     (KJ/mol) |  (#) |     (KJ/mol) |      (KJ/mol) | (Arb. Units) | (A)
+---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------
+2mer-0+1                   |   2.61851090 |    2 |   2.61851090 |    2.61851090 | 9.001449e-03 |  2.544
+3mer-0+1+3                 |  -0.15046015 |    2 |  -0.10030676 |    2.51820414 | 5.635101e-07 |  2.544  2.632  2.680
+3mer-0+1+2                 |  -0.07159102 |    1 |  -0.02386367 |    2.49434046 | 5.635101e-07 |  2.544  2.632  2.680
+3mer-0+2+4                 |   0.00231110 |    1 |   0.00077037 |    2.49511083 | 5.635101e-07 |  2.544  2.632  2.680
+3mer-0+1+6                 |  -0.07711799 |    2 |  -0.05141199 |    2.44369884 | 5.635101e-07 |  2.544  2.632  2.680
+---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------
+
+Crystal Lattice Energy (Eh)       = 0.00093076
+Crystal Lattice Energy (KJ/mol)   = 2.44369884
+Crystal Lattice Energy (Kcal/mol) = 0.58405804
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Execution terminated succesfully.
+Total elapsed wall-clock time: 449.00 s
+
+Thank you for using CrystaLatte.
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
