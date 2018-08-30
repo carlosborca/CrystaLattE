@@ -316,7 +316,7 @@ def main(verbose=0):
                 nmers[keynmer]["nambe"],
                 nmers[keynmer]["replicas"],
                 nmers[keynmer]["contrib"],
-                crystal_lattice_energy,
+                partial_crystal_lattice_energy,
                 nmers[keynmer]["priority_min"],
                 rminseps)
         
