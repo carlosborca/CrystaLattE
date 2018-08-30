@@ -220,6 +220,8 @@ def main(verbose=0):
     nmers = {}
 
     crystal_lattice_energy = 0.0
+    partial_crystal_lattice_energy = 0.0
+
     results = []
     csv_lines = []
     
@@ -285,6 +287,8 @@ def main(verbose=0):
     for keynmer in nmer_keys:
         nmer = nmers[keynmer]
 
+        partial_crystal_lattice_energy += nmers[keynmer]["contrib"]
+
         # Generate a string with an ordered list of minimum separations
         # between atoms belonging to different monomers.
         rminseps = ""
@@ -300,7 +304,7 @@ def main(verbose=0):
                 nmers[keynmer]["nambe"],
                 nmers[keynmer]["replicas"],
                 nmers[keynmer]["contrib"],
-                crystal_lattice_energy,
+                partial_crystal_lattice_energy,
                 nmers[keynmer]["priority_min"],
                 rminseps)
         
