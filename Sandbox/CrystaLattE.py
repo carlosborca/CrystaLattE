@@ -209,7 +209,7 @@ def extract_element(label):
 
 # ======================================================================
 def write_xyz(atoms, box, f):
-    """Basic XYZ format.
+    """Writes a basic XYZ format file.
     """
 
     # Write the number of atoms.
@@ -238,10 +238,10 @@ def write_xyz(atoms, box, f):
     # The argument "atoms" has format ('Si', x, y, z) for example
     for i in range(N):
         f.write('%-10s %10.6f %10.6f %10.6f\n' % atoms[i])
+# =============================================================================
 
 
 # =============================================================================
-
 def read_cif(fNameIn):
     """Read CIF file, and extract the necessary info in the form of a 
     dictionary. E.g., the value of "_cell_volume" can be found with 
@@ -349,7 +349,10 @@ def read_cif(fNameIn):
 
     # Return the extracted data.
     return data
+# =============================================================================
 
+
+# =============================================================================
 def cif_main(args):
 
     # Default settings.
@@ -1721,7 +1724,12 @@ def print_results(verbose=0):
 
 # ======================================================================
 def print_end_msg(start, verbose=0):
-    """.
+    """Prints a success message and timing information at the end of the
+    execution.
+       
+    Arguments:
+    <int> verbose
+        Adjusts the level of detail of the printouts.
     """
     
     if verbose >= 1:
