@@ -291,13 +291,15 @@ def main(verbose=0):
 
         # Generate a string with an ordered list of minimum separations
         # between atoms belonging to different monomers.
-        rminseps = ""
+        rminseps    = ""
+        rminsepscsv = ""
         
         nmer_min_monomer_separations = nmers[keynmer]["min_monomer_separations"] 
         #nmer_min_monomer_separations.sort() #debug
         
         for r in nmer_min_monomer_separations:
-            rminseps += "{:6.3f} ".format(float(r))
+            rminseps    += "{:6.3f} ".format(float(r))
+            rminsepscsv += "{:6.3f},".format(float(r))
 
         nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
                 keynmer,
@@ -318,7 +320,7 @@ def main(verbose=0):
                 nmers[keynmer]["contrib"],
                 partial_crystal_lattice_energy,
                 nmers[keynmer]["priority_min"],
-                rminseps.replace(" ", ",")
+                rminsepscsv)
         
         #print(nmer_csv) #debug
         csv_lines.append(nmer_csv) #debug
