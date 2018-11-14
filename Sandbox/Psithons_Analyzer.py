@@ -294,7 +294,7 @@ def main(verbose=0):
         rminseps = ""
         
         nmer_min_monomer_separations = nmers[keynmer]["min_monomer_separations"] 
-        nmer_min_monomer_separations.sort()
+        #nmer_min_monomer_separations.sort() #debug
         
         for r in nmer_min_monomer_separations:
             rminseps += "{:6.3f} ".format(float(r))
@@ -318,7 +318,7 @@ def main(verbose=0):
                 nmers[keynmer]["contrib"],
                 partial_crystal_lattice_energy,
                 nmers[keynmer]["priority_min"],
-                rminseps)
+                rminseps.replace(" ", ",")
         
         #print(nmer_csv) #debug
         csv_lines.append(nmer_csv) #debug
