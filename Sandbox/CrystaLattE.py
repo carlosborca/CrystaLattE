@@ -48,8 +48,9 @@ import psi4
 from psi4.driver import qcdb
 from psi4.driver.qcdb.align import B787
 from psi4.driver.qcdb.bfs import BFS
-from psi4.driver.qcdb.periodictable import el2mass
-from psi4.driver.qcdb.periodictable import el2z
+#from psi4.driver.qcdb.periodictable import el2mass
+#from psi4.driver.qcdb.periodictable import el2z
+import qcelemental as qcel
 
 # Import parts of PyCIFRW
 from CifFile import CifFile
@@ -749,7 +750,7 @@ def center_supercell(cif_output, verbose=0):
     scell_elem = np.loadtxt(cif_output, skiprows=2, usecols=(0), dtype="str")
     
     # Distnaces will be handled in Bohr.
-    scell_geom = scell_geom / qcdb.psi_bohr2angstroms
+    scell_geom = scell_geom / qcel.constants.bohr2angstroms
 
     # Calculation of the supercell center as the midpoint of all
     # coordinates.
@@ -813,9 +814,9 @@ def supercell2monomers(cif_output, r_cut_monomer, verbose=1):
     # condition of being the twice as long as the cutoff. This helps
     # filtering out fragments that contain incomplete molecules located
     # at the edges of the supercell.
-    if (r_cut_monomer / qcdb.psi_bohr2angstroms) > np.min(scell_geom_max_coords):
+    if (r_cut_monomer / qcel.constants.bohr2angstroms) > np.min(scell_geom_max_coords):
         print("\nWARNING: Cutoff (%3.2f A) longer than half the smallest dimension of the supercell (%3.2f A)." \
-              % (r_cut_monomer, np.min(scell_geom_max_coords)*qcdb.psi_bohr2angstroms))
+              % (r_cut_monomer, np.min(scell_geom_max_coords)*qcel.constants.bohr2angstroms))
         print("         Please increase the dimensions of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.")
 
     # Start the BFS timer.
@@ -864,7 +865,7 @@ def supercell2monomers(cif_output, r_cut_monomer, verbose=1):
 
         # Discard edges of the supercell and keeps the monomers within a
         # sphere of the cutoff radius.
-        if frag_r_mins[index] <= (r_cut_monomer / qcdb.psi_bohr2angstroms):
+        if frag_r_mins[index] <= (r_cut_monomer / qcel.constants.bohr2angstroms):
             name = "1mer-" + str(i)
             
             # The dictionary of one N-mer.
@@ -1026,7 +1027,7 @@ def center_of_mass(elems, geoms):
     total_mass = 0.0
 
     for at in range(len(geoms)):
-        m = el2mass[elems[at]]
+        m = qcel.periodictable.to_mass(elems[at])
         com += m*geoms[at]
         total_mass += m
     
@@ -1070,7 +1071,7 @@ def nre(elem, geom):
 
         for at2 in range(at1):
             dist = np.linalg.norm(geom[at1] - geom[at2])
-            nre += el2z[elem[at1]] * el2z[elem[at2]] / dist
+            nre += qcel.periodictable.to_Z(elem[at1]) * qcel.periodictable.to_Z(elem[at2]) / dist
 
     return nre
 # ======================================================================
@@ -1105,7 +1106,7 @@ def chemical_space(elem, geom):
     for i in range(natoms):
    
         # Get the charge of atom i
-        charge_i = el2z[elem[i]]
+        charge_i = qcel.periodictable.to_Z(elem[i])
         
         # Fill the diagonal with the special polynomial from of:
         # DOI: 10.1103/PhysRevLett.108.058301     
@@ -1114,7 +1115,7 @@ def chemical_space(elem, geom):
         for j in range(i):
             
             # Get the charge of atom j
-            charge_j = el2z[elem[j]]
+            charge_j = qcel.periodictable.to_Z(elem[j])
             
             # Compute distance between i and j
             dist = np.linalg.norm(geom[i] - geom[j])
@@ -1202,7 +1203,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
             max_mon_sep = max(new_nmer["min_monomer_separations"])
             max_com_sep = max(new_nmer["com_monomer_separations"])
 
-            if max_mon_sep > (nmer_separation_cutoff / qcdb.psi_bohr2angstroms):
+            if max_mon_sep > (nmer_separation_cutoff / qcel.constants.bohr2angstroms):
                 
                 if verbose >= 2:
                     
@@ -1211,11 +1212,11 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                     print(
                         "{} discarded in {:.2f} s: Maximum separation between closest atoms of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
-                            new_nmer_name, nmer_stop_time, max_mon_sep*qcdb.psi_bohr2angstroms, nmer_separation_cutoff))
+                            new_nmer_name, nmer_stop_time, max_mon_sep*qcel.constants.bohr2angstroms, nmer_separation_cutoff))
                         
                     counter_dscrd_sep += 1
             
-            elif max_com_sep > (coms_separation_cutoff / qcdb.psi_bohr2angstroms):
+            elif max_com_sep > (coms_separation_cutoff / qcel.constants.bohr2angstroms):
                 
                 if verbose >= 2:
                     
@@ -1223,7 +1224,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     nmer_stop_time = time.time() - nmer_start_time
                     print(
                         "{} discarded in {:.2f} s: Maximum separation between closest COMs of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
-                            new_nmer_name, nmer_stop_time, max_com_sep*qcdb.psi_bohr2angstroms, coms_separation_cutoff))
+                            new_nmer_name, nmer_stop_time, max_com_sep*qcel.constants.bohr2angstroms, coms_separation_cutoff))
 
                     counter_dscrd_com += 1
 
@@ -1403,7 +1404,7 @@ def monomer2makefp(cif_output, nmer, verbose=0):
         if at in nmer["delimiters"]:
             makefp_input += "--\n"
         
-        makefp_input += " {:6} {:4.1f} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at] + str(at + 1), el2z[nmer["elem"][at]], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+        makefp_input += " {:6} {:4.1f} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at] + str(at + 1), qcel.periodictable.to_Z(nmer["elem"][at]), nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
 
     makefp_input += " $end"
 
@@ -1558,11 +1559,11 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
     # previous-body interactions.
     varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
     
-    n_body_energy = psi4.core.get_variable(varstring)
+    n_body_energy = psi4.core.variable(varstring)
     
     if len(nmer["monomers"]) > 2:
         varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
-        n_minus_1_body_energy = psi4.core.get_variable(varstring)
+        n_minus_1_body_energy = psi4.core.variable(varstring)
         nmer["nambe"] = n_body_energy - n_minus_1_body_energy
 
     else:
@@ -1645,7 +1646,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         nmer_min_monomer_separations.sort()
         
         for r in nmer_min_monomer_separations:
-            rminseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
+            rminseps += "{:6.3f} ".format(r * qcel.constants.bohr2angstroms)
         
         # Generate a string with an ordered list of minimum separations
         # between the center of masses of the monomers.
@@ -1655,7 +1656,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         nmer_min_com_separations.sort()
         
         for r in nmer_min_com_separations:
-            rcomseps += "{:6.3f} ".format(r * qcdb.psi_bohr2angstroms)
+            rcomseps += "{:6.3f} ".format(r * qcel.constants.bohr2angstroms)
 
         # Produce Psithon inputs
         if "psithon" in cle_run_type:
@@ -1676,10 +1677,10 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
     
         nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
                 keynmer, 
-                nmer["nambe"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J, 
+                nmer["nambe"] * qcel.constants.hartree2kcalmol * qcel.constants.cal2J, 
                 nmer["replicas"], 
-                nmer["contrib"] * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
-                crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J,
+                nmer["contrib"] * qcel.constants.hartree2kcalmol * qcel.constants.cal2J,
+                crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J,
                 nmer["priority_min"],
                 rminseps)
         
@@ -1690,7 +1691,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
                 keynmer, 
                 energies_wallclock, 
                 cpus, 
-                crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
+                crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J))
         
     return crystal_lattice_energy
 # ======================================================================
@@ -1717,8 +1718,8 @@ def print_results(verbose=0):
             print(result)
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         print("\nCrystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy))
-        print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol * qcdb.psi_cal2J))
-        print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy * qcdb.psi_hartree2kcalmol))
+        print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J))
+        print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol))
 # ======================================================================
 
 
