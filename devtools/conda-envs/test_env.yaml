@@ -1,9 +1,14 @@
 name: test
-channels:
+channels: 
+  - psi4/label/dev
+  - conda-forge
 dependencies:
     # Base depends
   - python
   - pip
+  - psi4
+  - psi4-rt
+  - pycifrw
 
     # Testing
   - pytest
