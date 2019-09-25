@@ -13,4 +13,6 @@ def test_crystalatte_imported():
 
 def test_asdf():
     import crystalatte
-    crystalatte.main(cif_input="../../Tests/Benzene/Benzene.cif", cif_a=2, cif_b=2, cif_c=2, nmers_up_to=2, r_cut_com=5.1, r_cut_monomer=3.3, r_cut_dimer=2.7, r_cut_trimer=2.7, r_cut_tetramer=2.7, r_cut_pentamer=5.6, cle_run_type=["psi4api", "quiet"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=2)
+    import pprint
+    nmers_dictionary = crystalatte.main(cif_input="../Tests/Ammonia/Ammonia.cif", cif_output="../Tests/Ammonia/Ammonia.xyz", cif_a=3, cif_b=3, cif_c=3, nmers_up_to=5, r_cut_com=6.5, r_cut_monomer=3.5, r_cut_dimer=2.6, r_cut_trimer=3.7, r_cut_tetramer=3.7, r_cut_pentamer=6.1, cle_run_type=["psi4api"], psi4_method="HF/STO-3G", psi4_bsse="nocp", psi4_memory="500 MB", verbose=2)
+    pprint.pprint(nmers_dictionary)

@@ -1741,7 +1741,7 @@ def print_end_msg(start, verbose=0):
         print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
         print("Execution terminated succesfully.")
         print("Total elapsed wall-clock time: {:.2f} s\n".format(time.time() - start))
-        print("Thank you for using CrystaLatte.\n")
+        print("Thank you for using CrystaLattE.\n")
         print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 
 # ======================================================================
@@ -1829,6 +1829,8 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
     # Print exit message and timings information.
     print_end_msg(start, verbose)
 
+    return nmers
+
 # ======================================================================
 
 
@@ -1836,21 +1838,21 @@ if __name__ == "__main__":
 
     # Hard-coded Test
     if "crystalatte.py" in sys.argv[-1]:
-        main(   cif_input="../Tests/Benzene/Benzene.cif",
-                cif_output="../Tests/Benzene/Benzene.xyz",
+        main(   cif_input="../Tests/Ammonia/Ammonia.cif",
+                cif_output="../Tests/Ammonia/Ammonia.xyz",
                 cif_a=3,
                 cif_b=3,
                 cif_c=3,
-                nmers_up_to=2,
-                r_cut_com=90.0,
-                r_cut_monomer=5.1,
+                nmers_up_to=5,
+                r_cut_com=6.5,
+                r_cut_monomer=3.5,
                 r_cut_dimer=2.6,
-                r_cut_trimer=2.7,
-                r_cut_tetramer=2.7,
-                r_cut_pentamer=5.0,
-                cle_run_type=["psi4api", "quiet"],
+                r_cut_trimer=3.7,
+                r_cut_tetramer=3.7,
+                r_cut_pentamer=6.1,
+                cle_run_type=["psi4api"],
                 psi4_method="HF/STO-3G",
-                psi4_bsse="cp",
+                psi4_bsse="nocp",
                 psi4_memory="500 MB",
                 verbose=2)
 

@@ -1,76 +1,37 @@
-#------------------------------------------------------------------------------
-#$Date: 2012-02-28 12:14:52 +0000 (Tue, 28 Feb 2012) $
-#$Revision: 35911 $
-#$URL: file:///home/coder/svn-repositories/cod/cif/1/01/04/1010490.cif $
-#------------------------------------------------------------------------------
-#
-# This file is available in the Crystallography Open Database (COD),
-# http://www.crystallography.net/
-#
-# All data on this site have been placed in the public domain by the
-# contributors.
-#
-data_1010490
-_chemical_name_systematic          'Ammonia'
-_chemical_formula_structural       'N H3'
-_chemical_formula_sum              'H3 N'
-_publ_section_title                'Das Gitter des Ammoniaks.'
+data_stdin
+_cell_volume           135.05
+_symmetry_space_group_name_H-M 'P 1'
+_symmetry_Int_Tables_number 1
 loop_
-_publ_author_name
-  'Mark, H'
-  'Pohland, E'
-_journal_name_full
-;
-Zeitschrift fuer Kristallographie, Kristallgeometrie, Kristallphysik,
-Kristallchemie (-144,1977)
-;
-_journal_coden_ASTM                ZEKGAX
-_journal_volume                    61
-_journal_year                      1925
-_journal_page_first                532
-_journal_page_last                 537
-_cell_length_a                     5.193
-_cell_length_b                     5.193
-_cell_length_c                     5.193
-_cell_angle_alpha                  90
-_cell_angle_beta                   90
-_cell_angle_gamma                  90
-_cell_volume                       140.0
-_cell_formula_units_Z              4
-_exptl_crystal_density_meas        0.8
-_symmetry_space_group_name_H-M     'P 21 3'
-_symmetry_Int_Tables_number        198
-_symmetry_cell_setting             cubic
-loop_
+_symmetry_equiv_pos_site_id
 _symmetry_equiv_pos_as_xyz
-  'x,y,z'
-  'y,z,x'
-  'z,x,y'
-  '1/2+x,1/2-y,-z'
-  '1/2+y,1/2-z,-x'
-  '1/2+z,1/2-x,-y'
-  '-x,1/2+y,1/2-z'
-  '-y,1/2+z,1/2-x'
-  '-z,1/2+x,1/2-y'
-  '1/2-x,-y,1/2+z'
-  '1/2-y,-z,1/2+x'
-  '1/2-z,-x,1/2+y'
-loop_
-_atom_type_symbol
-_atom_type_oxidation_number
-  N3-   -3.000
-  H1+    1.000
+1 x,y,z
+_cell_length_a         5.1305
+_cell_length_b         5.1305
+_cell_length_c         5.1305
+_cell_angle_alpha        90.0000
+_cell_angle_beta        90.0000
+_cell_angle_gamma        90.0000
+_cell_formula_units_Z 1
 loop_
 _atom_site_label
 _atom_site_type_symbol
-_atom_site_symmetry_multiplicity
-_atom_site_Wyckoff_symbol
 _atom_site_fract_x
 _atom_site_fract_y
 _atom_site_fract_z
-_atom_site_occupancy
-_atom_site_attached_hydrogens
-_atom_site_calc_flag
-  N1    N3-    4 a 0.22 0.22 0.22 1.  3 d
-  H1    H1+    4 a -1. -1. -1. 3.  0 dum
-_cod_database_code 1010490
+n      N      0.210700    0.210700    0.210700
+n      N      0.710700    0.289300    0.789300
+n      N      0.789300    0.710700    0.289300
+n      N      0.289300    0.789300    0.710700
+h      H      0.368900    0.267100    0.115900
+h      H      0.267100    0.115900    0.368900
+h      H      0.115900    0.368900    0.267100
+h      H      0.868900    0.232900    0.884100
+h      H      0.767100    0.384100    0.631100
+h      H      0.615900    0.131100    0.732900
+h      H      0.732900    0.615900    0.131100
+h      H      0.884100    0.868900    0.232900
+h      H      0.384100    0.631100    0.767100
+h      H      0.131100    0.732900    0.615900
+h      H      0.232900    0.884100    0.868900
+h      H      0.631100    0.767100    0.384100
