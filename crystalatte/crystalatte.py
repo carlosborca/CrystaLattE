@@ -1544,7 +1544,7 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
     psi4.set_memory(psi4_memory)
     
     # Set Psi4 block of options.
-    psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'cc_type': 'df', 'freeze_core': 'true', 'e_convergence': '8'})
+    psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'cc_type': 'df', 'freeze_core': 'true', 'e_convergence': '9'})
     
     # Execute Psi4 energy calculations, unless running on test mode.
 
