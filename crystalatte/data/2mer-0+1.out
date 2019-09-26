@@ -23,9 +23,9 @@
     -----------------------------------------------------------------------
 
 
-    Psi4 started on: Thursday, 26 September 2019 03:06PM
+    Psi4 started on: Thursday, 26 September 2019 04:00PM
 
-    Process ID: 1207
+    Process ID: 1628
     Host:       Vanadium
     PSIDATADIR: /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4
     Memory:     500.0 MiB
@@ -68,7 +68,7 @@ set {
   freeze_core true
 }
 
-energy('scf/STO-3G', bsse_type = 'cp')
+energy('scf/STO-3G', bsse_type = 'nocp')
 
 --------------------------------------------------------------------------
 
@@ -76,18 +76,18 @@ energy('scf/STO-3G', bsse_type = 'cp')
 
 
    ===> N-Body Interaction Abacus <===
-        BSSE Treatment:                     cp
-        Number of 1-body computations:     4
+        BSSE Treatment:                     nocp
+        Number of 1-body computations:     2
         Number of 2-body computations:     1
 
    ==> N-Body: Now computing 1-body complexes <==
 
 
-       N-Body: Computing complex (1/4) with fragments (2,) in the basis of fragments (2,).
+       N-Body: Computing complex (1/2) with fragments (2,) in the basis of fragments (2,).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 15:06:21 2019
+*** at Thu Sep 26 16:00:50 2019
 
    => Loading Basis Set <=
 
@@ -206,12 +206,12 @@ energy('scf/STO-3G', bsse_type = 'cp')
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58562506171484   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42957380017456   -8.43949e-01   2.08005e-02 DIIS
-   @DF-RHF iter   2:   -55.44933997575385   -1.97662e-02   3.93998e-03 DIIS
-   @DF-RHF iter   3:   -55.44993006299880   -5.90087e-04   8.13904e-04 DIIS
-   @DF-RHF iter   4:   -55.44996535332226   -3.52903e-05   7.59270e-06 DIIS
-   @DF-RHF iter   5:   -55.44996535917187   -5.84961e-09   9.86692e-07 DIIS
+   @DF-RHF iter SAD:   -54.58562506171483   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.42957380017454   -8.43949e-01   2.08005e-02 DIIS
+   @DF-RHF iter   2:   -55.44933997575382   -1.97662e-02   3.93998e-03 DIIS
+   @DF-RHF iter   3:   -55.44993006299885   -5.90087e-04   8.13904e-04 DIIS
+   @DF-RHF iter   4:   -55.44996535332225   -3.52903e-05   7.59270e-06 DIIS
+   @DF-RHF iter   5:   -55.44996535917186   -5.84961e-09   9.86692e-07 DIIS
   Energy and wave function converged.
 
 
@@ -233,14 +233,14 @@ energy('scf/STO-3G', bsse_type = 'cp')
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.44996535917187
+  @DF-RHF Final Energy:   -55.44996535917186
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232912008511363
-    One-Electron Energy =                 -99.5034370119356879
-    Two-Electron Energy =                  31.8301804519126819
-    Total Energy =                        -55.4499653591718697
+    One-Electron Energy =                 -99.5034370119356595
+    Two-Electron Energy =                  31.8301804519126641
+    Total Energy =                        -55.4499653591718555
 
 Computation Completed
 
@@ -262,419 +262,23 @@ Properties computed using the SCF density matrix
      X:    -1.0038      Y:     1.0038      Z:    -1.0038     Total:     1.7386
 
 
-*** tstop() called on Vanadium at Thu Sep 26 15:06:22 2019
+*** tstop() called on Vanadium at Thu Sep 26 16:00:51 2019
 Module time:
 	user time   =       3.60 seconds =       0.06 minutes
-	system time =       0.77 seconds =       0.01 minutes
+	system time =       0.56 seconds =       0.01 minutes
 	total time  =          1 seconds =       0.02 minutes
 Total time:
 	user time   =       3.60 seconds =       0.06 minutes
-	system time =       0.77 seconds =       0.01 minutes
+	system time =       0.56 seconds =       0.01 minutes
 	total time  =          1 seconds =       0.02 minutes
 
-       N-Body: Complex Energy (fragments = (2,), basis = (2,):   -55.44996535917187)
+       N-Body: Complex Energy (fragments = (2,), basis = (2,):   -55.44996535917186)
 
-       N-Body: Computing complex (2/4) with fragments (2,) in the basis of fragments (1, 2).
-
-
-*** tstart() called on Vanadium
-*** at Thu Sep 26 15:06:22 2019
-
-   => Loading Basis Set <=
-
-    Name: STO-3G
-    Role: ORBITAL
-    Keyword: BASIS
-    atoms 1, 5     entry N          line    71 file /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4/basis/sto-3g.gbs 
-    atoms 2-4, 6-8 entry H          line    19 file /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4/basis/sto-3g.gbs 
-
-
-         ---------------------------------------------------------
-                                   SCF
-               by Justin Turney, Rob Parrish, Andy Simmonett
-                          and Daniel G. A. Smith
-                              RHF Reference
-                        4 Threads,    476 MiB Core
-         ---------------------------------------------------------
-
-  ==> Geometry <==
-
-    Molecular point group: c1
-    Full point group: C1
-
-    Geometry (in Bohr), charge = 0, multiplicity = 1:
-
-       Center              X                  Y                   Z               Mass       
-    ------------   -----------------  -----------------  -----------------  -----------------
-      Gh(N)          -1.681155160000    -1.681155160000    -1.681155160000    14.003074004430
-      Gh(H)          -2.600263150000    -0.147368400000    -1.134342120000     1.007825032230
-      Gh(H)          -1.134342120000    -2.600263150000    -0.147368400000     1.007825032230
-      Gh(H)          -0.147368400000    -1.134342120000    -2.600263150000     1.007825032230
-         N            3.928511960000     3.166464780000    -0.919107990000    14.003074004430
-         H            2.394725200000     3.713277820000     0.000000000000     1.007825032230
-         H            4.847619940000     4.700251540000    -1.465921030000     1.007825032230
-         H            3.381698920000     2.247356790000    -2.452894750000     1.007825032230
-
-  Running in c1 symmetry.
-
-  Rotational constants: A =      0.81389  B =      0.11262  C =      0.10111 [cm^-1]
-  Rotational constants: A =  24399.66655  B =   3376.30827  C =   3031.20899 [MHz]
-  Nuclear repulsion =   12.223291200851136
-
-  Charge       = 0
-  Multiplicity = 1
-  Electrons    = 10
-  Nalpha       = 5
-  Nbeta        = 5
-
-  ==> Algorithm <==
-
-  SCF Algorithm Type is DF.
-  DIIS enabled.
-  MOM disabled.
-  Fractional occupation disabled.
-  Guess Type is SAD.
-  Energy threshold   = 1.00e-08
-  Density threshold  = 1.00e-06
-  Integral threshold = 0.00e+00
-
-  ==> Primary Basis <==
-
-  Basis Set: STO-3G
-    Blend: STO-3G
-    Number of shells: 12
-    Number of basis function: 16
-    Number of Cartesian functions: 16
-    Spherical Harmonics?: true
-    Max angular momentum: 1
-
-   => Loading Basis Set <=
-
-    Name: (STO-3G AUX)
-    Role: JKFIT
-    Keyword: DF_BASIS_SCF
-    atoms 1, 5     entry N          line   263 file /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4/basis/def2-svp-jkfit.gbs 
-    atoms 2-4, 6-8 entry H          line    23 file /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4/basis/def2-svp-jkfit.gbs 
-
-  ==> Pre-Iterations <==
-
-   -------------------------------------------------------
-    Irrep   Nso     Nmo     Nalpha   Nbeta   Ndocc  Nsocc
-   -------------------------------------------------------
-     A         16      16       0       0       0       0
-   -------------------------------------------------------
-    Total      16      16       5       5       5       0
-   -------------------------------------------------------
-
-  ==> Integral Setup <==
-
-  DFHelper Memory: AOs need 0.001 GiB; user supplied 0.349 GiB. Using in-core AOs.
-
-  ==> MemDFJK: Density-Fitted J/K Matrices <==
-
-    J tasked:                   Yes
-    K tasked:                   Yes
-    wK tasked:                   No
-    OpenMP threads:               4
-    Memory [MiB]:               357
-    Algorithm:                 Core
-    Schwarz Cutoff:           1E-12
-    Mask sparsity (%):       0.7812
-    Fitting Condition:        1E-10
-
-   => Auxiliary Basis Set <=
-
-  Basis Set: (STO-3G AUX)
-    Blend: DEF2-SVP-JKFIT
-    Number of shells: 86
-    Number of basis function: 262
-    Number of Cartesian functions: 306
-    Spherical Harmonics?: true
-    Max angular momentum: 4
-
-  Minimum eigenvalue in the overlap matrix is 2.4902476447E-01.
-  Using Symmetric Orthogonalization.
-
-  SCF Guess: Superposition of Atomic Densities via on-the-fly atomic UHF.
-
-  ==> Iterations <==
-
-                           Total Energy        Delta E     RMS |[F,P]|
-
-   @DF-RHF iter SAD:   -54.58562426579657   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42961531242074   -8.43991e-01   1.03998e-02 DIIS
-   @DF-RHF iter   2:   -55.44937542083123   -1.97601e-02   1.97077e-03 DIIS
-   @DF-RHF iter   3:   -55.44996585920978   -5.90438e-04   4.07000e-04 DIIS
-   @DF-RHF iter   4:   -55.45000116392034   -3.53047e-05   3.95201e-06 DIIS
-   @DF-RHF iter   5:   -55.45000116979107   -5.87073e-09   9.39741e-07 DIIS
-  Energy and wave function converged.
-
-
-  ==> Post-Iterations <==
-
-    Orbital Energies [Eh]
-    ---------------------
-
-    Doubly Occupied:                                                      
-
-       1A    -15.300605     2A     -1.100127     3A     -0.584689  
-       4A     -0.584673     5A     -0.351801  
-
-    Virtual:                                                              
-
-       6A      0.429958     7A      0.662597     8A      0.756921  
-       9A      0.759545    10A      0.945151    11A      0.950794  
-      12A      1.337526    13A      2.206283    14A      2.699727  
-      15A      2.702101    16A     23.912532  
-
-    Final Occupation by Irrep:
-              A 
-    DOCC [     5 ]
-
-  @DF-RHF Final Energy:   -55.45000116979107
-
-   => Energetics <=
-
-    Nuclear Repulsion Energy =             12.2232912008511363
-    One-Electron Energy =                 -99.5028067039811219
-    Two-Electron Energy =                  31.8295143333389134
-    Total Energy =                        -55.4500011697910722
-
-Computation Completed
-
-
-Properties will be evaluated at   0.000000,   0.000000,   0.000000 [a0]
-
-Properties computed using the SCF density matrix
-
-  Nuclear Dipole Moment: [e a0]
-     X:    38.1236      Y:    32.8261      Z:   -10.3526
-
-  Electronic Dipole Moment: [e a0]
-     X:   -38.5178      Y:   -32.4304      Z:     9.9579
-
-  Dipole Moment: [e a0]
-     X:    -0.3942      Y:     0.3957      Z:    -0.3947     Total:     0.6840
-
-  Dipole Moment: [D]
-     X:    -1.0020      Y:     1.0059      Z:    -1.0032     Total:     1.7384
-
-
-*** tstop() called on Vanadium at Thu Sep 26 15:06:24 2019
-Module time:
-	user time   =       4.01 seconds =       0.07 minutes
-	system time =       1.22 seconds =       0.02 minutes
-	total time  =          2 seconds =       0.03 minutes
-Total time:
-	user time   =       7.64 seconds =       0.13 minutes
-	system time =       2.02 seconds =       0.03 minutes
-	total time  =          3 seconds =       0.05 minutes
-
-       N-Body: Complex Energy (fragments = (2,), basis = (1, 2):   -55.45000116979107)
-
-       N-Body: Computing complex (3/4) with fragments (1,) in the basis of fragments (1, 2).
+       N-Body: Computing complex (2/2) with fragments (1,) in the basis of fragments (1,).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 15:06:24 2019
-
-   => Loading Basis Set <=
-
-    Name: STO-3G
-    Role: ORBITAL
-    Keyword: BASIS
-    atoms 1, 5     entry N          line    71 file /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4/basis/sto-3g.gbs 
-    atoms 2-4, 6-8 entry H          line    19 file /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4/basis/sto-3g.gbs 
-
-
-         ---------------------------------------------------------
-                                   SCF
-               by Justin Turney, Rob Parrish, Andy Simmonett
-                          and Daniel G. A. Smith
-                              RHF Reference
-                        4 Threads,    476 MiB Core
-         ---------------------------------------------------------
-
-  ==> Geometry <==
-
-    Molecular point group: c1
-    Full point group: C1
-
-    Geometry (in Bohr), charge = 0, multiplicity = 1:
-
-       Center              X                  Y                   Z               Mass       
-    ------------   -----------------  -----------------  -----------------  -----------------
-         N           -1.681155160000    -1.681155160000    -1.681155160000    14.003074004430
-         H           -2.600263150000    -0.147368400000    -1.134342120000     1.007825032230
-         H           -1.134342120000    -2.600263150000    -0.147368400000     1.007825032230
-         H           -0.147368400000    -1.134342120000    -2.600263150000     1.007825032230
-      Gh(N)           3.928511960000     3.166464780000    -0.919107990000    14.003074004430
-      Gh(H)           2.394725200000     3.713277820000     0.000000000000     1.007825032230
-      Gh(H)           4.847619940000     4.700251540000    -1.465921030000     1.007825032230
-      Gh(H)           3.381698920000     2.247356790000    -2.452894750000     1.007825032230
-
-  Running in c1 symmetry.
-
-  Rotational constants: A =      0.81389  B =      0.11262  C =      0.10111 [cm^-1]
-  Rotational constants: A =  24399.66655  B =   3376.30827  C =   3031.20899 [MHz]
-  Nuclear repulsion =   12.223291189591457
-
-  Charge       = 0
-  Multiplicity = 1
-  Electrons    = 10
-  Nalpha       = 5
-  Nbeta        = 5
-
-  ==> Algorithm <==
-
-  SCF Algorithm Type is DF.
-  DIIS enabled.
-  MOM disabled.
-  Fractional occupation disabled.
-  Guess Type is SAD.
-  Energy threshold   = 1.00e-08
-  Density threshold  = 1.00e-06
-  Integral threshold = 0.00e+00
-
-  ==> Primary Basis <==
-
-  Basis Set: STO-3G
-    Blend: STO-3G
-    Number of shells: 12
-    Number of basis function: 16
-    Number of Cartesian functions: 16
-    Spherical Harmonics?: true
-    Max angular momentum: 1
-
-   => Loading Basis Set <=
-
-    Name: (STO-3G AUX)
-    Role: JKFIT
-    Keyword: DF_BASIS_SCF
-    atoms 1, 5     entry N          line   263 file /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4/basis/def2-svp-jkfit.gbs 
-    atoms 2-4, 6-8 entry H          line    23 file /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4/basis/def2-svp-jkfit.gbs 
-
-  ==> Pre-Iterations <==
-
-   -------------------------------------------------------
-    Irrep   Nso     Nmo     Nalpha   Nbeta   Ndocc  Nsocc
-   -------------------------------------------------------
-     A         16      16       0       0       0       0
-   -------------------------------------------------------
-    Total      16      16       5       5       5       0
-   -------------------------------------------------------
-
-  ==> Integral Setup <==
-
-  DFHelper Memory: AOs need 0.001 GiB; user supplied 0.349 GiB. Using in-core AOs.
-
-  ==> MemDFJK: Density-Fitted J/K Matrices <==
-
-    J tasked:                   Yes
-    K tasked:                   Yes
-    wK tasked:                   No
-    OpenMP threads:               4
-    Memory [MiB]:               357
-    Algorithm:                 Core
-    Schwarz Cutoff:           1E-12
-    Mask sparsity (%):       0.7812
-    Fitting Condition:        1E-10
-
-   => Auxiliary Basis Set <=
-
-  Basis Set: (STO-3G AUX)
-    Blend: DEF2-SVP-JKFIT
-    Number of shells: 86
-    Number of basis function: 262
-    Number of Cartesian functions: 306
-    Spherical Harmonics?: true
-    Max angular momentum: 4
-
-  Minimum eigenvalue in the overlap matrix is 2.4902476447E-01.
-  Using Symmetric Orthogonalization.
-
-  SCF Guess: Superposition of Atomic Densities via on-the-fly atomic UHF.
-
-  ==> Iterations <==
-
-                           Total Energy        Delta E     RMS |[F,P]|
-
-   @DF-RHF iter SAD:   -54.58562192825407   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42964563938858   -8.44024e-01   1.03981e-02 DIIS
-   @DF-RHF iter   2:   -55.44939821963963   -1.97526e-02   1.97164e-03 DIIS
-   @DF-RHF iter   3:   -55.44998942653415   -5.91207e-04   4.07189e-04 DIIS
-   @DF-RHF iter   4:   -55.45002478155406   -3.53550e-05   3.99658e-06 DIIS
-   @DF-RHF iter   5:   -55.45002478765323   -6.09917e-09   8.96497e-07 DIIS
-  Energy and wave function converged.
-
-
-  ==> Post-Iterations <==
-
-    Orbital Energies [Eh]
-    ---------------------
-
-    Doubly Occupied:                                                      
-
-       1A    -15.300656     2A     -1.100153     3A     -0.584715  
-       4A     -0.584698     5A     -0.351820  
-
-    Virtual:                                                              
-
-       6A      0.423025     7A      0.662567     8A      0.755938  
-       9A      0.759496    10A      0.938393    11A      0.945960  
-      12A      1.330375    13A      2.200237    14A      2.692941  
-      15A      2.694531    16A     23.905682  
-
-    Final Occupation by Irrep:
-              A 
-    DOCC [     5 ]
-
-  @DF-RHF Final Energy:   -55.45002478765323
-
-   => Energetics <=
-
-    Nuclear Repulsion Energy =             12.2232911895914569
-    One-Electron Energy =                 -99.5025559725713435
-    Two-Electron Energy =                  31.8292399953266454
-    Total Energy =                        -55.4500247876532342
-
-Computation Completed
-
-
-Properties will be evaluated at   0.000000,   0.000000,   0.000000 [a0]
-
-Properties computed using the SCF density matrix
-
-  Nuclear Dipole Moment: [e a0]
-     X:   -15.6501      Y:   -15.6501      Z:   -15.6501
-
-  Electronic Dipole Moment: [e a0]
-     X:    16.0439      Y:    16.0441      Z:    16.0452
-
-  Dipole Moment: [e a0]
-     X:     0.3939      Y:     0.3941      Z:     0.3951     Total:     0.6830
-
-  Dipole Moment: [D]
-     X:     1.0011      Y:     1.0016      Z:     1.0043     Total:     1.7361
-
-
-*** tstop() called on Vanadium at Thu Sep 26 15:06:26 2019
-Module time:
-	user time   =       4.03 seconds =       0.07 minutes
-	system time =       0.87 seconds =       0.01 minutes
-	total time  =          2 seconds =       0.03 minutes
-Total time:
-	user time   =      11.72 seconds =       0.20 minutes
-	system time =       2.91 seconds =       0.05 minutes
-	total time  =          5 seconds =       0.08 minutes
-
-       N-Body: Complex Energy (fragments = (1,), basis = (1, 2):   -55.45002478765323)
-
-       N-Body: Computing complex (4/4) with fragments (1,) in the basis of fragments (1,).
-
-
-*** tstart() called on Vanadium
-*** at Thu Sep 26 15:06:26 2019
+*** at Thu Sep 26 16:00:51 2019
 
    => Loading Basis Set <=
 
@@ -793,12 +397,12 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58562505887943   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42957380035040   -8.43949e-01   2.08005e-02 DIIS
+   @DF-RHF iter SAD:   -54.58562505887947   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.42957380035035   -8.43949e-01   2.08005e-02 DIIS
    @DF-RHF iter   2:   -55.44933997592629   -1.97662e-02   3.93998e-03 DIIS
-   @DF-RHF iter   3:   -55.44993006317272   -5.90087e-04   8.13904e-04 DIIS
-   @DF-RHF iter   4:   -55.44996535349632   -3.52903e-05   7.59270e-06 DIIS
-   @DF-RHF iter   5:   -55.44996535934588   -5.84956e-09   9.86692e-07 DIIS
+   @DF-RHF iter   3:   -55.44993006317269   -5.90087e-04   8.13904e-04 DIIS
+   @DF-RHF iter   4:   -55.44996535349627   -3.52903e-05   7.59270e-06 DIIS
+   @DF-RHF iter   5:   -55.44996535934590   -5.84963e-09   9.86692e-07 DIIS
   Energy and wave function converged.
 
 
@@ -820,14 +424,14 @@ Total time:
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.44996535934588
+  @DF-RHF Final Energy:   -55.44996535934590
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232911895914569
-    One-Electron Energy =                 -99.5034369941981396
-    Two-Electron Energy =                  31.8301804452608046
-    Total Energy =                        -55.4499653593458817
+    One-Electron Energy =                 -99.5034369941981538
+    Two-Electron Energy =                  31.8301804452607939
+    Total Energy =                        -55.4499653593458959
 
 Computation Completed
 
@@ -849,17 +453,17 @@ Properties computed using the SCF density matrix
      X:     1.0038      Y:     1.0038      Z:     1.0038     Total:     1.7386
 
 
-*** tstop() called on Vanadium at Thu Sep 26 15:06:27 2019
+*** tstop() called on Vanadium at Thu Sep 26 16:00:53 2019
 Module time:
-	user time   =       4.64 seconds =       0.08 minutes
-	system time =       1.06 seconds =       0.02 minutes
-	total time  =          1 seconds =       0.02 minutes
+	user time   =       4.47 seconds =       0.07 minutes
+	system time =       1.07 seconds =       0.02 minutes
+	total time  =          2 seconds =       0.03 minutes
 Total time:
-	user time   =      16.39 seconds =       0.27 minutes
-	system time =       4.00 seconds =       0.07 minutes
-	total time  =          6 seconds =       0.10 minutes
+	user time   =       8.16 seconds =       0.14 minutes
+	system time =       1.64 seconds =       0.03 minutes
+	total time  =          3 seconds =       0.05 minutes
 
-       N-Body: Complex Energy (fragments = (1,), basis = (1,):   -55.44996535934588)
+       N-Body: Complex Energy (fragments = (1,), basis = (1,):   -55.44996535934590)
 
    ==> N-Body: Now computing 2-body complexes <==
 
@@ -868,7 +472,7 @@ Total time:
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 15:06:27 2019
+*** at Thu Sep 26 16:00:53 2019
 
    => Loading Basis Set <=
 
@@ -992,12 +596,12 @@ Total time:
                            Total Energy        Delta E     RMS |[F,P]|
 
    @DF-RHF iter SAD:  -109.17187536361408   -1.09172e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.85868685651440   -1.68681e+00   1.47404e-02 DIIS
-   @DF-RHF iter   2:  -110.89833834745338   -3.96515e-02   2.79577e-03 DIIS
-   @DF-RHF iter   3:  -110.89952567303521   -1.18733e-03   5.76810e-04 DIIS
-   @DF-RHF iter   4:  -110.89959659941232   -7.09264e-05   6.16741e-06 DIIS
-   @DF-RHF iter   5:  -110.89959661335396   -1.39416e-08   1.19982e-06 DIIS
-   @DF-RHF iter   6:  -110.89959661386979   -5.15826e-10   1.49399e-07 DIIS
+   @DF-RHF iter   1:  -110.85868685651442   -1.68681e+00   1.47404e-02 DIIS
+   @DF-RHF iter   2:  -110.89833834745340   -3.96515e-02   2.79577e-03 DIIS
+   @DF-RHF iter   3:  -110.89952567303537   -1.18733e-03   5.76810e-04 DIIS
+   @DF-RHF iter   4:  -110.89959659941236   -7.09264e-05   6.16741e-06 DIIS
+   @DF-RHF iter   5:  -110.89959661335408   -1.39417e-08   1.19982e-06 DIIS
+   @DF-RHF iter   6:  -110.89959661386979   -5.15712e-10   1.49399e-07 DIIS
   Energy and wave function converged.
 
 
@@ -1027,8 +631,8 @@ Total time:
    => Energetics <=
 
     Nuclear Repulsion Energy =             38.1810274208381557
-    One-Electron Energy =                -226.3637036476459627
-    Two-Electron Energy =                  77.2830796129380246
+    One-Electron Energy =                -226.3637036476459059
+    Two-Electron Energy =                  77.2830796129379678
     Total Energy =                       -110.8995966138697895
 
 Computation Completed
@@ -1051,23 +655,23 @@ Properties computed using the SCF density matrix
      X:     0.0170      Y:     2.0070      Z:     0.0158     Total:     2.0072
 
 
-*** tstop() called on Vanadium at Thu Sep 26 15:06:29 2019
+*** tstop() called on Vanadium at Thu Sep 26 16:00:55 2019
 Module time:
-	user time   =       4.17 seconds =       0.07 minutes
-	system time =       0.93 seconds =       0.02 minutes
+	user time   =       3.95 seconds =       0.07 minutes
+	system time =       1.05 seconds =       0.02 minutes
 	total time  =          2 seconds =       0.03 minutes
 Total time:
-	user time   =      20.66 seconds =       0.34 minutes
-	system time =       4.97 seconds =       0.08 minutes
-	total time  =          8 seconds =       0.13 minutes
+	user time   =      12.16 seconds =       0.20 minutes
+	system time =       2.70 seconds =       0.05 minutes
+	total time  =          5 seconds =       0.08 minutes
 
        N-Body: Complex Energy (fragments = (1, 2), basis = (1, 2):  -110.89959661386979)
 
-   ==> N-Body: Counterpoise Corrected (CP) energies <==
+   ==> N-Body: Non-Counterpoise Corrected (NoCP) energies <==
 
    n-Body     Total Energy [Eh]       I.E. [kcal/mol]      Delta [kcal/mol]
         1     -110.899930718518        0.000000000000        0.000000000000
-        2     -110.899501374943        0.269417160519        0.269417160519
+        2     -110.899596613870        0.209653831838        0.209653831838
 
    => Loading Basis Set <=
 
@@ -1078,7 +682,7 @@ Total time:
     atoms 2-4, 6-8 entry H          line    15 file /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4/basis/def2-svp.gbs 
 
 
-    Psi4 stopped on: Thursday, 26 September 2019 03:06PM
-    Psi4 wall time for execution: 0:00:08.68
+    Psi4 stopped on: Thursday, 26 September 2019 04:00PM
+    Psi4 wall time for execution: 0:00:04.99
 
 *** Psi4 exiting successfully. Buy a developer a beer!

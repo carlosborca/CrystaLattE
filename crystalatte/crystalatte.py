@@ -1475,10 +1475,7 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     else:
         psithon_method = psi4_method
 
-    # This is a temporary fix because the N-Body wrapper executed 4 calculations for a dimer when doing VMFC!!
-    psithon_input += "\nenergy('{}', bsse_type = 'cp')\n".format(psithon_method)
-    #psithon_input += "\nenergy('{}', bsse_type = '{}')\n".format(psithon_method, psi4_bsse}
-   
+    psithon_input += "\nenergy('{}', bsse_type = '{}')\n".format(psithon_method, psi4_bsse)
     psithon_input += "\n"
 
     owd = os.getcwd()

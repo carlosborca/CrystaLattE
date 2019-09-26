@@ -47,5 +47,5 @@ set {
   freeze_core true
 }
 
-energy('scf/STO-3G', bsse_type = 'cp')
+energy('scf/STO-3G', bsse_type = 'nocp')
 
