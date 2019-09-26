@@ -77,7 +77,7 @@ def input_parser(in_f_name):
     keywords["r_cut_trimer"] = 8.0
     keywords["r_cut_tetramer"] = 6.0 
     keywords["r_cut_pentamer"] = 4.0 
-    keywords["cle_run_type"] = ["psi4api", "quiet"]
+    keywords["cle_run_type"] = ["psi4api"]
     keywords["psi4_method"] = "HF/STO-3G"
     keywords["psi4_bsse"] = "cp"
     keywords["psi4_memory"] = "500 MB"
@@ -1688,11 +1688,16 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         results.append(nmer_result)
 
         if verbose >= 2:
-            print("{} elapsed {:.2f} s processing on {} threads. Cumulative Lattice Energy = {:9.8f} KJ/mol".format(
-                keynmer, 
-                energies_wallclock, 
-                cpus, 
-                crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J))
+
+            if "psi4api" in cle_run_type:
+                print("{} elapsed {:.2f} s processing on {} threads. Cumulative Lattice Energy = {:9.8f} KJ/mol".format(
+                    keynmer, 
+                    energies_wallclock, 
+                    cpus, 
+                    crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J))
+
+            if "psithon" in cle_run_type:
+                print("{} written.".format(keynmer))
         
     return crystal_lattice_energy
 # ======================================================================
@@ -1745,7 +1750,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4api", "quiet"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
+def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4api"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -1814,7 +1819,13 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
         print("       Please use 2 <= nmer_up_to < 5.")
    
     if verbose >= 2:
-        print ("\nComputing interaction energies of N-mers:")
+        
+        if "psi4api" in cle_run_type:
+            print ("\nComputing interaction energies of N-mers:")
+        
+        if "psithon" in cle_run_type:
+            print ("\nWriting N-mer coordinates to Psithon input files:")
+
 
     cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
     # ------------------------------------------------------------------
