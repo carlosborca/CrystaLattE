@@ -1843,7 +1843,7 @@ if __name__ == "__main__":
                 cif_a=3,
                 cif_b=3,
                 cif_c=3,
-                nmers_up_to=5,
+                nmers_up_to=2,
                 r_cut_com=6.5,
                 r_cut_monomer=3.5,
                 r_cut_dimer=2.6,
