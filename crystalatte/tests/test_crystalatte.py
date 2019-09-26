@@ -20,7 +20,7 @@ def test_ammonia():
     import pprint
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers = crystalatte.main(cif_input="data/Ammonia.cif", cif_output="data/Ammonia.xyz", cif_a=3, cif_b=3, cif_c=3, nmers_up_to=5, r_cut_com=6.5, r_cut_monomer=3.5, r_cut_dimer=2.6, r_cut_trimer=3.7, r_cut_tetramer=3.7, r_cut_pentamer=6.1, cle_run_type=["psi4api"], psi4_method="HF/STO-3G", psi4_bsse="nocp", psi4_memory="500 MB", verbose=2)
+    nmers, cle = crystalatte.main(cif_input="data/Ammonia.cif", cif_output="data/Ammonia.xyz", cif_a=3, cif_b=3, cif_c=3, nmers_up_to=5, r_cut_com=6.5, r_cut_monomer=3.5, r_cut_dimer=2.6, r_cut_trimer=3.7, r_cut_tetramer=3.7, r_cut_pentamer=6.1, cle_run_type=["psi4api"], psi4_method="HF/STO-3G", psi4_bsse="nocp", psi4_memory="500 MB", verbose=2)
     pprint.pprint(nmers)
 
     # Test the number of N-mers.
@@ -98,3 +98,6 @@ def test_ammonia():
     assert compare_values(7.337171371615357, min(nmers["3mer-0+1+5"]["com_monomer_separations"]),     atol=1.e-8)
     assert compare_values(6.459398295191971, min(nmers["4mer-0+1+2+3"]["com_monomer_separations"]),   atol=1.e-8)
     assert compare_values(6.459398295191971, min(nmers["5mer-0+1+2+3+4"]["com_monomer_separations"]), atol=1.e-8)
+
+    # Test the crystal lattice energy.
+    assert compare_values(0.00097592, cle, atol=1.e-8)

@@ -1723,7 +1723,7 @@ def print_results(results, crystal_lattice_energy, verbose=0):
         for result in results:
             print(result)
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------\n")
-        print("Crystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy))
+        #print("Crystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy))
         print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J))
         print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol))
 # ======================================================================
@@ -1837,7 +1837,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
     # Print exit message and timings information.
     print_end_msg(start, verbose)
 
-    return nmers
+    return nmers, crystal_lattice_energy
 
 # ======================================================================
 

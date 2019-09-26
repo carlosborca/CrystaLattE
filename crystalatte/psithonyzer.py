@@ -201,8 +201,8 @@ def psithonyzer_print_results(results, crystal_lattice_energy, verbose=0):
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         for result in results:
             print(result)
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
-        print("\nCrystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy / 2625.500)) # Same value as in psi_hartree2kJmol
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------\n")
+        #print("Crystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy / 2625.500)) # Same value as in psi_hartree2kJmol
         print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy))
         print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy / 4.184)) # Same value as in psi_cal2J
 # ======================================================================
