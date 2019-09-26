@@ -1461,7 +1461,7 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     psithon_input += "}\n"
 
     psithon_input += "\nset {\n"
-    psithon_input += "  e_convergence 8\n"
+    psithon_input += "  e_convergence 9\n"
     psithon_input += "  scf_type df\n"
     psithon_input += "  mp2_type df\n" 
     psithon_input += "  cc_type df\n"
