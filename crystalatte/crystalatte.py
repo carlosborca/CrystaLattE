@@ -111,8 +111,14 @@ def input_parser(in_f_name):
             elif keyword_name in ["psi4_bsse", "psi4_memory", "psi4_method", "cif_input", "cif_output"]:
                 keyword_value = keyword_value.strip()
 
-            elif keyword_name in ["nmers_up_to", "cif_a", "cif_b", "cif_c", "verbose"]:
+            elif keyword_name in ["nmers_up_to", "verbose"]:
                 keyword_value = int(keyword_value)
+            
+            elif keyword_name in ["cif_a", "cif_b", "cif_c"]:
+                keyword_value = int(keyword_value)
+                
+                if (keyword_value%2) == 0:
+                    keyword_value += 1
 
             else:
                 try:
