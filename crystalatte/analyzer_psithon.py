@@ -163,8 +163,8 @@ def get_nmer_data(fname, verbose=0):
 # ======================================================================
 
 # ======================================================================
-def print_results(results, crystal_lattice_energy, verbose=0):
-    """Prints a summary of the energy results at the end of the
+def print_header(verbose=0):
+    """Prints a the header of the program when starting the
     execution.
     
     Arguments:
@@ -179,6 +179,20 @@ def print_results(results, crystal_lattice_energy, verbose=0):
         print("  The tool for the automated calculation of crystal lattice energies.  \n")
         print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
         print("CrystaLattE is being executed in Psithon analysis mode.\n")
+
+# ======================================================================
+
+# ======================================================================
+def print_results(results, crystal_lattice_energy, verbose=0):
+    """Prints a summary of the energy results at the end of the
+    execution.
+    
+    Arguments:
+    <int> verbose
+        Adjusts the level of detail of the printouts.
+    """
+
+    if verbose >= 1:
         print("Summary of results:")
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
@@ -325,6 +339,7 @@ def main(verbose=0):
         #print(nmer_csv) #debug
         csv_lines.append(nmer_csv) #debug
 
+    print_header(verbose)
     print_results(results, crystal_lattice_energy, verbose)
     print_end_msg(start, verbose)
 
