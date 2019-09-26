@@ -1702,7 +1702,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
 
 
 # ======================================================================
-def print_results(verbose=0):
+def print_results(results, crystal_lattice_energy, verbose=0):
     """Prints a summary of the energy results at the end of the
     execution.
     
@@ -1720,8 +1720,8 @@ def print_results(verbose=0):
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         for result in results:
             print(result)
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
-        print("\nCrystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy))
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------\n")
+        print("Crystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy))
         print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J))
         print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol))
 # ======================================================================
@@ -1824,7 +1824,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
     
     # Print the final results.
     print("")
-    print_results(verbose)
+    print_results(results, crystal_lattice_energy, verbose)
     
     # Print exit message and timings information.
     print_end_msg(start, verbose)

@@ -12,7 +12,7 @@ def test_crystalatte_imported():
     """Sample test, will always pass so long as import statement worked"""
     assert "crystalatte" in sys.modules
 
-def test_asdf():
+def test_ammonia():
     """Main test with the ammonia crystal."""
 
     # Required imports
