@@ -38,7 +38,7 @@ import time
 
 
 # ======================================================================
-def success_check(fname, verbose=0):
+def psithonyzer_success_check(fname, verbose=0):
     """Takes a Psi4 output file and checks if it contains the string
     'coffee' to decide if the calculation was successful or not.
 
@@ -67,7 +67,7 @@ def success_check(fname, verbose=0):
 
 
 # ======================================================================
-def get_nmer_data(fname, verbose=0):
+def psithonyzer_get_nmer_data(fname, verbose=0):
     """.
     
     Arguments:
@@ -163,7 +163,7 @@ def get_nmer_data(fname, verbose=0):
 # ======================================================================
 
 # ======================================================================
-def print_header(verbose=0):
+def psithonyzer_print_header(verbose=0):
     """Prints a the header of the program when starting the
     execution.
     
@@ -183,7 +183,7 @@ def print_header(verbose=0):
 # ======================================================================
 
 # ======================================================================
-def print_results(results, crystal_lattice_energy, verbose=0):
+def psithonyzer_print_results(results, crystal_lattice_energy, verbose=0):
     """Prints a summary of the energy results at the end of the
     execution.
     
@@ -209,7 +209,7 @@ def print_results(results, crystal_lattice_energy, verbose=0):
 
 
 # ======================================================================
-def print_end_msg(start, verbose=0):
+def psithonyzer_print_end_msg(start, verbose=0):
     """.
     """
 
@@ -223,7 +223,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(verbose=0):
+def psithonyzer_main(verbose=0):
 
     # Start counting execution time.
     start = time.time()
@@ -259,14 +259,14 @@ def main(verbose=0):
 
             # Check if Psi4 exited successfully.
             # Why bothering analyzing a file otherwise?
-            success = success_check(f)
+            success = psithonyzer_success_check(f)
             #print(success) #debug
     
             if success:
                 # If the output was ran successufully, get the N-mer name
                 # to create a key for its soon-to-be created dictionary
                 # and get the data to populate such N-mer dictionary.
-                key, number_of_monomers, replicas, priority_min, min_monomer_separations, com_monomer_separations, n_body_energy = get_nmer_data(f)
+                key, number_of_monomers, replicas, priority_min, min_monomer_separations, com_monomer_separations, n_body_energy = psithonyzer_get_nmer_data(f)
 
                 # Create a new dictionary for the current N-mer.
                 nmers[key]= {}
@@ -339,9 +339,9 @@ def main(verbose=0):
         #print(nmer_csv) #debug
         csv_lines.append(nmer_csv) #debug
 
-    print_header(verbose)
-    print_results(results, crystal_lattice_energy, verbose)
-    print_end_msg(start, verbose)
+    psithonyzer_print_header(verbose)
+    psithonyzer_print_results(results, crystal_lattice_energy, verbose)
+    psithonyzer_print_end_msg(start, verbose)
 
     #TODO: This should be the CIF file name, when that is inclued in 
     #      the Psi4 output
@@ -356,4 +356,4 @@ def main(verbose=0):
     #print(nmers) #debug
 
 if __name__ == "__main__":
-    main(1)
+    psithonyzer_main(1)

@@ -5,6 +5,7 @@ Automated calculation of crystal lattice energies with the many-body expansion
 
 # Add imports here
 from .crystalatte import *
+from .psithonyzer import *
 
 # Handle versioneer
 from ._version import get_versions
