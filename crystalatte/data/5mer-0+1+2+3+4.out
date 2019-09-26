@@ -23,13 +23,13 @@
     -----------------------------------------------------------------------
 
 
-    Psi4 started on: Thursday, 26 September 2019 11:51AM
+    Psi4 started on: Thursday, 26 September 2019 03:08PM
 
-    Process ID: 230
+    Process ID: 1232
     Host:       Vanadium
     PSIDATADIR: /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4
     Memory:     500.0 MiB
-    Threads:    8
+    Threads:    4
     
   ==> Input File <==
 
@@ -105,7 +105,7 @@ energy('scf/STO-3G', bsse_type = 'cp')
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:16 2019
+*** at Thu Sep 26 15:08:42 2019
 
    => Loading Basis Set <=
 
@@ -121,7 +121,7 @@ energy('scf/STO-3G', bsse_type = 'cp')
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -198,7 +198,7 @@ energy('scf/STO-3G', bsse_type = 'cp')
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -224,12 +224,12 @@ energy('scf/STO-3G', bsse_type = 'cp')
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58562505887944   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42957380035041   -8.43949e-01   2.08005e-02 DIIS
+   @DF-RHF iter SAD:   -54.58562505887945   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.42957380035038   -8.43949e-01   2.08005e-02 DIIS
    @DF-RHF iter   2:   -55.44933997592628   -1.97662e-02   3.93998e-03 DIIS
-   @DF-RHF iter   3:   -55.44993006317269   -5.90087e-04   8.13904e-04 DIIS
-   @DF-RHF iter   4:   -55.44996535349632   -3.52903e-05   7.59270e-06 DIIS
-   @DF-RHF iter   5:   -55.44996535934585   -5.84952e-09   9.86692e-07 DIIS
+   @DF-RHF iter   3:   -55.44993006317270   -5.90087e-04   8.13904e-04 DIIS
+   @DF-RHF iter   4:   -55.44996535349629   -3.52903e-05   7.59270e-06 DIIS
+   @DF-RHF iter   5:   -55.44996535934585   -5.84956e-09   9.86692e-07 DIIS
   Energy and wave function converged.
 
 
@@ -256,8 +256,8 @@ energy('scf/STO-3G', bsse_type = 'cp')
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232911895914569
-    One-Electron Energy =                 -99.5034369941980401
-    Two-Electron Energy =                  31.8301804452607335
+    One-Electron Energy =                 -99.5034369941980970
+    Two-Electron Energy =                  31.8301804452607904
     Total Energy =                        -55.4499653593458390
 
 Computation Completed
@@ -280,14 +280,14 @@ Properties computed using the SCF density matrix
      X:     1.0038      Y:     1.0038      Z:     1.0038     Total:     1.7386
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:18 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:08:44 2019
 Module time:
-	user time   =      11.19 seconds =       0.19 minutes
-	system time =       2.33 seconds =       0.04 minutes
+	user time   =       4.52 seconds =       0.08 minutes
+	system time =       1.28 seconds =       0.02 minutes
 	total time  =          2 seconds =       0.03 minutes
 Total time:
-	user time   =      11.19 seconds =       0.19 minutes
-	system time =       2.33 seconds =       0.04 minutes
+	user time   =       4.52 seconds =       0.08 minutes
+	system time =       1.28 seconds =       0.02 minutes
 	total time  =          2 seconds =       0.03 minutes
 
        N-Body: Complex Energy (fragments = (1,), basis = (1,):   -55.44996535934585)
@@ -296,7 +296,7 @@ Total time:
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:18 2019
+*** at Thu Sep 26 15:08:44 2019
 
    => Loading Basis Set <=
 
@@ -312,7 +312,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -405,7 +405,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -431,12 +431,12 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58561893332309   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42983297962890   -8.44214e-01   4.15714e-03 DIIS
+   @DF-RHF iter SAD:   -54.58561893332310   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.42983297962896   -8.44214e-01   4.15714e-03 DIIS
    @DF-RHF iter   2:   -55.44955069358409   -1.97177e-02   7.90277e-04 DIIS
-   @DF-RHF iter   3:   -55.45014462240414   -5.93929e-04   1.63097e-04 DIIS
-   @DF-RHF iter   4:   -55.45018013560657   -3.55132e-05   1.81298e-06 DIIS
-   @DF-RHF iter   5:   -55.45018014289447   -7.28790e-09   5.02492e-07 DIIS
+   @DF-RHF iter   3:   -55.45014462240418   -5.93929e-04   1.63097e-04 DIIS
+   @DF-RHF iter   4:   -55.45018013560654   -3.55132e-05   1.81298e-06 DIIS
+   @DF-RHF iter   5:   -55.45018014289448   -7.28794e-09   5.02492e-07 DIIS
   Energy and wave function converged.
 
 
@@ -469,14 +469,14 @@ Total time:
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.45018014289447
+  @DF-RHF Final Energy:   -55.45018014289448
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232911895914569
-    One-Electron Energy =                 -99.5001374792672095
-    Two-Electron Energy =                  31.8266661467812781
-    Total Energy =                        -55.4501801428944674
+    One-Electron Energy =                 -99.5001374792673232
+    Two-Electron Energy =                  31.8266661467813776
+    Total Energy =                        -55.4501801428944816
 
 Computation Completed
 
@@ -498,23 +498,23 @@ Properties computed using the SCF density matrix
      X:     0.9975      Y:     1.0014      Z:     0.9988     Total:     1.7307
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:22 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:08:47 2019
 Module time:
-	user time   =      12.86 seconds =       0.21 minutes
-	system time =       2.41 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.68 seconds =       0.11 minutes
+	system time =       1.02 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =      24.25 seconds =       0.40 minutes
-	system time =       4.77 seconds =       0.08 minutes
-	total time  =          6 seconds =       0.10 minutes
+	user time   =      11.25 seconds =       0.19 minutes
+	system time =       2.32 seconds =       0.04 minutes
+	total time  =          5 seconds =       0.08 minutes
 
-       N-Body: Complex Energy (fragments = (1,), basis = (1, 2, 3, 4, 5):   -55.45018014289447)
+       N-Body: Complex Energy (fragments = (1,), basis = (1, 2, 3, 4, 5):   -55.45018014289448)
 
        N-Body: Computing complex (3/10) with fragments (3,) in the basis of fragments (3,).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:22 2019
+*** at Thu Sep 26 15:08:47 2019
 
    => Loading Basis Set <=
 
@@ -530,7 +530,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -607,7 +607,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -634,11 +634,11 @@ Total time:
                            Total Energy        Delta E     RMS |[F,P]|
 
    @DF-RHF iter SAD:   -54.58562506171283   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42957380017287   -8.43949e-01   2.08005e-02 DIIS
+   @DF-RHF iter   1:   -55.42957380017281   -8.43949e-01   2.08005e-02 DIIS
    @DF-RHF iter   2:   -55.44933997575205   -1.97662e-02   3.93998e-03 DIIS
-   @DF-RHF iter   3:   -55.44993006299705   -5.90087e-04   8.13904e-04 DIIS
-   @DF-RHF iter   4:   -55.44996535332046   -3.52903e-05   7.59270e-06 DIIS
-   @DF-RHF iter   5:   -55.44996535917012   -5.84966e-09   9.86692e-07 DIIS
+   @DF-RHF iter   3:   -55.44993006299703   -5.90087e-04   8.13904e-04 DIIS
+   @DF-RHF iter   4:   -55.44996535332049   -3.52903e-05   7.59270e-06 DIIS
+   @DF-RHF iter   5:   -55.44996535917008   -5.84959e-09   9.86692e-07 DIIS
   Energy and wave function converged.
 
 
@@ -660,14 +660,14 @@ Total time:
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.44996535917012
+  @DF-RHF Final Energy:   -55.44996535917008
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232912008511363
-    One-Electron Energy =                 -99.5034370119316094
-    Two-Electron Energy =                  31.8301804519103548
-    Total Energy =                        -55.4499653591701218
+    One-Electron Energy =                 -99.5034370119315383
+    Two-Electron Energy =                  31.8301804519103193
+    Total Energy =                        -55.4499653591700792
 
 Computation Completed
 
@@ -689,23 +689,23 @@ Properties computed using the SCF density matrix
      X:     1.0038      Y:    -1.0038      Z:    -1.0038     Total:     1.7386
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:24 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:08:49 2019
 Module time:
-	user time   =       8.08 seconds =       0.13 minutes
-	system time =       1.61 seconds =       0.03 minutes
+	user time   =       3.72 seconds =       0.06 minutes
+	system time =       0.56 seconds =       0.01 minutes
 	total time  =          2 seconds =       0.03 minutes
 Total time:
-	user time   =      32.55 seconds =       0.54 minutes
-	system time =       6.39 seconds =       0.11 minutes
-	total time  =          8 seconds =       0.13 minutes
+	user time   =      15.02 seconds =       0.25 minutes
+	system time =       2.89 seconds =       0.05 minutes
+	total time  =          7 seconds =       0.12 minutes
 
-       N-Body: Complex Energy (fragments = (3,), basis = (3,):   -55.44996535917012)
+       N-Body: Complex Energy (fragments = (3,), basis = (3,):   -55.44996535917008)
 
        N-Body: Computing complex (4/10) with fragments (2,) in the basis of fragments (2,).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:24 2019
+*** at Thu Sep 26 15:08:49 2019
 
    => Loading Basis Set <=
 
@@ -721,7 +721,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -798,7 +798,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -824,12 +824,12 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58562506171481   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42957380017456   -8.43949e-01   2.08005e-02 DIIS
-   @DF-RHF iter   2:   -55.44933997575380   -1.97662e-02   3.93998e-03 DIIS
-   @DF-RHF iter   3:   -55.44993006299887   -5.90087e-04   8.13904e-04 DIIS
-   @DF-RHF iter   4:   -55.44996535332223   -3.52903e-05   7.59270e-06 DIIS
-   @DF-RHF iter   5:   -55.44996535917187   -5.84964e-09   9.86692e-07 DIIS
+   @DF-RHF iter SAD:   -54.58562506171484   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.42957380017454   -8.43949e-01   2.08005e-02 DIIS
+   @DF-RHF iter   2:   -55.44933997575383   -1.97662e-02   3.93998e-03 DIIS
+   @DF-RHF iter   3:   -55.44993006299876   -5.90087e-04   8.13904e-04 DIIS
+   @DF-RHF iter   4:   -55.44996535332229   -3.52903e-05   7.59270e-06 DIIS
+   @DF-RHF iter   5:   -55.44996535917190   -5.84961e-09   9.86692e-07 DIIS
   Energy and wave function converged.
 
 
@@ -851,14 +851,14 @@ Total time:
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.44996535917187
+  @DF-RHF Final Energy:   -55.44996535917190
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232912008511363
-    One-Electron Energy =                 -99.5034370119357163
+    One-Electron Energy =                 -99.5034370119357447
     Two-Electron Energy =                  31.8301804519127103
-    Total Energy =                        -55.4499653591718697
+    Total Energy =                        -55.4499653591718982
 
 Computation Completed
 
@@ -880,23 +880,23 @@ Properties computed using the SCF density matrix
      X:    -1.0038      Y:     1.0038      Z:    -1.0038     Total:     1.7386
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:26 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:08:50 2019
 Module time:
-	user time   =       7.94 seconds =       0.13 minutes
-	system time =       1.83 seconds =       0.03 minutes
-	total time  =          2 seconds =       0.03 minutes
+	user time   =       3.70 seconds =       0.06 minutes
+	system time =       0.81 seconds =       0.01 minutes
+	total time  =          1 seconds =       0.02 minutes
 Total time:
-	user time   =      40.63 seconds =       0.68 minutes
-	system time =       8.27 seconds =       0.14 minutes
-	total time  =         10 seconds =       0.17 minutes
+	user time   =      18.77 seconds =       0.31 minutes
+	system time =       3.72 seconds =       0.06 minutes
+	total time  =          8 seconds =       0.13 minutes
 
-       N-Body: Complex Energy (fragments = (2,), basis = (2,):   -55.44996535917187)
+       N-Body: Complex Energy (fragments = (2,), basis = (2,):   -55.44996535917190)
 
        N-Body: Computing complex (5/10) with fragments (4,) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:26 2019
+*** at Thu Sep 26 15:08:50 2019
 
    => Loading Basis Set <=
 
@@ -912,7 +912,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -1005,7 +1005,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -1031,12 +1031,12 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58562324199909   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.43138770689765   -8.45764e-01   4.12945e-03 DIIS
-   @DF-RHF iter   2:   -55.45082012186059   -1.94324e-02   8.00129e-04 DIIS
-   @DF-RHF iter   3:   -55.45142768325513   -6.07561e-04   1.64508e-04 DIIS
-   @DF-RHF iter   4:   -55.45146402792523   -3.63447e-05   2.13991e-06 DIIS
-   @DF-RHF iter   5:   -55.45146403590878   -7.98356e-09   4.89586e-07 DIIS
+   @DF-RHF iter SAD:   -54.58562324199914   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.43138770689768   -8.45764e-01   4.12945e-03 DIIS
+   @DF-RHF iter   2:   -55.45082012186062   -1.94324e-02   8.00129e-04 DIIS
+   @DF-RHF iter   3:   -55.45142768325510   -6.07561e-04   1.64508e-04 DIIS
+   @DF-RHF iter   4:   -55.45146402792515   -3.63447e-05   2.13991e-06 DIIS
+   @DF-RHF iter   5:   -55.45146403590870   -7.98355e-09   4.89586e-07 DIIS
   Energy and wave function converged.
 
 
@@ -1069,14 +1069,14 @@ Total time:
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.45146403590878
+  @DF-RHF Final Energy:   -55.45146403590870
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232912008511381
-    One-Electron Energy =                 -99.4900286807503704
-    Two-Electron Energy =                  31.8152734439904528
-    Total Energy =                        -55.4514640359087849
+    One-Electron Energy =                 -99.4900286807502283
+    Two-Electron Energy =                  31.8152734439903959
+    Total Energy =                        -55.4514640359086997
 
 Computation Completed
 
@@ -1098,23 +1098,23 @@ Properties computed using the SCF density matrix
      X:    -1.0356      Y:    -0.9983      Z:     1.0350     Total:     1.7721
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:30 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:08:53 2019
 Module time:
-	user time   =      12.66 seconds =       0.21 minutes
-	system time =       2.21 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.27 seconds =       0.10 minutes
+	system time =       1.13 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =      53.49 seconds =       0.89 minutes
-	system time =      10.52 seconds =       0.18 minutes
-	total time  =         14 seconds =       0.23 minutes
+	user time   =      25.10 seconds =       0.42 minutes
+	system time =       4.85 seconds =       0.08 minutes
+	total time  =         11 seconds =       0.18 minutes
 
-       N-Body: Complex Energy (fragments = (4,), basis = (1, 2, 3, 4, 5):   -55.45146403590878)
+       N-Body: Complex Energy (fragments = (4,), basis = (1, 2, 3, 4, 5):   -55.45146403590870)
 
        N-Body: Computing complex (6/10) with fragments (2,) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:30 2019
+*** at Thu Sep 26 15:08:53 2019
 
    => Loading Basis Set <=
 
@@ -1130,7 +1130,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -1223,7 +1223,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -1249,12 +1249,12 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58562337983770   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.43138843771070   -8.45765e-01   4.12943e-03 DIIS
-   @DF-RHF iter   2:   -55.45082073191627   -1.94323e-02   8.00131e-04 DIIS
-   @DF-RHF iter   3:   -55.45142829967817   -6.07568e-04   1.64509e-04 DIIS
-   @DF-RHF iter   4:   -55.45146464490699   -3.63452e-05   2.13998e-06 DIIS
-   @DF-RHF iter   5:   -55.45146465289156   -7.98457e-09   4.89525e-07 DIIS
+   @DF-RHF iter SAD:   -54.58562337983769   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.43138843771069   -8.45765e-01   4.12943e-03 DIIS
+   @DF-RHF iter   2:   -55.45082073191626   -1.94323e-02   8.00131e-04 DIIS
+   @DF-RHF iter   3:   -55.45142829967826   -6.07568e-04   1.64509e-04 DIIS
+   @DF-RHF iter   4:   -55.45146464490705   -3.63452e-05   2.13998e-06 DIIS
+   @DF-RHF iter   5:   -55.45146465289147   -7.98442e-09   4.89525e-07 DIIS
   Energy and wave function converged.
 
 
@@ -1287,14 +1287,14 @@ Total time:
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.45146465289156
+  @DF-RHF Final Energy:   -55.45146465289147
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232912008511363
-    One-Electron Energy =                 -99.4900206346717511
-    Two-Electron Energy =                  31.8152647809290556
-    Total Energy =                        -55.4514646528915591
+    One-Electron Energy =                 -99.4900206346715237
+    Two-Electron Energy =                  31.8152647809289206
+    Total Energy =                        -55.4514646528914668
 
 Computation Completed
 
@@ -1316,23 +1316,23 @@ Properties computed using the SCF density matrix
      X:    -0.9983      Y:     1.0350      Z:    -1.0356     Total:     1.7721
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:33 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:08:56 2019
 Module time:
-	user time   =      13.02 seconds =       0.22 minutes
-	system time =       2.00 seconds =       0.03 minutes
+	user time   =       7.26 seconds =       0.12 minutes
+	system time =       1.24 seconds =       0.02 minutes
 	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =      66.71 seconds =       1.11 minutes
-	system time =      12.56 seconds =       0.21 minutes
-	total time  =         17 seconds =       0.28 minutes
+	user time   =      32.47 seconds =       0.54 minutes
+	system time =       6.10 seconds =       0.10 minutes
+	total time  =         14 seconds =       0.23 minutes
 
-       N-Body: Complex Energy (fragments = (2,), basis = (1, 2, 3, 4, 5):   -55.45146465289156)
+       N-Body: Complex Energy (fragments = (2,), basis = (1, 2, 3, 4, 5):   -55.45146465289147)
 
        N-Body: Computing complex (7/10) with fragments (5,) in the basis of fragments (5,).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:33 2019
+*** at Thu Sep 26 15:08:56 2019
 
    => Loading Basis Set <=
 
@@ -1348,7 +1348,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -1425,7 +1425,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -1451,12 +1451,12 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58562506451267   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42957379996167   -8.43949e-01   2.08005e-02 DIIS
-   @DF-RHF iter   2:   -55.44933997554420   -1.97662e-02   3.93998e-03 DIIS
-   @DF-RHF iter   3:   -55.44993006278767   -5.90087e-04   8.13904e-04 DIIS
-   @DF-RHF iter   4:   -55.44996535311097   -3.52903e-05   7.59270e-06 DIIS
-   @DF-RHF iter   5:   -55.44996535896062   -5.84965e-09   9.86692e-07 DIIS
+   @DF-RHF iter SAD:   -54.58562506451263   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.42957379996170   -8.43949e-01   2.08005e-02 DIIS
+   @DF-RHF iter   2:   -55.44933997554416   -1.97662e-02   3.93998e-03 DIIS
+   @DF-RHF iter   3:   -55.44993006278771   -5.90087e-04   8.13904e-04 DIIS
+   @DF-RHF iter   4:   -55.44996535311102   -3.52903e-05   7.59270e-06 DIIS
+   @DF-RHF iter   5:   -55.44996535896061   -5.84959e-09   9.86692e-07 DIIS
   Energy and wave function converged.
 
 
@@ -1478,14 +1478,14 @@ Total time:
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.44996535896062
+  @DF-RHF Final Energy:   -55.44996535896061
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232912121108139
-    One-Electron Energy =                 -99.5034370296629334
-    Two-Electron Energy =                  31.8301804585915065
-    Total Energy =                        -55.4499653589606183
+    One-Electron Energy =                 -99.5034370296629049
+    Two-Electron Energy =                  31.8301804585914851
+    Total Energy =                        -55.4499653589606112
 
 Computation Completed
 
@@ -1507,23 +1507,23 @@ Properties computed using the SCF density matrix
      X:    -1.0038      Y:     1.0038      Z:    -1.0038     Total:     1.7386
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:35 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:08:58 2019
 Module time:
-	user time   =       8.41 seconds =       0.14 minutes
-	system time =       1.61 seconds =       0.03 minutes
+	user time   =       3.86 seconds =       0.06 minutes
+	system time =       0.75 seconds =       0.01 minutes
 	total time  =          2 seconds =       0.03 minutes
 Total time:
-	user time   =      75.32 seconds =       1.26 minutes
-	system time =      14.20 seconds =       0.24 minutes
-	total time  =         19 seconds =       0.32 minutes
+	user time   =      36.43 seconds =       0.61 minutes
+	system time =       6.88 seconds =       0.11 minutes
+	total time  =         16 seconds =       0.27 minutes
 
-       N-Body: Complex Energy (fragments = (5,), basis = (5,):   -55.44996535896062)
+       N-Body: Complex Energy (fragments = (5,), basis = (5,):   -55.44996535896061)
 
        N-Body: Computing complex (8/10) with fragments (3,) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:35 2019
+*** at Thu Sep 26 15:08:58 2019
 
    => Loading Basis Set <=
 
@@ -1539,7 +1539,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -1632,7 +1632,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -1658,12 +1658,12 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58562090011935   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.43145899893087   -8.45838e-01   4.12852e-03 DIIS
-   @DF-RHF iter   2:   -55.45087786953989   -1.94189e-02   8.00742e-04 DIIS
-   @DF-RHF iter   3:   -55.45148651509385   -6.08646e-04   1.64603e-04 DIIS
-   @DF-RHF iter   4:   -55.45152292495082   -3.64099e-05   2.20022e-06 DIIS
-   @DF-RHF iter   5:   -55.45152293344806   -8.49725e-09   5.06722e-07 DIIS
+   @DF-RHF iter SAD:   -54.58562090011932   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.43145899893086   -8.45838e-01   4.12852e-03 DIIS
+   @DF-RHF iter   2:   -55.45087786953990   -1.94189e-02   8.00742e-04 DIIS
+   @DF-RHF iter   3:   -55.45148651509383   -6.08646e-04   1.64603e-04 DIIS
+   @DF-RHF iter   4:   -55.45152292495079   -3.64099e-05   2.20022e-06 DIIS
+   @DF-RHF iter   5:   -55.45152293344813   -8.49735e-09   5.06722e-07 DIIS
   Energy and wave function converged.
 
 
@@ -1696,14 +1696,14 @@ Total time:
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.45152293344806
+  @DF-RHF Final Energy:   -55.45152293344813
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232912008511363
-    One-Electron Energy =                 -99.4891611513245948
-    Two-Electron Energy =                  31.8143470170253941
-    Total Energy =                        -55.4515229334480608
+    One-Electron Energy =                 -99.4891611513247938
+    Two-Electron Energy =                  31.8143470170255291
+    Total Energy =                        -55.4515229334481319
 
 Computation Completed
 
@@ -1725,23 +1725,23 @@ Properties computed using the SCF density matrix
      X:     1.0355      Y:    -1.0329      Z:    -0.9961     Total:     1.7696
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:39 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:01 2019
 Module time:
-	user time   =      12.70 seconds =       0.21 minutes
-	system time =       2.31 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.42 seconds =       0.11 minutes
+	system time =       0.92 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =      88.22 seconds =       1.47 minutes
-	system time =      16.56 seconds =       0.28 minutes
-	total time  =         23 seconds =       0.38 minutes
+	user time   =      42.94 seconds =       0.72 minutes
+	system time =       7.83 seconds =       0.13 minutes
+	total time  =         19 seconds =       0.32 minutes
 
-       N-Body: Complex Energy (fragments = (3,), basis = (1, 2, 3, 4, 5):   -55.45152293344806)
+       N-Body: Complex Energy (fragments = (3,), basis = (1, 2, 3, 4, 5):   -55.45152293344813)
 
        N-Body: Computing complex (9/10) with fragments (4,) in the basis of fragments (4,).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:39 2019
+*** at Thu Sep 26 15:09:01 2019
 
    => Loading Basis Set <=
 
@@ -1757,7 +1757,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -1834,7 +1834,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -1860,12 +1860,12 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58562506170265   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42957380016242   -8.43949e-01   2.08005e-02 DIIS
-   @DF-RHF iter   2:   -55.44933997574164   -1.97662e-02   3.93998e-03 DIIS
-   @DF-RHF iter   3:   -55.44993006298660   -5.90087e-04   8.13904e-04 DIIS
-   @DF-RHF iter   4:   -55.44996535331011   -3.52903e-05   7.59270e-06 DIIS
-   @DF-RHF iter   5:   -55.44996535915970   -5.84959e-09   9.86692e-07 DIIS
+   @DF-RHF iter SAD:   -54.58562506170266   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.42957380016239   -8.43949e-01   2.08005e-02 DIIS
+   @DF-RHF iter   2:   -55.44933997574166   -1.97662e-02   3.93998e-03 DIIS
+   @DF-RHF iter   3:   -55.44993006298663   -5.90087e-04   8.13904e-04 DIIS
+   @DF-RHF iter   4:   -55.44996535331009   -3.52903e-05   7.59270e-06 DIIS
+   @DF-RHF iter   5:   -55.44996535915969   -5.84960e-09   9.86692e-07 DIIS
   Energy and wave function converged.
 
 
@@ -1887,14 +1887,14 @@ Total time:
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.44996535915970
+  @DF-RHF Final Energy:   -55.44996535915969
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232912008511381
-    One-Electron Energy =                 -99.5034370119295772
-    Two-Electron Energy =                  31.8301804519187428
-    Total Energy =                        -55.4499653591596982
+    One-Electron Energy =                 -99.5034370119295914
+    Two-Electron Energy =                  31.8301804519187606
+    Total Energy =                        -55.4499653591596910
 
 Computation Completed
 
@@ -1916,23 +1916,23 @@ Properties computed using the SCF density matrix
      X:    -1.0038      Y:    -1.0038      Z:     1.0038     Total:     1.7386
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:41 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:02 2019
 Module time:
-	user time   =       8.16 seconds =       0.14 minutes
-	system time =       1.60 seconds =       0.03 minutes
-	total time  =          2 seconds =       0.03 minutes
+	user time   =       3.60 seconds =       0.06 minutes
+	system time =       0.80 seconds =       0.01 minutes
+	total time  =          1 seconds =       0.02 minutes
 Total time:
-	user time   =      96.55 seconds =       1.61 minutes
-	system time =      18.24 seconds =       0.30 minutes
-	total time  =         25 seconds =       0.42 minutes
+	user time   =      46.60 seconds =       0.78 minutes
+	system time =       8.63 seconds =       0.14 minutes
+	total time  =         20 seconds =       0.33 minutes
 
-       N-Body: Complex Energy (fragments = (4,), basis = (4,):   -55.44996535915970)
+       N-Body: Complex Energy (fragments = (4,), basis = (4,):   -55.44996535915969)
 
        N-Body: Computing complex (10/10) with fragments (5,) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:41 2019
+*** at Thu Sep 26 15:09:02 2019
 
    => Loading Basis Set <=
 
@@ -1948,7 +1948,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -2041,7 +2041,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -2067,12 +2067,12 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:   -54.58562137921557   -5.45856e+01   0.00000e+00 
-   @DF-RHF iter   1:   -55.42968728209875   -8.44066e-01   4.15898e-03 DIIS
-   @DF-RHF iter   2:   -55.44943368391884   -1.97464e-02   7.88964e-04 DIIS
+   @DF-RHF iter SAD:   -54.58562137921555   -5.45856e+01   0.00000e+00 
+   @DF-RHF iter   1:   -55.42968728209878   -8.44066e-01   4.15898e-03 DIIS
+   @DF-RHF iter   2:   -55.44943368391874   -1.97464e-02   7.88964e-04 DIIS
    @DF-RHF iter   3:   -55.45002526300202   -5.91579e-04   1.62897e-04 DIIS
-   @DF-RHF iter   4:   -55.45006063491473   -3.53719e-05   1.66001e-06 DIIS
-   @DF-RHF iter   5:   -55.45006064122343   -6.30870e-09   4.32457e-07 DIIS
+   @DF-RHF iter   4:   -55.45006063491470   -3.53719e-05   1.66001e-06 DIIS
+   @DF-RHF iter   5:   -55.45006064122349   -6.30879e-09   4.32457e-07 DIIS
   Energy and wave function converged.
 
 
@@ -2105,14 +2105,14 @@ Total time:
               A 
     DOCC [     5 ]
 
-  @DF-RHF Final Energy:   -55.45006064122343
+  @DF-RHF Final Energy:   -55.45006064122349
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             12.2232912121108139
-    One-Electron Energy =                 -99.5019218639255314
-    Two-Electron Energy =                  31.8285700105912888
-    Total Energy =                        -55.4500606412234305
+    One-Electron Energy =                 -99.5019218639256451
+    Two-Electron Energy =                  31.8285700105913492
+    Total Energy =                        -55.4500606412234873
 
 Computation Completed
 
@@ -2134,17 +2134,17 @@ Properties computed using the SCF density matrix
      X:    -1.0005      Y:     0.9997      Z:    -1.0064     Total:     1.7359
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:45 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:05 2019
 Module time:
-	user time   =      12.80 seconds =       0.21 minutes
-	system time =       2.02 seconds =       0.03 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.55 seconds =       0.11 minutes
+	system time =       0.98 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     109.52 seconds =       1.83 minutes
-	system time =      20.30 seconds =       0.34 minutes
-	total time  =         29 seconds =       0.48 minutes
+	user time   =      53.27 seconds =       0.89 minutes
+	system time =       9.61 seconds =       0.16 minutes
+	total time  =         23 seconds =       0.38 minutes
 
-       N-Body: Complex Energy (fragments = (5,), basis = (1, 2, 3, 4, 5):   -55.45006064122343)
+       N-Body: Complex Energy (fragments = (5,), basis = (1, 2, 3, 4, 5):   -55.45006064122349)
 
    ==> N-Body: Now computing 2-body complexes <==
 
@@ -2153,7 +2153,7 @@ Total time:
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:45 2019
+*** at Thu Sep 26 15:09:05 2019
 
    => Loading Basis Set <=
 
@@ -2169,7 +2169,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -2262,7 +2262,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -2289,12 +2289,12 @@ Total time:
                            Total Energy        Delta E     RMS |[F,P]|
 
    @DF-RHF iter SAD:  -109.17187223922723   -1.09172e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.86065221776268   -1.68878e+00   5.87319e-03 DIIS
-   @DF-RHF iter   2:  -110.89993905799889   -3.92868e-02   1.12788e-03 DIIS
-   @DF-RHF iter   3:  -110.90114627092558   -1.20721e-03   2.32114e-04 DIIS
-   @DF-RHF iter   4:  -110.90121840959799   -7.21387e-05   3.04714e-06 DIIS
-   @DF-RHF iter   5:  -110.90121842661213   -1.70141e-08   8.12672e-07 DIIS
-   @DF-RHF iter   6:  -110.90121842813700   -1.52487e-09   2.06345e-07 DIIS
+   @DF-RHF iter   1:  -110.86065221776269   -1.68878e+00   5.87319e-03 DIIS
+   @DF-RHF iter   2:  -110.89993905799902   -3.92868e-02   1.12788e-03 DIIS
+   @DF-RHF iter   3:  -110.90114627092552   -1.20721e-03   2.32114e-04 DIIS
+   @DF-RHF iter   4:  -110.90121840959794   -7.21387e-05   3.04714e-06 DIIS
+   @DF-RHF iter   5:  -110.90121842661220   -1.70143e-08   8.12672e-07 DIIS
+   @DF-RHF iter   6:  -110.90121842813700   -1.52480e-09   2.06345e-07 DIIS
   Energy and wave function converged.
 
 
@@ -2332,7 +2332,7 @@ Total time:
    => Energetics <=
 
     Nuclear Repulsion Energy =             38.1810274208381628
-    One-Electron Energy =                -226.3491427470733015
+    One-Electron Energy =                -226.3491427470732731
     Two-Electron Energy =                  77.2668968980981248
     Total Energy =                       -110.9012184281369997
 
@@ -2356,15 +2356,15 @@ Properties computed using the SCF density matrix
      X:    -0.0228      Y:     0.0212      Z:     2.0331     Total:     2.0334
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:48 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:08 2019
 Module time:
-	user time   =      12.83 seconds =       0.21 minutes
-	system time =       2.21 seconds =       0.04 minutes
+	user time   =       6.43 seconds =       0.11 minutes
+	system time =       0.98 seconds =       0.02 minutes
 	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     122.52 seconds =       2.04 minutes
-	system time =      22.59 seconds =       0.38 minutes
-	total time  =         32 seconds =       0.53 minutes
+	user time   =      59.75 seconds =       1.00 minutes
+	system time =      10.61 seconds =       0.18 minutes
+	total time  =         26 seconds =       0.43 minutes
 
        N-Body: Complex Energy (fragments = (1, 4), basis = (1, 2, 3, 4, 5):  -110.90121842813700)
 
@@ -2372,7 +2372,7 @@ Total time:
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:48 2019
+*** at Thu Sep 26 15:09:08 2019
 
    => Loading Basis Set <=
 
@@ -2388,7 +2388,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -2481,7 +2481,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -2507,13 +2507,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -109.17186921949852   -1.09172e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.85894318843822   -1.68707e+00   5.89402e-03 DIIS
+   @DF-RHF iter SAD:  -109.17186921949848   -1.09172e+02   0.00000e+00 
+   @DF-RHF iter   1:  -110.85894318843815   -1.68707e+00   5.89402e-03 DIIS
    @DF-RHF iter   2:  -110.89854632056978   -3.96031e-02   1.11988e-03 DIIS
-   @DF-RHF iter   3:  -110.89973742643470   -1.19111e-03   2.30938e-04 DIIS
-   @DF-RHF iter   4:  -110.89980856857208   -7.11421e-05   2.66337e-06 DIIS
-   @DF-RHF iter   5:  -110.89980858408843   -1.55163e-08   6.51952e-07 DIIS
-   @DF-RHF iter   6:  -110.89980858512251   -1.03408e-09   7.83000e-08 DIIS
+   @DF-RHF iter   3:  -110.89973742643471   -1.19111e-03   2.30938e-04 DIIS
+   @DF-RHF iter   4:  -110.89980856857200   -7.11421e-05   2.66337e-06 DIIS
+   @DF-RHF iter   5:  -110.89980858408849   -1.55165e-08   6.51952e-07 DIIS
+   @DF-RHF iter   6:  -110.89980858512256   -1.03407e-09   7.83000e-08 DIIS
   Energy and wave function converged.
 
 
@@ -2546,14 +2546,14 @@ Total time:
               A 
     DOCC [    10 ]
 
-  @DF-RHF Final Energy:  -110.89980858512251
+  @DF-RHF Final Energy:  -110.89980858512256
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             38.1810274216112475
-    One-Electron Energy =                -226.3604781832002004
-    Two-Electron Energy =                  77.2796421764664387
-    Total Energy =                       -110.8998085851225142
+    One-Electron Energy =                -226.3604781832002288
+    Two-Electron Energy =                  77.2796421764664245
+    Total Energy =                       -110.8998085851225568
 
 Computation Completed
 
@@ -2575,23 +2575,23 @@ Properties computed using the SCF density matrix
      X:    -0.0207      Y:     2.0008      Z:    -0.0221     Total:     2.0010
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:52 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:11 2019
 Module time:
-	user time   =      12.97 seconds =       0.22 minutes
-	system time =       1.83 seconds =       0.03 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.54 seconds =       0.11 minutes
+	system time =       1.11 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     135.69 seconds =       2.26 minutes
-	system time =      24.47 seconds =       0.41 minutes
-	total time  =         36 seconds =       0.60 minutes
+	user time   =      66.33 seconds =       1.11 minutes
+	system time =      11.75 seconds =       0.20 minutes
+	total time  =         29 seconds =       0.48 minutes
 
-       N-Body: Complex Energy (fragments = (1, 5), basis = (1, 2, 3, 4, 5):  -110.89980858512251)
+       N-Body: Complex Energy (fragments = (1, 5), basis = (1, 2, 3, 4, 5):  -110.89980858512256)
 
        N-Body: Computing complex (3/10) with fragments (3, 4) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:52 2019
+*** at Thu Sep 26 15:09:11 2019
 
    => Loading Basis Set <=
 
@@ -2607,7 +2607,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -2700,7 +2700,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -2726,13 +2726,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -109.17478214578477   -1.09175e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.86627658937152   -1.69149e+00   5.69233e-03 DIIS
-   @DF-RHF iter   2:  -110.90364640718545   -3.73698e-02   1.08374e-03 DIIS
-   @DF-RHF iter   3:  -110.90478671763229   -1.14031e-03   2.25466e-04 DIIS
-   @DF-RHF iter   4:  -110.90485526710572   -6.85495e-05   3.96823e-06 DIIS
-   @DF-RHF iter   5:  -110.90485529280870   -2.57030e-08   6.81280e-07 DIIS
-   @DF-RHF iter   6:  -110.90485529374634   -9.37632e-10   1.69947e-07 DIIS
+   @DF-RHF iter SAD:  -109.17478214578472   -1.09175e+02   0.00000e+00 
+   @DF-RHF iter   1:  -110.86627658937144   -1.69149e+00   5.69233e-03 DIIS
+   @DF-RHF iter   2:  -110.90364640718551   -3.73698e-02   1.08374e-03 DIIS
+   @DF-RHF iter   3:  -110.90478671763216   -1.14031e-03   2.25466e-04 DIIS
+   @DF-RHF iter   4:  -110.90485526710566   -6.85495e-05   3.96823e-06 DIIS
+   @DF-RHF iter   5:  -110.90485529280886   -2.57032e-08   6.81280e-07 DIIS
+   @DF-RHF iter   6:  -110.90485529374632   -9.37462e-10   1.69947e-07 DIIS
   Energy and wave function converged.
 
 
@@ -2765,14 +2765,14 @@ Total time:
               A 
     DOCC [    10 ]
 
-  @DF-RHF Final Energy:  -110.90485529374634
+  @DF-RHF Final Energy:  -110.90485529374632
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             39.8716733392647811
-    One-Electron Energy =                -229.9642761852911974
-    Two-Electron Energy =                  79.1877475522800722
-    Total Energy =                       -110.9048552937463370
+    One-Electron Energy =                -229.9642761852911406
+    Two-Electron Energy =                  79.1877475522800296
+    Total Energy =                       -110.9048552937463228
 
 Computation Completed
 
@@ -2794,23 +2794,23 @@ Properties computed using the SCF density matrix
      X:     0.1243      Y:    -2.1239      Z:     0.0606     Total:     2.1284
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:56 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:14 2019
 Module time:
-	user time   =      12.91 seconds =       0.22 minutes
-	system time =       1.90 seconds =       0.03 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.48 seconds =       0.11 minutes
+	system time =       1.00 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     148.83 seconds =       2.48 minutes
-	system time =      26.39 seconds =       0.44 minutes
-	total time  =         40 seconds =       0.67 minutes
+	user time   =      72.91 seconds =       1.22 minutes
+	system time =      12.78 seconds =       0.21 minutes
+	total time  =         32 seconds =       0.53 minutes
 
-       N-Body: Complex Energy (fragments = (3, 4), basis = (1, 2, 3, 4, 5):  -110.90485529374634)
+       N-Body: Complex Energy (fragments = (3, 4), basis = (1, 2, 3, 4, 5):  -110.90485529374632)
 
        N-Body: Computing complex (4/10) with fragments (1, 3) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:56 2019
+*** at Thu Sep 26 15:09:14 2019
 
    => Loading Basis Set <=
 
@@ -2826,7 +2826,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -2919,7 +2919,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -2945,13 +2945,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -109.17186891564107   -1.09172e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.86072310829279   -1.68885e+00   5.87247e-03 DIIS
-   @DF-RHF iter   2:  -110.89999630776587   -3.92732e-02   1.12834e-03 DIIS
-   @DF-RHF iter   3:  -110.90120463938879   -1.20833e-03   2.32181e-04 DIIS
-   @DF-RHF iter   4:  -110.90127684153428   -7.22021e-05   3.10012e-06 DIIS
-   @DF-RHF iter   5:  -110.90127685909481   -1.75605e-08   8.30768e-07 DIIS
-   @DF-RHF iter   6:  -110.90127686068237   -1.58757e-09   2.13584e-07 DIIS
+   @DF-RHF iter SAD:  -109.17186891564110   -1.09172e+02   0.00000e+00 
+   @DF-RHF iter   1:  -110.86072310829285   -1.68885e+00   5.87247e-03 DIIS
+   @DF-RHF iter   2:  -110.89999630776596   -3.92732e-02   1.12834e-03 DIIS
+   @DF-RHF iter   3:  -110.90120463938885   -1.20833e-03   2.32181e-04 DIIS
+   @DF-RHF iter   4:  -110.90127684153418   -7.22021e-05   3.10012e-06 DIIS
+   @DF-RHF iter   5:  -110.90127685909488   -1.75607e-08   8.30768e-07 DIIS
+   @DF-RHF iter   6:  -110.90127686068243   -1.58755e-09   2.13584e-07 DIIS
   Energy and wave function converged.
 
 
@@ -2984,14 +2984,14 @@ Total time:
               A 
     DOCC [    10 ]
 
-  @DF-RHF Final Energy:  -110.90127686068237
+  @DF-RHF Final Energy:  -110.90127686068243
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             38.1810274208381557
-    One-Electron Energy =                -226.3485709676408248
-    Two-Electron Energy =                  77.2662666861203036
-    Total Energy =                       -110.9012768606823727
+    One-Electron Energy =                -226.3485709676410238
+    Two-Electron Energy =                  77.2662666861204457
+    Total Energy =                       -110.9012768606824295
 
 Computation Completed
 
@@ -3013,23 +3013,23 @@ Properties computed using the SCF density matrix
      X:     2.0324      Y:    -0.0164      Z:     0.0207     Total:     2.0325
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:51:59 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:17 2019
 Module time:
-	user time   =      13.10 seconds =       0.22 minutes
-	system time =       1.97 seconds =       0.03 minutes
+	user time   =       6.30 seconds =       0.10 minutes
+	system time =       1.19 seconds =       0.02 minutes
 	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     162.10 seconds =       2.70 minutes
-	system time =      28.44 seconds =       0.47 minutes
-	total time  =         43 seconds =       0.72 minutes
+	user time   =      79.27 seconds =       1.32 minutes
+	system time =      13.97 seconds =       0.23 minutes
+	total time  =         35 seconds =       0.58 minutes
 
-       N-Body: Complex Energy (fragments = (1, 3), basis = (1, 2, 3, 4, 5):  -110.90127686068237)
+       N-Body: Complex Energy (fragments = (1, 3), basis = (1, 2, 3, 4, 5):  -110.90127686068243)
 
        N-Body: Computing complex (5/10) with fragments (2, 4) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:51:59 2019
+*** at Thu Sep 26 15:09:17 2019
 
    => Loading Basis Set <=
 
@@ -3045,7 +3045,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -3138,7 +3138,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -3164,13 +3164,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -109.17478492320646   -1.09175e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.86620774043043   -1.69142e+00   5.69289e-03 DIIS
-   @DF-RHF iter   2:  -110.90358993769485   -3.73822e-02   1.08335e-03 DIIS
-   @DF-RHF iter   3:  -110.90472935929360   -1.13942e-03   2.25406e-04 DIIS
-   @DF-RHF iter   4:  -110.90479785338967   -6.84941e-05   3.93781e-06 DIIS
-   @DF-RHF iter   5:  -110.90479787875705   -2.53674e-08   6.68722e-07 DIIS
-   @DF-RHF iter   6:  -110.90479787966467   -9.07619e-10   1.63891e-07 DIIS
+   @DF-RHF iter SAD:  -109.17478492320639   -1.09175e+02   0.00000e+00 
+   @DF-RHF iter   1:  -110.86620774043033   -1.69142e+00   5.69289e-03 DIIS
+   @DF-RHF iter   2:  -110.90358993769502   -3.73822e-02   1.08335e-03 DIIS
+   @DF-RHF iter   3:  -110.90472935929367   -1.13942e-03   2.25406e-04 DIIS
+   @DF-RHF iter   4:  -110.90479785338961   -6.84941e-05   3.93781e-06 DIIS
+   @DF-RHF iter   5:  -110.90479787875702   -2.53674e-08   6.68722e-07 DIIS
+   @DF-RHF iter   6:  -110.90479787966470   -9.07676e-10   1.63891e-07 DIIS
   Energy and wave function converged.
 
 
@@ -3203,14 +3203,14 @@ Total time:
               A 
     DOCC [    10 ]
 
-  @DF-RHF Final Energy:  -110.90479787966467
+  @DF-RHF Final Energy:  -110.90479787966470
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             39.8716733392647882
-    One-Electron Energy =                -229.9652505190583724
-    Two-Electron Energy =                  79.1887793001289140
-    Total Energy =                       -110.9047978796646703
+    One-Electron Energy =                -229.9652505190583440
+    Two-Electron Energy =                  79.1887793001288571
+    Total Energy =                       -110.9047978796646987
 
 Computation Completed
 
@@ -3232,23 +3232,23 @@ Properties computed using the SCF density matrix
      X:    -2.1266      Y:     0.0585      Z:     0.1238     Total:     2.1310
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:03 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:20 2019
 Module time:
-	user time   =      12.50 seconds =       0.21 minutes
-	system time =       1.94 seconds =       0.03 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.43 seconds =       0.11 minutes
+	system time =       1.09 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     174.75 seconds =       2.91 minutes
-	system time =      30.47 seconds =       0.51 minutes
-	total time  =         47 seconds =       0.78 minutes
+	user time   =      85.75 seconds =       1.43 minutes
+	system time =      15.08 seconds =       0.25 minutes
+	total time  =         38 seconds =       0.63 minutes
 
-       N-Body: Complex Energy (fragments = (2, 4), basis = (1, 2, 3, 4, 5):  -110.90479787966467)
+       N-Body: Complex Energy (fragments = (2, 4), basis = (1, 2, 3, 4, 5):  -110.90479787966470)
 
        N-Body: Computing complex (6/10) with fragments (4, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:03 2019
+*** at Thu Sep 26 15:09:20 2019
 
    => Loading Basis Set <=
 
@@ -3264,7 +3264,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -3357,7 +3357,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -3383,13 +3383,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -109.17124474488459   -1.09171e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.86112315689419   -1.68988e+00   5.85929e-03 DIIS
-   @DF-RHF iter   2:  -110.90028247423987   -3.91593e-02   1.12350e-03 DIIS
-   @DF-RHF iter   3:  -110.90148128968907   -1.19882e-03   2.31514e-04 DIIS
+   @DF-RHF iter SAD:  -109.17124474488462   -1.09171e+02   0.00000e+00 
+   @DF-RHF iter   1:  -110.86112315689417   -1.68988e+00   5.85929e-03 DIIS
+   @DF-RHF iter   2:  -110.90028247423989   -3.91593e-02   1.12350e-03 DIIS
+   @DF-RHF iter   3:  -110.90148128968909   -1.19882e-03   2.31514e-04 DIIS
    @DF-RHF iter   4:  -110.90155301024603   -7.17206e-05   2.81396e-06 DIIS
-   @DF-RHF iter   5:  -110.90155302462428   -1.43782e-08   7.87357e-07 DIIS
-   @DF-RHF iter   6:  -110.90155302605174   -1.42747e-09   2.06620e-07 DIIS
+   @DF-RHF iter   5:  -110.90155302462423   -1.43782e-08   7.87357e-07 DIIS
+   @DF-RHF iter   6:  -110.90155302605176   -1.42752e-09   2.06620e-07 DIIS
   Energy and wave function converged.
 
 
@@ -3422,14 +3422,14 @@ Total time:
               A 
     DOCC [    10 ]
 
-  @DF-RHF Final Energy:  -110.90155302605174
+  @DF-RHF Final Energy:  -110.90155302605176
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             32.7133108428230699
-    One-Electron Energy =                -215.4962149885728593
-    Two-Electron Energy =                  71.8813511196980528
-    Total Energy =                       -110.9015530260517437
+    One-Electron Energy =                -215.4962149885728877
+    Two-Electron Energy =                  71.8813511196980670
+    Total Energy =                       -110.9015530260517579
 
 Computation Completed
 
@@ -3451,23 +3451,23 @@ Properties computed using the SCF density matrix
      X:    -2.0315      Y:     0.0062      Z:     0.0284     Total:     2.0317
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:07 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:24 2019
 Module time:
-	user time   =      12.78 seconds =       0.21 minutes
-	system time =       1.95 seconds =       0.03 minutes
+	user time   =       6.43 seconds =       0.11 minutes
+	system time =       1.11 seconds =       0.02 minutes
 	total time  =          4 seconds =       0.07 minutes
 Total time:
-	user time   =     187.77 seconds =       3.13 minutes
-	system time =      32.44 seconds =       0.54 minutes
-	total time  =         51 seconds =       0.85 minutes
+	user time   =      92.25 seconds =       1.54 minutes
+	system time =      16.25 seconds =       0.27 minutes
+	total time  =         42 seconds =       0.70 minutes
 
-       N-Body: Complex Energy (fragments = (4, 5), basis = (1, 2, 3, 4, 5):  -110.90155302605174)
+       N-Body: Complex Energy (fragments = (4, 5), basis = (1, 2, 3, 4, 5):  -110.90155302605176)
 
        N-Body: Computing complex (7/10) with fragments (2, 3) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:07 2019
+*** at Thu Sep 26 15:09:24 2019
 
    => Loading Basis Set <=
 
@@ -3483,7 +3483,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -3576,7 +3576,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -3602,13 +3602,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -109.17478276827690   -1.09175e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.86628160233414   -1.69150e+00   5.69226e-03 DIIS
-   @DF-RHF iter   2:  -110.90365078024939   -3.73692e-02   1.08384e-03 DIIS
+   @DF-RHF iter SAD:  -109.17478276827683   -1.09175e+02   0.00000e+00 
+   @DF-RHF iter   1:  -110.86628160233418   -1.69150e+00   5.69226e-03 DIIS
+   @DF-RHF iter   2:  -110.90365078024941   -3.73692e-02   1.08384e-03 DIIS
    @DF-RHF iter   3:  -110.90479129779615   -1.14052e-03   2.25484e-04 DIIS
-   @DF-RHF iter   4:  -110.90485986331554   -6.85655e-05   3.95856e-06 DIIS
-   @DF-RHF iter   5:  -110.90485988908962   -2.57741e-08   6.74118e-07 DIIS
-   @DF-RHF iter   6:  -110.90485989002595   -9.36325e-10   1.61986e-07 DIIS
+   @DF-RHF iter   4:  -110.90485986331547   -6.85655e-05   3.95856e-06 DIIS
+   @DF-RHF iter   5:  -110.90485988908954   -2.57741e-08   6.74118e-07 DIIS
+   @DF-RHF iter   6:  -110.90485989002582   -9.36282e-10   1.61986e-07 DIIS
   Energy and wave function converged.
 
 
@@ -3641,14 +3641,14 @@ Total time:
               A 
     DOCC [    10 ]
 
-  @DF-RHF Final Energy:  -110.90485989002595
+  @DF-RHF Final Energy:  -110.90485989002582
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             39.8716733392647882
-    One-Electron Energy =                -229.9642316607524322
-    Two-Electron Energy =                  79.1876984314616976
-    Total Energy =                       -110.9048598900259464
+    One-Electron Energy =                -229.9642316607523185
+    Two-Electron Energy =                  79.1876984314617118
+    Total Energy =                       -110.9048598900258185
 
 Computation Completed
 
@@ -3670,23 +3670,23 @@ Properties computed using the SCF density matrix
      X:     0.0591      Y:     0.1267      Z:    -2.1243     Total:     2.1289
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:10 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:27 2019
 Module time:
-	user time   =      13.06 seconds =       0.22 minutes
-	system time =       1.81 seconds =       0.03 minutes
+	user time   =       6.75 seconds =       0.11 minutes
+	system time =       0.94 seconds =       0.02 minutes
 	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     201.02 seconds =       3.35 minutes
-	system time =      34.30 seconds =       0.57 minutes
-	total time  =         54 seconds =       0.90 minutes
+	user time   =      99.05 seconds =       1.65 minutes
+	system time =      17.21 seconds =       0.29 minutes
+	total time  =         45 seconds =       0.75 minutes
 
-       N-Body: Complex Energy (fragments = (2, 3), basis = (1, 2, 3, 4, 5):  -110.90485989002595)
+       N-Body: Complex Energy (fragments = (2, 3), basis = (1, 2, 3, 4, 5):  -110.90485989002582)
 
        N-Body: Computing complex (8/10) with fragments (1, 2) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:10 2019
+*** at Thu Sep 26 15:09:27 2019
 
    => Loading Basis Set <=
 
@@ -3702,7 +3702,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -3795,7 +3795,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -3822,12 +3822,12 @@ Total time:
                            Total Energy        Delta E     RMS |[F,P]|
 
    @DF-RHF iter SAD:  -109.17187244965268   -1.09172e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.86065164484427   -1.68878e+00   5.87317e-03 DIIS
-   @DF-RHF iter   2:  -110.89993836421880   -3.92867e-02   1.12786e-03 DIIS
-   @DF-RHF iter   3:  -110.90114556070711   -1.20720e-03   2.32111e-04 DIIS
-   @DF-RHF iter   4:  -110.90121769732748   -7.21366e-05   3.04930e-06 DIIS
-   @DF-RHF iter   5:  -110.90121771438154   -1.70541e-08   8.13616e-07 DIIS
-   @DF-RHF iter   6:  -110.90121771590952   -1.52798e-09   2.06192e-07 DIIS
+   @DF-RHF iter   1:  -110.86065164484415   -1.68878e+00   5.87317e-03 DIIS
+   @DF-RHF iter   2:  -110.89993836421888   -3.92867e-02   1.12786e-03 DIIS
+   @DF-RHF iter   3:  -110.90114556070716   -1.20720e-03   2.32111e-04 DIIS
+   @DF-RHF iter   4:  -110.90121769732747   -7.21366e-05   3.04930e-06 DIIS
+   @DF-RHF iter   5:  -110.90121771438160   -1.70541e-08   8.13616e-07 DIIS
+   @DF-RHF iter   6:  -110.90121771590974   -1.52814e-09   2.06192e-07 DIIS
   Energy and wave function converged.
 
 
@@ -3860,14 +3860,14 @@ Total time:
               A 
     DOCC [    10 ]
 
-  @DF-RHF Final Energy:  -110.90121771590952
+  @DF-RHF Final Energy:  -110.90121771590974
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             38.1810274208381557
-    One-Electron Energy =                -226.3492020283341049
-    Two-Electron Energy =                  77.2669568915864318
-    Total Energy =                       -110.9012177159095245
+    One-Electron Energy =                -226.3492020283342185
+    Two-Electron Energy =                  77.2669568915863323
+    Total Energy =                       -110.9012177159097376
 
 Computation Completed
 
@@ -3889,23 +3889,23 @@ Properties computed using the SCF density matrix
      X:     0.0174      Y:     2.0357      Z:    -0.0216     Total:     2.0359
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:14 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:30 2019
 Module time:
-	user time   =      12.80 seconds =       0.21 minutes
-	system time =       2.22 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.81 seconds =       0.11 minutes
+	system time =       0.92 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     213.99 seconds =       3.57 minutes
-	system time =      36.55 seconds =       0.61 minutes
-	total time  =         58 seconds =       0.97 minutes
+	user time   =     105.89 seconds =       1.76 minutes
+	system time =      18.16 seconds =       0.30 minutes
+	total time  =         48 seconds =       0.80 minutes
 
-       N-Body: Complex Energy (fragments = (1, 2), basis = (1, 2, 3, 4, 5):  -110.90121771590952)
+       N-Body: Complex Energy (fragments = (1, 2), basis = (1, 2, 3, 4, 5):  -110.90121771590974)
 
        N-Body: Computing complex (9/10) with fragments (2, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:14 2019
+*** at Thu Sep 26 15:09:30 2019
 
    => Loading Basis Set <=
 
@@ -3921,7 +3921,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -4014,7 +4014,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -4040,13 +4040,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -109.17124645266625   -1.09171e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.86116426802049   -1.68992e+00   5.85836e-03 DIIS
-   @DF-RHF iter   2:  -110.90031610961385   -3.91518e-02   1.12286e-03 DIIS
-   @DF-RHF iter   3:  -110.90151373626917   -1.19763e-03   2.31369e-04 DIIS
-   @DF-RHF iter   4:  -110.90158535862460   -7.16224e-05   2.84772e-06 DIIS
-   @DF-RHF iter   5:  -110.90158537328972   -1.46651e-08   7.91817e-07 DIIS
-   @DF-RHF iter   6:  -110.90158537472861   -1.43889e-09   2.06903e-07 DIIS
+   @DF-RHF iter SAD:  -109.17124645266628   -1.09171e+02   0.00000e+00 
+   @DF-RHF iter   1:  -110.86116426802045   -1.68992e+00   5.85836e-03 DIIS
+   @DF-RHF iter   2:  -110.90031610961384   -3.91518e-02   1.12286e-03 DIIS
+   @DF-RHF iter   3:  -110.90151373626922   -1.19763e-03   2.31369e-04 DIIS
+   @DF-RHF iter   4:  -110.90158535862457   -7.16224e-05   2.84772e-06 DIIS
+   @DF-RHF iter   5:  -110.90158537328988   -1.46653e-08   7.91817e-07 DIIS
+   @DF-RHF iter   6:  -110.90158537472858   -1.43871e-09   2.06903e-07 DIIS
   Energy and wave function converged.
 
 
@@ -4079,14 +4079,14 @@ Total time:
               A 
     DOCC [    10 ]
 
-  @DF-RHF Final Energy:  -110.90158537472861
+  @DF-RHF Final Energy:  -110.90158537472858
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             34.7593693813650049
-    One-Electron Energy =                -219.6201159243707366
-    Two-Electron Energy =                  73.9591611682771344
-    Total Energy =                       -110.9015853747286116
+    One-Electron Energy =                -219.6201159243706229
+    Two-Electron Energy =                  73.9591611682770491
+    Total Energy =                       -110.9015853747285831
 
 Computation Completed
 
@@ -4108,23 +4108,23 @@ Properties computed using the SCF density matrix
      X:    -1.9879      Y:     2.0567      Z:    -2.0317     Total:     3.5085
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:18 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:33 2019
 Module time:
-	user time   =      12.88 seconds =       0.21 minutes
-	system time =       2.08 seconds =       0.03 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.91 seconds =       0.12 minutes
+	system time =       1.15 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     227.07 seconds =       3.78 minutes
-	system time =      38.66 seconds =       0.64 minutes
-	total time  =         62 seconds =       1.03 minutes
+	user time   =     112.85 seconds =       1.88 minutes
+	system time =      19.32 seconds =       0.32 minutes
+	total time  =         51 seconds =       0.85 minutes
 
-       N-Body: Complex Energy (fragments = (2, 5), basis = (1, 2, 3, 4, 5):  -110.90158537472861)
+       N-Body: Complex Energy (fragments = (2, 5), basis = (1, 2, 3, 4, 5):  -110.90158537472858)
 
        N-Body: Computing complex (10/10) with fragments (3, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:18 2019
+*** at Thu Sep 26 15:09:33 2019
 
    => Loading Basis Set <=
 
@@ -4140,7 +4140,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -4233,7 +4233,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -4259,13 +4259,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -109.17187055495610   -1.09172e+02   0.00000e+00 
-   @DF-RHF iter   1:  -110.86058085141360   -1.68871e+00   5.87360e-03 DIIS
-   @DF-RHF iter   2:  -110.89988057878209   -3.92997e-02   1.12757e-03 DIIS
-   @DF-RHF iter   3:  -110.90108690910425   -1.20633e-03   2.32061e-04 DIIS
-   @DF-RHF iter   4:  -110.90115898626053   -7.20772e-05   3.03885e-06 DIIS
-   @DF-RHF iter   5:  -110.90115900285797   -1.65974e-08   8.20165e-07 DIIS
-   @DF-RHF iter   6:  -110.90115900438336   -1.52539e-09   2.17048e-07 DIIS
+   @DF-RHF iter SAD:  -109.17187055495613   -1.09172e+02   0.00000e+00 
+   @DF-RHF iter   1:  -110.86058085141354   -1.68871e+00   5.87360e-03 DIIS
+   @DF-RHF iter   2:  -110.89988057878216   -3.92997e-02   1.12757e-03 DIIS
+   @DF-RHF iter   3:  -110.90108690910421   -1.20633e-03   2.32061e-04 DIIS
+   @DF-RHF iter   4:  -110.90115898626074   -7.20772e-05   3.03885e-06 DIIS
+   @DF-RHF iter   5:  -110.90115900285817   -1.65974e-08   8.20165e-07 DIIS
+   @DF-RHF iter   6:  -110.90115900438340   -1.52524e-09   2.17048e-07 DIIS
   Energy and wave function converged.
 
 
@@ -4298,14 +4298,14 @@ Total time:
               A 
     DOCC [    10 ]
 
-  @DF-RHF Final Energy:  -110.90115900438336
+  @DF-RHF Final Energy:  -110.90115900438340
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             38.1810274310356306
-    One-Electron Energy =                -226.3480316270923538
-    Two-Electron Energy =                  77.2658451916733640
-    Total Energy =                       -110.9011590043833593
+    One-Electron Energy =                -226.3480316270922685
+    Two-Electron Energy =                  77.2658451916732361
+    Total Energy =                       -110.9011590043834019
 
 Computation Completed
 
@@ -4327,17 +4327,17 @@ Properties computed using the SCF density matrix
      X:     0.0496      Y:    -0.0515      Z:    -2.0023     Total:     2.0036
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:21 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:36 2019
 Module time:
-	user time   =      12.61 seconds =       0.21 minutes
-	system time =       1.96 seconds =       0.03 minutes
+	user time   =       6.36 seconds =       0.11 minutes
+	system time =       1.00 seconds =       0.02 minutes
 	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     239.85 seconds =       4.00 minutes
-	system time =      40.70 seconds =       0.68 minutes
-	total time  =         65 seconds =       1.08 minutes
+	user time   =     119.27 seconds =       1.99 minutes
+	system time =      20.32 seconds =       0.34 minutes
+	total time  =         54 seconds =       0.90 minutes
 
-       N-Body: Complex Energy (fragments = (3, 5), basis = (1, 2, 3, 4, 5):  -110.90115900438336)
+       N-Body: Complex Energy (fragments = (3, 5), basis = (1, 2, 3, 4, 5):  -110.90115900438340)
 
    ==> N-Body: Now computing 3-body complexes <==
 
@@ -4346,7 +4346,7 @@ Total time:
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:21 2019
+*** at Thu Sep 26 15:09:36 2019
 
    => Loading Basis Set <=
 
@@ -4362,7 +4362,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -4455,7 +4455,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -4481,13 +4481,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -163.76103192429153   -1.63761e+02   0.00000e+00 
-   @DF-RHF iter   1:  -166.29544904884546   -2.53442e+00   7.05915e-03 DIIS
-   @DF-RHF iter   2:  -166.35267383248376   -5.72248e-02   1.34303e-03 DIIS
-   @DF-RHF iter   3:  -166.35441116608422   -1.73733e-03   2.78705e-04 DIIS
-   @DF-RHF iter   4:  -166.35451551856238   -1.04352e-04   4.40565e-06 DIIS
-   @DF-RHF iter   5:  -166.35451555171684   -3.31545e-08   8.93823e-07 DIIS
-   @DF-RHF iter   6:  -166.35451555337795   -1.66111e-09   2.30609e-07 DIIS
+   @DF-RHF iter SAD:  -163.76103192429156   -1.63761e+02   0.00000e+00 
+   @DF-RHF iter   1:  -166.29544904884537   -2.53442e+00   7.05915e-03 DIIS
+   @DF-RHF iter   2:  -166.35267383248379   -5.72248e-02   1.34303e-03 DIIS
+   @DF-RHF iter   3:  -166.35441116608439   -1.73733e-03   2.78705e-04 DIIS
+   @DF-RHF iter   4:  -166.35451551856227   -1.04352e-04   4.40565e-06 DIIS
+   @DF-RHF iter   5:  -166.35451555171727   -3.31550e-08   8.93823e-07 DIIS
+   @DF-RHF iter   6:  -166.35451555337798   -1.66071e-09   2.30609e-07 DIIS
   Energy and wave function converged.
 
 
@@ -4520,14 +4520,14 @@ Total time:
               A 
     DOCC [    15 ]
 
-  @DF-RHF Final Energy:  -166.35451555337795
+  @DF-RHF Final Energy:  -166.35451555337798
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             74.0961379993103577
-    One-Electron Energy =                -373.3258706381859042
-    Two-Electron Energy =                 132.8752170854975816
-    Total Energy =                       -166.3545155533779507
+    One-Electron Energy =                -373.3258706381857337
+    Two-Electron Energy =                 132.8752170854973826
+    Total Energy =                       -166.3545155533779791
 
 Computation Completed
 
@@ -4549,23 +4549,23 @@ Properties computed using the SCF density matrix
      X:    -0.8571      Y:    -1.1388      Z:    -0.9463     Total:     1.7108
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:25 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:39 2019
 Module time:
-	user time   =      13.17 seconds =       0.22 minutes
-	system time =       2.21 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.63 seconds =       0.11 minutes
+	system time =       0.96 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     253.16 seconds =       4.22 minutes
-	system time =      42.91 seconds =       0.72 minutes
-	total time  =         69 seconds =       1.15 minutes
+	user time   =     125.96 seconds =       2.10 minutes
+	system time =      21.28 seconds =       0.35 minutes
+	total time  =         57 seconds =       0.95 minutes
 
-       N-Body: Complex Energy (fragments = (3, 4, 5), basis = (1, 2, 3, 4, 5):  -166.35451555337795)
+       N-Body: Complex Energy (fragments = (3, 4, 5), basis = (1, 2, 3, 4, 5):  -166.35451555337798)
 
        N-Body: Computing complex (2/10) with fragments (1, 3, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:25 2019
+*** at Thu Sep 26 15:09:39 2019
 
    => Loading Basis Set <=
 
@@ -4581,7 +4581,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -4674,7 +4674,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -4700,13 +4700,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -163.75874747743774   -1.63759e+02   0.00000e+00 
-   @DF-RHF iter   1:  -166.28926811406799   -2.53052e+00   7.22101e-03 DIIS
-   @DF-RHF iter   2:  -166.34860410963688   -5.93360e-02   1.38270e-03 DIIS
-   @DF-RHF iter   3:  -166.35041636982950   -1.81226e-03   2.84271e-04 DIIS
-   @DF-RHF iter   4:  -166.35052441598702   -1.08046e-04   4.01904e-06 DIIS
-   @DF-RHF iter   5:  -166.35052444558301   -2.95960e-08   1.03356e-06 DIIS
-   @DF-RHF iter   6:  -166.35052444798001   -2.39700e-09   2.59381e-07 DIIS
+   @DF-RHF iter SAD:  -163.75874747743768   -1.63759e+02   0.00000e+00 
+   @DF-RHF iter   1:  -166.28926811406822   -2.53052e+00   7.22101e-03 DIIS
+   @DF-RHF iter   2:  -166.34860410963674   -5.93360e-02   1.38270e-03 DIIS
+   @DF-RHF iter   3:  -166.35041636982942   -1.81226e-03   2.84271e-04 DIIS
+   @DF-RHF iter   4:  -166.35052441598694   -1.08046e-04   4.01904e-06 DIIS
+   @DF-RHF iter   5:  -166.35052444558306   -2.95961e-08   1.03356e-06 DIIS
+   @DF-RHF iter   6:  -166.35052444798001   -2.39694e-09   2.59381e-07 DIIS
   Energy and wave function converged.
 
 
@@ -4744,8 +4744,8 @@ Total time:
    => Energetics <=
 
     Nuclear Repulsion Energy =             77.8732086709316036
-    One-Electron Energy =                -380.5721155010930943
-    Two-Electron Energy =                 136.3483823821814838
+    One-Electron Energy =                -380.5721155010931511
+    Two-Electron Energy =                 136.3483823821815406
     Total Energy =                       -166.3505244479800069
 
 Computation Completed
@@ -4768,15 +4768,15 @@ Properties computed using the SCF density matrix
      X:     1.0282      Y:     0.9642      Z:    -0.9995     Total:     1.7279
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:29 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:42 2019
 Module time:
-	user time   =      13.16 seconds =       0.22 minutes
-	system time =       2.03 seconds =       0.03 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.67 seconds =       0.11 minutes
+	system time =       1.12 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     266.55 seconds =       4.44 minutes
-	system time =      44.95 seconds =       0.75 minutes
-	total time  =         73 seconds =       1.22 minutes
+	user time   =     132.74 seconds =       2.21 minutes
+	system time =      22.42 seconds =       0.37 minutes
+	total time  =         60 seconds =       1.00 minutes
 
        N-Body: Complex Energy (fragments = (1, 3, 5), basis = (1, 2, 3, 4, 5):  -166.35052444798001)
 
@@ -4784,7 +4784,7 @@ Total time:
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:29 2019
+*** at Thu Sep 26 15:09:42 2019
 
    => Loading Basis Set <=
 
@@ -4800,7 +4800,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -4893,7 +4893,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -4921,11 +4921,11 @@ Total time:
 
    @DF-RHF iter SAD:  -163.76166022521144   -1.63762e+02   0.00000e+00 
    @DF-RHF iter   1:  -166.29497028800273   -2.53331e+00   7.07019e-03 DIIS
-   @DF-RHF iter   2:  -166.35231226602303   -5.73420e-02   1.34679e-03 DIIS
+   @DF-RHF iter   2:  -166.35231226602315   -5.73420e-02   1.34679e-03 DIIS
    @DF-RHF iter   3:  -166.35405842064171   -1.74615e-03   2.79369e-04 DIIS
    @DF-RHF iter   4:  -166.35416332304681   -1.04902e-04   4.44308e-06 DIIS
-   @DF-RHF iter   5:  -166.35416335724540   -3.41986e-08   9.38137e-07 DIIS
-   @DF-RHF iter   6:  -166.35416335910230   -1.85690e-09   2.41493e-07 DIIS
+   @DF-RHF iter   5:  -166.35416335724537   -3.41986e-08   9.38137e-07 DIIS
+   @DF-RHF iter   6:  -166.35416335910224   -1.85688e-09   2.41493e-07 DIIS
   Energy and wave function converged.
 
 
@@ -4958,14 +4958,14 @@ Total time:
               A 
     DOCC [    15 ]
 
-  @DF-RHF Final Energy:  -166.35416335910230
+  @DF-RHF Final Energy:  -166.35416335910224
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             79.5638545896474056
-    One-Electron Energy =                -384.1823179759093136
-    Two-Electron Energy =                 138.2643000271596065
-    Total Energy =                       -166.3541633591023015
+    One-Electron Energy =                -384.1823179759092000
+    Two-Electron Energy =                 138.2643000271595497
+    Total Energy =                       -166.3541633591022446
 
 Computation Completed
 
@@ -4987,23 +4987,23 @@ Properties computed using the SCF density matrix
      X:     1.1349      Y:    -1.0879      Z:     1.0770     Total:     1.9056
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:33 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:45 2019
 Module time:
-	user time   =      12.83 seconds =       0.21 minutes
-	system time =       2.27 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.81 seconds =       0.11 minutes
+	system time =       1.05 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     279.55 seconds =       4.66 minutes
-	system time =      47.30 seconds =       0.79 minutes
-	total time  =         77 seconds =       1.28 minutes
+	user time   =     139.66 seconds =       2.33 minutes
+	system time =      23.49 seconds =       0.39 minutes
+	total time  =         63 seconds =       1.05 minutes
 
-       N-Body: Complex Energy (fragments = (1, 3, 4), basis = (1, 2, 3, 4, 5):  -166.35416335910230)
+       N-Body: Complex Energy (fragments = (1, 3, 4), basis = (1, 2, 3, 4, 5):  -166.35416335910224)
 
        N-Body: Computing complex (4/10) with fragments (1, 2, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:33 2019
+*** at Thu Sep 26 15:09:46 2019
 
    => Loading Basis Set <=
 
@@ -5019,7 +5019,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -5112,7 +5112,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -5138,13 +5138,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -163.75812442944121   -1.63758e+02   0.00000e+00 
-   @DF-RHF iter   1:  -166.28985073204242   -2.53173e+00   7.20491e-03 DIIS
-   @DF-RHF iter   2:  -166.34898366590414   -5.91329e-02   1.37820e-03 DIIS
-   @DF-RHF iter   3:  -166.35078632962859   -1.80266e-03   2.83821e-04 DIIS
-   @DF-RHF iter   4:  -166.35089402691540   -1.07697e-04   3.61919e-06 DIIS
-   @DF-RHF iter   5:  -166.35089405165780   -2.47424e-08   9.97682e-07 DIIS
-   @DF-RHF iter   6:  -166.35089405396769   -2.30989e-09   2.42217e-07 DIIS
+   @DF-RHF iter SAD:  -163.75812442944115   -1.63758e+02   0.00000e+00 
+   @DF-RHF iter   1:  -166.28985073204251   -2.53173e+00   7.20491e-03 DIIS
+   @DF-RHF iter   2:  -166.34898366590403   -5.91329e-02   1.37820e-03 DIIS
+   @DF-RHF iter   3:  -166.35078632962851   -1.80266e-03   2.83821e-04 DIIS
+   @DF-RHF iter   4:  -166.35089402691534   -1.07697e-04   3.61919e-06 DIIS
+   @DF-RHF iter   5:  -166.35089405165789   -2.47425e-08   9.97682e-07 DIIS
+   @DF-RHF iter   6:  -166.35089405396775   -2.30986e-09   2.42217e-07 DIIS
   Energy and wave function converged.
 
 
@@ -5177,14 +5177,14 @@ Total time:
               A 
     DOCC [    15 ]
 
-  @DF-RHF Final Energy:  -166.35089405396769
+  @DF-RHF Final Energy:  -166.35089405396775
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             74.4515506212610205
-    One-Electron Energy =                -373.8384047965868149
-    Two-Electron Energy =                 133.0359601213580731
-    Total Energy =                       -166.3508940539676928
+    One-Electron Energy =                -373.8384047965870423
+    Two-Electron Energy =                 133.0359601213582437
+    Total Energy =                       -166.3508940539677496
 
 Computation Completed
 
@@ -5206,23 +5206,23 @@ Properties computed using the SCF density matrix
      X:    -0.9893      Y:     3.0568      Z:    -1.0329     Total:     3.3749
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:36 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:49 2019
 Module time:
-	user time   =      13.33 seconds =       0.22 minutes
-	system time =       2.08 seconds =       0.03 minutes
+	user time   =       6.60 seconds =       0.11 minutes
+	system time =       0.98 seconds =       0.02 minutes
 	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     293.07 seconds =       4.88 minutes
-	system time =      49.44 seconds =       0.82 minutes
-	total time  =         80 seconds =       1.33 minutes
+	user time   =     146.29 seconds =       2.44 minutes
+	system time =      24.50 seconds =       0.41 minutes
+	total time  =         67 seconds =       1.12 minutes
 
-       N-Body: Complex Energy (fragments = (1, 2, 5), basis = (1, 2, 3, 4, 5):  -166.35089405396769)
+       N-Body: Complex Energy (fragments = (1, 2, 5), basis = (1, 2, 3, 4, 5):  -166.35089405396775)
 
        N-Body: Computing complex (5/10) with fragments (2, 4, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:36 2019
+*** at Thu Sep 26 15:09:49 2019
 
    => Loading Basis Set <=
 
@@ -5238,7 +5238,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -5331,7 +5331,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -5357,13 +5357,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -163.76040811970495   -1.63760e+02   0.00000e+00 
-   @DF-RHF iter   1:  -166.29604255873119   -2.53563e+00   7.04775e-03 DIIS
-   @DF-RHF iter   2:  -166.35313647695472   -5.70939e-02   1.33952e-03 DIIS
-   @DF-RHF iter   3:  -166.35486577512893   -1.72930e-03   2.78076e-04 DIIS
-   @DF-RHF iter   4:  -166.35496963024912   -1.03855e-04   4.36082e-06 DIIS
-   @DF-RHF iter   5:  -166.35496966280547   -3.25564e-08   8.69650e-07 DIIS
-   @DF-RHF iter   6:  -166.35496966438890   -1.58343e-09   2.16521e-07 DIIS
+   @DF-RHF iter SAD:  -163.76040811970486   -1.63760e+02   0.00000e+00 
+   @DF-RHF iter   1:  -166.29604255873107   -2.53563e+00   7.04775e-03 DIIS
+   @DF-RHF iter   2:  -166.35313647695460   -5.70939e-02   1.33952e-03 DIIS
+   @DF-RHF iter   3:  -166.35486577512879   -1.72930e-03   2.78076e-04 DIIS
+   @DF-RHF iter   4:  -166.35496963024909   -1.03855e-04   4.36082e-06 DIIS
+   @DF-RHF iter   5:  -166.35496966280539   -3.25563e-08   8.69650e-07 DIIS
+   @DF-RHF iter   6:  -166.35496966438876   -1.58337e-09   2.16521e-07 DIIS
   Energy and wave function converged.
 
 
@@ -5396,14 +5396,14 @@ Total time:
               A 
     DOCC [    15 ]
 
-  @DF-RHF Final Energy:  -166.35496966438890
+  @DF-RHF Final Energy:  -166.35496966438876
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             70.6744799496397889
-    One-Electron Energy =                -366.6009976022005503
-    Two-Electron Energy =                 129.5715479881718295
-    Total Energy =                       -166.3549696643889035
+    One-Electron Energy =                -366.6009976022002093
+    Two-Electron Energy =                 129.5715479881716305
+    Total Energy =                       -166.3549696643887614
 
 Computation Completed
 
@@ -5425,23 +5425,23 @@ Properties computed using the SCF density matrix
      X:    -3.1109      Y:     1.0855      Z:    -0.8728     Total:     3.4085
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:40 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:52 2019
 Module time:
-	user time   =      12.90 seconds =       0.22 minutes
-	system time =       2.29 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.70 seconds =       0.11 minutes
+	system time =       0.94 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     306.17 seconds =       5.10 minutes
-	system time =      51.78 seconds =       0.86 minutes
-	total time  =         84 seconds =       1.40 minutes
+	user time   =     153.05 seconds =       2.55 minutes
+	system time =      25.44 seconds =       0.42 minutes
+	total time  =         70 seconds =       1.17 minutes
 
-       N-Body: Complex Energy (fragments = (2, 4, 5), basis = (1, 2, 3, 4, 5):  -166.35496966438890)
+       N-Body: Complex Energy (fragments = (2, 4, 5), basis = (1, 2, 3, 4, 5):  -166.35496966438876)
 
        N-Body: Computing complex (6/10) with fragments (1, 2, 3) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:40 2019
+*** at Thu Sep 26 15:09:52 2019
 
    => Loading Basis Set <=
 
@@ -5457,7 +5457,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -5550,7 +5550,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -5576,13 +5576,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -163.76166092029041   -1.63762e+02   0.00000e+00 
-   @DF-RHF iter   1:  -166.29497389076371   -2.53331e+00   7.07011e-03 DIIS
-   @DF-RHF iter   2:  -166.35231500424979   -5.73411e-02   1.34686e-03 DIIS
-   @DF-RHF iter   3:  -166.35406135058562   -1.74635e-03   2.79380e-04 DIIS
-   @DF-RHF iter   4:  -166.35416626618021   -1.04916e-04   4.43443e-06 DIIS
-   @DF-RHF iter   5:  -166.35416630047123   -3.42910e-08   9.31953e-07 DIIS
-   @DF-RHF iter   6:  -166.35416630232092   -1.84968e-09   2.35650e-07 DIIS
+   @DF-RHF iter SAD:  -163.76166092029058   -1.63762e+02   0.00000e+00 
+   @DF-RHF iter   1:  -166.29497389076357   -2.53331e+00   7.07011e-03 DIIS
+   @DF-RHF iter   2:  -166.35231500424999   -5.73411e-02   1.34686e-03 DIIS
+   @DF-RHF iter   3:  -166.35406135058540   -1.74635e-03   2.79380e-04 DIIS
+   @DF-RHF iter   4:  -166.35416626618019   -1.04916e-04   4.43443e-06 DIIS
+   @DF-RHF iter   5:  -166.35416630047135   -3.42912e-08   9.31953e-07 DIIS
+   @DF-RHF iter   6:  -166.35416630232089   -1.84954e-09   2.35650e-07 DIIS
   Energy and wave function converged.
 
 
@@ -5615,14 +5615,14 @@ Total time:
               A 
     DOCC [    15 ]
 
-  @DF-RHF Final Energy:  -166.35416630232092
+  @DF-RHF Final Energy:  -166.35416630232089
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             79.5638545896473772
-    One-Electron Energy =                -384.1823527543672299
-    Two-Electron Energy =                 138.2643318623989614
-    Total Energy =                       -166.3541663023209196
+    One-Electron Energy =                -384.1823527543672867
+    Two-Electron Energy =                 138.2643318623989899
+    Total Energy =                       -166.3541663023208912
 
 Computation Completed
 
@@ -5644,23 +5644,23 @@ Properties computed using the SCF density matrix
      X:     1.0743      Y:     1.1410      Z:    -1.0908     Total:     1.9094
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:44 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:55 2019
 Module time:
-	user time   =      13.14 seconds =       0.22 minutes
-	system time =       2.28 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.44 seconds =       0.11 minutes
+	system time =       0.94 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     319.44 seconds =       5.32 minutes
-	system time =      54.19 seconds =       0.90 minutes
-	total time  =         88 seconds =       1.47 minutes
+	user time   =     159.55 seconds =       2.66 minutes
+	system time =      26.38 seconds =       0.44 minutes
+	total time  =         73 seconds =       1.22 minutes
 
-       N-Body: Complex Energy (fragments = (1, 2, 3), basis = (1, 2, 3, 4, 5):  -166.35416630232092)
+       N-Body: Complex Energy (fragments = (1, 2, 3), basis = (1, 2, 3, 4, 5):  -166.35416630232089)
 
        N-Body: Computing complex (7/10) with fragments (1, 4, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:44 2019
+*** at Thu Sep 26 15:09:55 2019
 
    => Loading Basis Set <=
 
@@ -5676,7 +5676,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -5769,7 +5769,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -5795,13 +5795,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -163.75812264907248   -1.63758e+02   0.00000e+00 
-   @DF-RHF iter   1:  -166.28981112201856   -2.53169e+00   7.20653e-03 DIIS
-   @DF-RHF iter   2:  -166.34896347767128   -5.91524e-02   1.37895e-03 DIIS
-   @DF-RHF iter   3:  -166.35076774498282   -1.80427e-03   2.83936e-04 DIIS
-   @DF-RHF iter   4:  -166.35087553440229   -1.07789e-04   3.63213e-06 DIIS
-   @DF-RHF iter   5:  -166.35087555926810   -2.48658e-08   1.00243e-06 DIIS
-   @DF-RHF iter   6:  -166.35087556159453   -2.32643e-09   2.43113e-07 DIIS
+   @DF-RHF iter SAD:  -163.75812264907242   -1.63758e+02   0.00000e+00 
+   @DF-RHF iter   1:  -166.28981112201842   -2.53169e+00   7.20653e-03 DIIS
+   @DF-RHF iter   2:  -166.34896347767139   -5.91524e-02   1.37895e-03 DIIS
+   @DF-RHF iter   3:  -166.35076774498293   -1.80427e-03   2.83936e-04 DIIS
+   @DF-RHF iter   4:  -166.35087553440212   -1.07789e-04   3.63213e-06 DIIS
+   @DF-RHF iter   5:  -166.35087555926810   -2.48660e-08   1.00243e-06 DIIS
+   @DF-RHF iter   6:  -166.35087556159448   -2.32637e-09   2.43113e-07 DIIS
   Energy and wave function converged.
 
 
@@ -5834,14 +5834,14 @@ Total time:
               A 
     DOCC [    15 ]
 
-  @DF-RHF Final Energy:  -166.35087556159453
+  @DF-RHF Final Energy:  -166.35087556159448
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             72.4054920827190642
     One-Electron Energy =                -369.7140178204311383
-    Two-Electron Energy =                 130.9576501761175678
-    Total Energy =                       -166.3508755615945347
+    Two-Electron Energy =                 130.9576501761176246
+    Total Energy =                       -166.3508755615944779
 
 Computation Completed
 
@@ -5863,23 +5863,23 @@ Properties computed using the SCF density matrix
      X:    -1.0364      Y:     1.0253      Z:     1.0129     Total:     1.7752
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:48 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:09:58 2019
 Module time:
-	user time   =      12.92 seconds =       0.22 minutes
-	system time =       2.29 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.32 seconds =       0.11 minutes
+	system time =       1.12 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     332.55 seconds =       5.54 minutes
-	system time =      56.53 seconds =       0.94 minutes
-	total time  =         92 seconds =       1.53 minutes
+	user time   =     165.96 seconds =       2.77 minutes
+	system time =      27.53 seconds =       0.46 minutes
+	total time  =         76 seconds =       1.27 minutes
 
-       N-Body: Complex Energy (fragments = (1, 4, 5), basis = (1, 2, 3, 4, 5):  -166.35087556159453)
+       N-Body: Complex Energy (fragments = (1, 4, 5), basis = (1, 2, 3, 4, 5):  -166.35087556159448)
 
        N-Body: Computing complex (8/10) with fragments (2, 3, 4) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:48 2019
+*** at Thu Sep 26 15:09:58 2019
 
    => Loading Basis Set <=
 
@@ -5895,7 +5895,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -5988,7 +5988,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -6014,13 +6014,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -163.76748231531184   -1.63767e+02   0.00000e+00 
-   @DF-RHF iter   1:  -166.30499458370352   -2.53751e+00   6.79709e-03 DIIS
-   @DF-RHF iter   2:  -166.35887455012261   -5.38800e-02   1.27328e-03 DIIS
-   @DF-RHF iter   3:  -166.36048475646464   -1.61021e-03   2.66813e-04 DIIS
-   @DF-RHF iter   4:  -166.36058119443376   -9.64380e-05   6.45010e-06 DIIS
-   @DF-RHF iter   5:  -166.36058126043315   -6.59994e-08   7.36431e-07 DIIS
-   @DF-RHF iter   6:  -166.36058126147628   -1.04313e-09   1.82866e-07 DIIS
+   @DF-RHF iter SAD:  -163.76748231531172   -1.63767e+02   0.00000e+00 
+   @DF-RHF iter   1:  -166.30499458370340   -2.53751e+00   6.79709e-03 DIIS
+   @DF-RHF iter   2:  -166.35887455012255   -5.38800e-02   1.27328e-03 DIIS
+   @DF-RHF iter   3:  -166.36048475646456   -1.61021e-03   2.66813e-04 DIIS
+   @DF-RHF iter   4:  -166.36058119443388   -9.64380e-05   6.45010e-06 DIIS
+   @DF-RHF iter   5:  -166.36058126043321   -6.59993e-08   7.36431e-07 DIIS
+   @DF-RHF iter   6:  -166.36058126147617   -1.04296e-09   1.82866e-07 DIIS
   Energy and wave function converged.
 
 
@@ -6053,14 +6053,14 @@ Total time:
               A 
     DOCC [    15 ]
 
-  @DF-RHF Final Energy:  -166.36058126147628
+  @DF-RHF Final Energy:  -166.36058126147617
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             82.9451464152409841
-    One-Electron Energy =                -391.4088039838212580
-    Two-Electron Energy =                 142.1030763071040042
-    Total Energy =                       -166.3605812614762840
+    One-Electron Energy =                -391.4088039838210307
+    Two-Electron Energy =                 142.1030763071038905
+    Total Energy =                       -166.3605812614761703
 
 Computation Completed
 
@@ -6082,23 +6082,23 @@ Properties computed using the SCF density matrix
      X:    -0.9443      Y:    -0.9419      Z:    -0.9426     Total:     1.6332
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:51 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:10:01 2019
 Module time:
-	user time   =      13.00 seconds =       0.22 minutes
-	system time =       2.14 seconds =       0.04 minutes
+	user time   =       6.81 seconds =       0.11 minutes
+	system time =       1.14 seconds =       0.02 minutes
 	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     345.75 seconds =       5.76 minutes
-	system time =      58.72 seconds =       0.98 minutes
-	total time  =         95 seconds =       1.58 minutes
+	user time   =     172.80 seconds =       2.88 minutes
+	system time =      28.71 seconds =       0.48 minutes
+	total time  =         79 seconds =       1.32 minutes
 
-       N-Body: Complex Energy (fragments = (2, 3, 4), basis = (1, 2, 3, 4, 5):  -166.36058126147628)
+       N-Body: Complex Energy (fragments = (2, 3, 4), basis = (1, 2, 3, 4, 5):  -166.36058126147617)
 
        N-Body: Computing complex (9/10) with fragments (2, 3, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:51 2019
+*** at Thu Sep 26 15:10:01 2019
 
    => Loading Basis Set <=
 
@@ -6114,7 +6114,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -6207,7 +6207,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -6233,13 +6233,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -163.76103411672668   -1.63761e+02   0.00000e+00 
-   @DF-RHF iter   1:  -166.29547215913152   -2.53444e+00   7.05714e-03 DIIS
-   @DF-RHF iter   2:  -166.35266978807471   -5.71976e-02   1.34246e-03 DIIS
-   @DF-RHF iter   3:  -166.35440607566204   -1.73629e-03   2.78667e-04 DIIS
-   @DF-RHF iter   4:  -166.35451040711365   -1.04331e-04   4.28911e-06 DIIS
-   @DF-RHF iter   5:  -166.35451043927540   -3.21618e-08   8.59973e-07 DIIS
-   @DF-RHF iter   6:  -166.35451044087711   -1.60171e-09   2.08025e-07 DIIS
+   @DF-RHF iter SAD:  -163.76103411672671   -1.63761e+02   0.00000e+00 
+   @DF-RHF iter   1:  -166.29547215913141   -2.53444e+00   7.05714e-03 DIIS
+   @DF-RHF iter   2:  -166.35266978807454   -5.71976e-02   1.34246e-03 DIIS
+   @DF-RHF iter   3:  -166.35440607566198   -1.73629e-03   2.78667e-04 DIIS
+   @DF-RHF iter   4:  -166.35451040711359   -1.04331e-04   4.28911e-06 DIIS
+   @DF-RHF iter   5:  -166.35451043927546   -3.21619e-08   8.59973e-07 DIIS
+   @DF-RHF iter   6:  -166.35451044087705   -1.60159e-09   2.08025e-07 DIIS
   Energy and wave function converged.
 
 
@@ -6272,14 +6272,14 @@ Total time:
               A 
     DOCC [    15 ]
 
-  @DF-RHF Final Energy:  -166.35451044087711
+  @DF-RHF Final Energy:  -166.35451044087705
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             76.1421965378523140
-    One-Electron Energy =                -377.4553449165507573
-    Two-Electron Energy =                 134.9586379378213223
-    Total Energy =                       -166.3545104408771067
+    One-Electron Energy =                -377.4553449165508709
+    Two-Electron Energy =                 134.9586379378214929
+    Total Energy =                       -166.3545104408770499
 
 Computation Completed
 
@@ -6301,23 +6301,23 @@ Properties computed using the SCF density matrix
      X:    -0.9177      Y:     1.1298      Z:    -3.1185     Total:     3.4415
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:55 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:10:04 2019
 Module time:
-	user time   =      12.56 seconds =       0.21 minutes
-	system time =       2.53 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.86 seconds =       0.11 minutes
+	system time =       0.98 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     358.50 seconds =       5.97 minutes
-	system time =      61.31 seconds =       1.02 minutes
-	total time  =         99 seconds =       1.65 minutes
+	user time   =     179.72 seconds =       3.00 minutes
+	system time =      29.69 seconds =       0.49 minutes
+	total time  =         82 seconds =       1.37 minutes
 
-       N-Body: Complex Energy (fragments = (2, 3, 5), basis = (1, 2, 3, 4, 5):  -166.35451044087711)
+       N-Body: Complex Energy (fragments = (2, 3, 5), basis = (1, 2, 3, 4, 5):  -166.35451044087705)
 
        N-Body: Computing complex (10/10) with fragments (1, 2, 4) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:55 2019
+*** at Thu Sep 26 15:10:04 2019
 
    => Loading Basis Set <=
 
@@ -6333,7 +6333,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -6426,7 +6426,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -6452,13 +6452,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -163.76166405692635   -1.63762e+02   0.00000e+00 
-   @DF-RHF iter   1:  -166.29490044777353   -2.53324e+00   7.07069e-03 DIIS
-   @DF-RHF iter   2:  -166.35225489137360   -5.73544e-02   1.34645e-03 DIIS
-   @DF-RHF iter   3:  -166.35400009900931   -1.74521e-03   2.79319e-04 DIIS
-   @DF-RHF iter   4:  -166.35410494520599   -1.04846e-04   4.42352e-06 DIIS
-   @DF-RHF iter   5:  -166.35410497914864   -3.39427e-08   9.32627e-07 DIIS
-   @DF-RHF iter   6:  -166.35410498098321   -1.83456e-09   2.39120e-07 DIIS
+   @DF-RHF iter SAD:  -163.76166405692629   -1.63762e+02   0.00000e+00 
+   @DF-RHF iter   1:  -166.29490044777350   -2.53324e+00   7.07069e-03 DIIS
+   @DF-RHF iter   2:  -166.35225489137355   -5.73544e-02   1.34645e-03 DIIS
+   @DF-RHF iter   3:  -166.35400009900943   -1.74521e-03   2.79319e-04 DIIS
+   @DF-RHF iter   4:  -166.35410494520590   -1.04846e-04   4.42352e-06 DIIS
+   @DF-RHF iter   5:  -166.35410497914876   -3.39429e-08   9.32627e-07 DIIS
+   @DF-RHF iter   6:  -166.35410498098298   -1.83422e-09   2.39120e-07 DIIS
   Energy and wave function converged.
 
 
@@ -6491,14 +6491,14 @@ Total time:
               A 
     DOCC [    15 ]
 
-  @DF-RHF Final Energy:  -166.35410498098321
+  @DF-RHF Final Energy:  -166.35410498098298
 
    => Energetics <=
 
     Nuclear Repulsion Energy =             79.5638545896474199
-    One-Electron Energy =                -384.1830687264276776
-    Two-Electron Energy =                 138.2651091557970631
-    Total Energy =                       -166.3541049809832089
+    One-Electron Energy =                -384.1830687264272228
+    Two-Electron Energy =                 138.2651091557968357
+    Total Energy =                       -166.3541049809829815
 
 Computation Completed
 
@@ -6520,17 +6520,17 @@ Properties computed using the SCF density matrix
      X:    -1.0942      Y:     1.0775      Z:     1.1358     Total:     1.9100
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:52:59 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:10:07 2019
 Module time:
-	user time   =      12.84 seconds =       0.21 minutes
-	system time =       2.29 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.74 seconds =       0.11 minutes
+	system time =       0.93 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     371.61 seconds =       6.19 minutes
-	system time =      63.70 seconds =       1.06 minutes
-	total time  =        103 seconds =       1.72 minutes
+	user time   =     186.57 seconds =       3.11 minutes
+	system time =      30.64 seconds =       0.51 minutes
+	total time  =         85 seconds =       1.42 minutes
 
-       N-Body: Complex Energy (fragments = (1, 2, 4), basis = (1, 2, 3, 4, 5):  -166.35410498098321)
+       N-Body: Complex Energy (fragments = (1, 2, 4), basis = (1, 2, 3, 4, 5):  -166.35410498098298)
 
    ==> N-Body: Now computing 4-body complexes <==
 
@@ -6539,7 +6539,7 @@ Total time:
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:52:59 2019
+*** at Thu Sep 26 15:10:07 2019
 
    => Loading Basis Set <=
 
@@ -6555,7 +6555,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -6648,7 +6648,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -6674,13 +6674,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -218.35373378743159   -2.18354e+02   0.00000e+00 
+   @DF-RHF iter SAD:  -218.35373378743171   -2.18354e+02   0.00000e+00 
    @DF-RHF iter   1:  -221.73424667549440   -3.38051e+00   7.97423e-03 DIIS
-   @DF-RHF iter   2:  -221.80794157929188   -7.36949e-02   1.49942e-03 DIIS
-   @DF-RHF iter   3:  -221.81014692784817   -2.20535e-03   3.13413e-04 DIIS
-   @DF-RHF iter   4:  -221.81027945347981   -1.32526e-04   6.92677e-06 DIIS
-   @DF-RHF iter   5:  -221.81027952870176   -7.52219e-08   1.27101e-06 DIIS
-   @DF-RHF iter   6:  -221.81027953153944   -2.83768e-09   3.00662e-07 DIIS
+   @DF-RHF iter   2:  -221.80794157929191   -7.36949e-02   1.49942e-03 DIIS
+   @DF-RHF iter   3:  -221.81014692784839   -2.20535e-03   3.13413e-04 DIIS
+   @DF-RHF iter   4:  -221.81027945347978   -1.32526e-04   6.92677e-06 DIIS
+   @DF-RHF iter   5:  -221.81027952870176   -7.52220e-08   1.27101e-06 DIIS
+   @DF-RHF iter   6:  -221.81027953153909   -2.83734e-09   3.00662e-07 DIIS
   Energy and wave function converged.
 
 
@@ -6713,14 +6713,14 @@ Total time:
               A 
     DOCC [    20 ]
 
-  @DF-RHF Final Energy:  -221.81027953153944
+  @DF-RHF Final Energy:  -221.81027953153909
 
    => Energetics <=
 
     Nuclear Repulsion Energy =            127.4823980436896136
-    One-Electron Energy =                -555.4040328063065317
-    Two-Electron Energy =                 206.1113552310774821
-    Total Energy =                       -221.8102795315394360
+    One-Electron Energy =                -555.4040328063056222
+    Two-Electron Energy =                 206.1113552310769137
+    Total Energy =                       -221.8102795315390949
 
 Computation Completed
 
@@ -6742,23 +6742,23 @@ Properties computed using the SCF density matrix
      X:    -1.9159      Y:     0.0652      Z:    -1.9379     Total:     2.7259
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:53:03 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:10:10 2019
 Module time:
-	user time   =      13.03 seconds =       0.22 minutes
-	system time =       2.21 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.73 seconds =       0.11 minutes
+	system time =       0.99 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     384.85 seconds =       6.41 minutes
-	system time =      65.95 seconds =       1.10 minutes
-	total time  =        107 seconds =       1.78 minutes
+	user time   =     193.33 seconds =       3.22 minutes
+	system time =      31.66 seconds =       0.53 minutes
+	total time  =         88 seconds =       1.47 minutes
 
-       N-Body: Complex Energy (fragments = (2, 3, 4, 5), basis = (1, 2, 3, 4, 5):  -221.81027953153944)
+       N-Body: Complex Energy (fragments = (2, 3, 4, 5), basis = (1, 2, 3, 4, 5):  -221.81027953153909)
 
        N-Body: Computing complex (2/5) with fragments (1, 2, 3, 4) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:53:03 2019
+*** at Thu Sep 26 15:10:10 2019
 
    => Loading Basis Set <=
 
@@ -6774,7 +6774,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -6867,7 +6867,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -6893,13 +6893,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -218.35499053123053   -2.18355e+02   0.00000e+00 
-   @DF-RHF iter   1:  -221.73311438045812   -3.37812e+00   7.99446e-03 DIIS
-   @DF-RHF iter   2:  -221.80706371129261   -7.39493e-02   1.50602e-03 DIIS
-   @DF-RHF iter   3:  -221.80928628300575   -2.22257e-03   3.14756e-04 DIIS
-   @DF-RHF iter   4:  -221.80942000988031   -1.33727e-04   6.94147e-06 DIIS
-   @DF-RHF iter   5:  -221.80942008542590   -7.55456e-08   1.38337e-06 DIIS
-   @DF-RHF iter   6:  -221.80942008885367   -3.42777e-09   3.19704e-07 DIIS
+   @DF-RHF iter SAD:  -218.35499053123047   -2.18355e+02   0.00000e+00 
+   @DF-RHF iter   1:  -221.73311438045792   -3.37812e+00   7.99446e-03 DIIS
+   @DF-RHF iter   2:  -221.80706371129276   -7.39493e-02   1.50602e-03 DIIS
+   @DF-RHF iter   3:  -221.80928628300563   -2.22257e-03   3.14756e-04 DIIS
+   @DF-RHF iter   4:  -221.80942000988020   -1.33727e-04   6.94147e-06 DIIS
+   @DF-RHF iter   5:  -221.80942008542567   -7.55455e-08   1.38337e-06 DIIS
+   @DF-RHF iter   6:  -221.80942008885387   -3.42820e-09   3.19704e-07 DIIS
   Energy and wave function converged.
 
 
@@ -6932,14 +6932,14 @@ Total time:
               A 
     DOCC [    20 ]
 
-  @DF-RHF Final Energy:  -221.80942008885367
+  @DF-RHF Final Energy:  -221.80942008885387
 
    => Energetics <=
 
     Nuclear Repulsion Energy =            136.3717726960190930
-    One-Electron Energy =                -572.9854906200814639
-    Two-Electron Energy =                 214.8042978352087005
-    Total Energy =                       -221.8094200888536704
+    One-Electron Energy =                -572.9854906200819187
+    Two-Electron Energy =                 214.8042978352089563
+    Total Energy =                       -221.8094200888538694
 
 Computation Completed
 
@@ -6961,23 +6961,23 @@ Properties computed using the SCF density matrix
      X:     0.0861      Y:     0.0921      Z:     0.0890     Total:     0.1543
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:53:06 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:10:13 2019
 Module time:
-	user time   =      13.17 seconds =       0.22 minutes
-	system time =       2.03 seconds =       0.03 minutes
+	user time   =       6.80 seconds =       0.11 minutes
+	system time =       0.88 seconds =       0.01 minutes
 	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     398.24 seconds =       6.64 minutes
-	system time =      68.02 seconds =       1.13 minutes
-	total time  =        110 seconds =       1.83 minutes
+	user time   =     200.24 seconds =       3.34 minutes
+	system time =      32.55 seconds =       0.54 minutes
+	total time  =         91 seconds =       1.52 minutes
 
-       N-Body: Complex Energy (fragments = (1, 2, 3, 4), basis = (1, 2, 3, 4, 5):  -221.80942008885367)
+       N-Body: Complex Energy (fragments = (1, 2, 3, 4), basis = (1, 2, 3, 4, 5):  -221.80942008885387)
 
        N-Body: Computing complex (3/5) with fragments (1, 3, 4, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:53:06 2019
+*** at Thu Sep 26 15:10:13 2019
 
    => Loading Basis Set <=
 
@@ -6993,7 +6993,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -7086,7 +7086,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -7112,13 +7112,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -218.34853891067795   -2.18349e+02   0.00000e+00 
-   @DF-RHF iter   1:  -221.72356641657547   -3.37503e+00   8.22316e-03 DIIS
-   @DF-RHF iter   2:  -221.80094670284450   -7.73803e-02   1.56580e-03 DIIS
-   @DF-RHF iter   3:  -221.80329629163330   -2.34959e-03   3.24050e-04 DIIS
-   @DF-RHF iter   4:  -221.80343713394964   -1.40842e-04   5.06362e-06 DIIS
-   @DF-RHF iter   5:  -221.80343717934602   -4.53964e-08   1.10138e-06 DIIS
-   @DF-RHF iter   6:  -221.80343718191884   -2.57282e-09   2.82675e-07 DIIS
+   @DF-RHF iter SAD:  -218.34853891067786   -2.18349e+02   0.00000e+00 
+   @DF-RHF iter   1:  -221.72356641657527   -3.37503e+00   8.22316e-03 DIIS
+   @DF-RHF iter   2:  -221.80094670284447   -7.73803e-02   1.56580e-03 DIIS
+   @DF-RHF iter   3:  -221.80329629163342   -2.34959e-03   3.24050e-04 DIIS
+   @DF-RHF iter   4:  -221.80343713394976   -1.40842e-04   5.06362e-06 DIIS
+   @DF-RHF iter   5:  -221.80343717934588   -4.53961e-08   1.10138e-06 DIIS
+   @DF-RHF iter   6:  -221.80343718191881   -2.57293e-09   2.82675e-07 DIIS
   Energy and wave function converged.
 
 
@@ -7151,14 +7151,14 @@ Total time:
               A 
     DOCC [    20 ]
 
-  @DF-RHF Final Energy:  -221.80343718191884
+  @DF-RHF Final Energy:  -221.80343718191881
 
    => Energetics <=
 
     Nuclear Repulsion Energy =            127.5227642696020069
-    One-Electron Energy =                -554.9089096787614608
-    Two-Electron Energy =                 205.5827082272406017
-    Total Energy =                       -221.8034371819188380
+    One-Electron Energy =                -554.9089096787613471
+    Two-Electron Energy =                 205.5827082272405164
+    Total Energy =                       -221.8034371819188095
 
 Computation Completed
 
@@ -7180,23 +7180,23 @@ Properties computed using the SCF density matrix
      X:     0.1354      Y:    -0.1038      Z:     0.0570     Total:     0.1799
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:53:10 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:10:16 2019
 Module time:
-	user time   =      12.89 seconds =       0.21 minutes
-	system time =       2.27 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.84 seconds =       0.11 minutes
+	system time =       1.03 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     411.28 seconds =       6.85 minutes
-	system time =      70.38 seconds =       1.17 minutes
-	total time  =        114 seconds =       1.90 minutes
+	user time   =     207.19 seconds =       3.45 minutes
+	system time =      33.60 seconds =       0.56 minutes
+	total time  =         94 seconds =       1.57 minutes
 
-       N-Body: Complex Energy (fragments = (1, 3, 4, 5), basis = (1, 2, 3, 4, 5):  -221.80343718191884)
+       N-Body: Complex Energy (fragments = (1, 3, 4, 5), basis = (1, 2, 3, 4, 5):  -221.80343718191881)
 
        N-Body: Computing complex (4/5) with fragments (1, 2, 3, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:53:10 2019
+*** at Thu Sep 26 15:10:16 2019
 
    => Loading Basis Set <=
 
@@ -7212,7 +7212,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -7305,7 +7305,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -7331,13 +7331,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -218.34854117570023   -2.18349e+02   0.00000e+00 
-   @DF-RHF iter   1:  -221.72358794920351   -3.37505e+00   8.22059e-03 DIIS
-   @DF-RHF iter   2:  -221.80092587209785   -7.73379e-02   1.56512e-03 DIIS
-   @DF-RHF iter   3:  -221.80327409922850   -2.34823e-03   3.24045e-04 DIIS
-   @DF-RHF iter   4:  -221.80341495352408   -1.40854e-04   4.94665e-06 DIIS
-   @DF-RHF iter   5:  -221.80341499765547   -4.41314e-08   1.06514e-06 DIIS
-   @DF-RHF iter   6:  -221.80341500012838   -2.47292e-09   2.66044e-07 DIIS
+   @DF-RHF iter SAD:  -218.34854117570029   -2.18349e+02   0.00000e+00 
+   @DF-RHF iter   1:  -221.72358794920370   -3.37505e+00   8.22059e-03 DIIS
+   @DF-RHF iter   2:  -221.80092587209796   -7.73379e-02   1.56512e-03 DIIS
+   @DF-RHF iter   3:  -221.80327409922833   -2.34823e-03   3.24045e-04 DIIS
+   @DF-RHF iter   4:  -221.80341495352394   -1.40854e-04   4.94665e-06 DIIS
+   @DF-RHF iter   5:  -221.80341499765561   -4.41317e-08   1.06514e-06 DIIS
+   @DF-RHF iter   6:  -221.80341500012813   -2.47252e-09   2.66044e-07 DIIS
   Energy and wave function converged.
 
 
@@ -7370,14 +7370,14 @@ Total time:
               A 
     DOCC [    20 ]
 
-  @DF-RHF Final Energy:  -221.80341500012838
+  @DF-RHF Final Energy:  -221.80341500012813
 
    => Energetics <=
 
     Nuclear Repulsion Energy =            129.5688228081438638
-    One-Electron Energy =                -559.0386599768096403
-    Two-Electron Energy =                 207.6664221685373946
-    Total Energy =                       -221.8034150001283820
+    One-Electron Energy =                -559.0386599768092992
+    Two-Electron Energy =                 207.6664221685373093
+    Total Energy =                       -221.8034150001281262
 
 Computation Completed
 
@@ -7399,23 +7399,23 @@ Properties computed using the SCF density matrix
      X:     0.0799      Y:     2.1430      Z:    -2.0998     Total:     3.0013
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:53:14 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:10:19 2019
 Module time:
-	user time   =      12.94 seconds =       0.22 minutes
-	system time =       2.40 seconds =       0.04 minutes
-	total time  =          4 seconds =       0.07 minutes
+	user time   =       6.57 seconds =       0.11 minutes
+	system time =       1.06 seconds =       0.02 minutes
+	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     424.41 seconds =       7.07 minutes
-	system time =      72.84 seconds =       1.21 minutes
-	total time  =        118 seconds =       1.97 minutes
+	user time   =     213.79 seconds =       3.56 minutes
+	system time =      34.69 seconds =       0.58 minutes
+	total time  =         97 seconds =       1.62 minutes
 
-       N-Body: Complex Energy (fragments = (1, 2, 3, 5), basis = (1, 2, 3, 4, 5):  -221.80341500012838)
+       N-Body: Complex Energy (fragments = (1, 2, 3, 5), basis = (1, 2, 3, 4, 5):  -221.80341500012813)
 
        N-Body: Computing complex (5/5) with fragments (1, 2, 4, 5) in the basis of fragments (1, 2, 3, 4, 5).
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:53:14 2019
+*** at Thu Sep 26 15:10:19 2019
 
    => Loading Basis Set <=
 
@@ -7431,7 +7431,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -7524,7 +7524,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -7550,13 +7550,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -218.34791616038473   -2.18348e+02   0.00000e+00 
-   @DF-RHF iter   1:  -221.72415906548628   -3.37624e+00   8.21004e-03 DIIS
-   @DF-RHF iter   2:  -221.80135075106477   -7.71917e-02   1.56222e-03 DIIS
-   @DF-RHF iter   3:  -221.80369150517308   -2.34075e-03   3.23623e-04 DIIS
+   @DF-RHF iter SAD:  -218.34791616038461   -2.18348e+02   0.00000e+00 
+   @DF-RHF iter   1:  -221.72415906548625   -3.37624e+00   8.21004e-03 DIIS
+   @DF-RHF iter   2:  -221.80135075106480   -7.71917e-02   1.56222e-03 DIIS
+   @DF-RHF iter   3:  -221.80369150517316   -2.34075e-03   3.23623e-04 DIIS
    @DF-RHF iter   4:  -221.80383196808489   -1.40463e-04   4.87412e-06 DIIS
-   @DF-RHF iter   5:  -221.80383201040496   -4.23201e-08   1.08953e-06 DIIS
-   @DF-RHF iter   6:  -221.80383201295126   -2.54630e-09   2.76335e-07 DIIS
+   @DF-RHF iter   5:  -221.80383201040485   -4.23200e-08   1.08953e-06 DIIS
+   @DF-RHF iter   6:  -221.80383201295118   -2.54633e-09   2.76335e-07 DIIS
   Energy and wave function converged.
 
 
@@ -7589,14 +7589,14 @@ Total time:
               A 
     DOCC [    20 ]
 
-  @DF-RHF Final Energy:  -221.80383201295126
+  @DF-RHF Final Energy:  -221.80383201295118
 
    => Energetics <=
 
     Nuclear Repulsion Energy =            124.1011062199313528
-    One-Electron Energy =                -548.1782040575676547
-    Two-Electron Energy =                 202.2732658246850406
-    Total Energy =                       -221.8038320129512613
+    One-Electron Energy =                -548.1782040575675410
+    Two-Electron Energy =                 202.2732658246850121
+    Total Energy =                       -221.8038320129511760
 
 Computation Completed
 
@@ -7618,17 +7618,17 @@ Properties computed using the SCF density matrix
      X:    -2.0956      Y:     2.1037      Z:     0.1248     Total:     2.9720
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:53:17 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:10:22 2019
 Module time:
-	user time   =      13.10 seconds =       0.22 minutes
-	system time =       2.05 seconds =       0.03 minutes
+	user time   =       6.56 seconds =       0.11 minutes
+	system time =       1.09 seconds =       0.02 minutes
 	total time  =          3 seconds =       0.05 minutes
 Total time:
-	user time   =     437.71 seconds =       7.30 minutes
-	system time =      74.94 seconds =       1.25 minutes
-	total time  =        121 seconds =       2.02 minutes
+	user time   =     220.41 seconds =       3.67 minutes
+	system time =      35.78 seconds =       0.60 minutes
+	total time  =        100 seconds =       1.67 minutes
 
-       N-Body: Complex Energy (fragments = (1, 2, 4, 5), basis = (1, 2, 3, 4, 5):  -221.80383201295126)
+       N-Body: Complex Energy (fragments = (1, 2, 4, 5), basis = (1, 2, 3, 4, 5):  -221.80383201295118)
 
    ==> N-Body: Now computing 5-body complexes <==
 
@@ -7637,7 +7637,7 @@ Total time:
 
 
 *** tstart() called on Vanadium
-*** at Thu Sep 26 11:53:18 2019
+*** at Thu Sep 26 15:10:22 2019
 
    => Loading Basis Set <=
 
@@ -7653,7 +7653,7 @@ Total time:
                by Justin Turney, Rob Parrish, Andy Simmonett
                           and Daniel G. A. Smith
                               RHF Reference
-                        8 Threads,    476 MiB Core
+                        4 Threads,    476 MiB Core
          ---------------------------------------------------------
 
   ==> Geometry <==
@@ -7746,7 +7746,7 @@ Total time:
     J tasked:                   Yes
     K tasked:                   Yes
     wK tasked:                   No
-    OpenMP threads:               8
+    OpenMP threads:               4
     Memory [MiB]:               357
     Algorithm:                 Core
     Schwarz Cutoff:           1E-12
@@ -7772,13 +7772,13 @@ Total time:
 
                            Total Energy        Delta E     RMS |[F,P]|
 
-   @DF-RHF iter SAD:  -272.94187091030994   -2.72942e+02   0.00000e+00 
-   @DF-RHF iter   1:  -277.16179050352611   -4.21992e+00   9.02720e-03 DIIS
+   @DF-RHF iter SAD:  -272.94187091030983   -2.72942e+02   0.00000e+00 
+   @DF-RHF iter   1:  -277.16179050352616   -4.21992e+00   9.02720e-03 DIIS
    @DF-RHF iter   2:  -277.25572379054279   -9.39333e-02   1.70394e-03 DIIS
-   @DF-RHF iter   3:  -277.25854788476147   -2.82409e-03   3.55201e-04 DIIS
-   @DF-RHF iter   4:  -277.25871775865329   -1.69874e-04   7.40794e-06 DIIS
-   @DF-RHF iter   5:  -277.25871784535150   -8.66982e-08   1.60593e-06 DIIS
-   @DF-RHF iter   6:  -277.25871785013015   -4.77866e-09   3.62424e-07 DIIS
+   @DF-RHF iter   3:  -277.25854788476153   -2.82409e-03   3.55201e-04 DIIS
+   @DF-RHF iter   4:  -277.25871775865352   -1.69874e-04   7.40794e-06 DIIS
+   @DF-RHF iter   5:  -277.25871784535207   -8.66985e-08   1.60593e-06 DIIS
+   @DF-RHF iter   6:  -277.25871785012998   -4.77792e-09   3.62424e-07 DIIS
   Energy and wave function converged.
 
 
@@ -7811,14 +7811,14 @@ Total time:
               A 
     DOCC [    25 ]
 
-  @DF-RHF Final Energy:  -277.25871785013015
+  @DF-RHF Final Energy:  -277.25871785012998
 
    => Energetics <=
 
     Nuclear Repulsion Energy =            194.6434693443767117
-    One-Electron Energy =                -764.3462361809484946
-    Two-Electron Energy =                 292.4440489864416008
-    Total Energy =                       -277.2587178501301537
+    One-Electron Energy =                -764.3462361809478125
+    Two-Electron Energy =                 292.4440489864410893
+    Total Energy =                       -277.2587178501299832
 
 Computation Completed
 
@@ -7840,26 +7840,26 @@ Properties computed using the SCF density matrix
      X:    -0.9030      Y:     1.0979      Z:    -0.9202     Total:     1.6935
 
 
-*** tstop() called on Vanadium at Thu Sep 26 11:53:21 2019
+*** tstop() called on Vanadium at Thu Sep 26 15:10:26 2019
 Module time:
-	user time   =      13.40 seconds =       0.22 minutes
-	system time =       2.03 seconds =       0.03 minutes
-	total time  =          3 seconds =       0.05 minutes
+	user time   =       6.91 seconds =       0.12 minutes
+	system time =       1.15 seconds =       0.02 minutes
+	total time  =          4 seconds =       0.07 minutes
 Total time:
-	user time   =     451.28 seconds =       7.52 minutes
-	system time =      77.05 seconds =       1.28 minutes
-	total time  =        125 seconds =       2.08 minutes
+	user time   =     227.41 seconds =       3.79 minutes
+	system time =      36.97 seconds =       0.62 minutes
+	total time  =        104 seconds =       1.73 minutes
 
-       N-Body: Complex Energy (fragments = (1, 2, 3, 4, 5), basis = (1, 2, 3, 4, 5):  -277.25871785013015)
+       N-Body: Complex Energy (fragments = (1, 2, 3, 4, 5), basis = (1, 2, 3, 4, 5):  -277.25871785012998)
 
    ==> N-Body: Counterpoise Corrected (CP) energies <==
 
    n-Body     Total Energy [Eh]       I.E. [kcal/mol]      Delta [kcal/mol]
         1     -277.249826795808        0.000000000000        0.000000000000
-        2     -277.253389228795       -2.235460448966       -2.235460448966
-        3     -277.253853117705       -2.526555134891       -0.291094685924
-        4     -277.253852230851       -2.525998625196        0.000556509695
-        5     -277.253852239572       -2.526004097975       -0.000005472779
+        2     -277.253389228796       -2.235460449287       -2.235460449287
+        3     -277.253853117704       -2.526555134356       -0.291094685068
+        4     -277.253852230851       -2.525998625232        0.000556509124
+        5     -277.253852239572       -2.526004097904       -0.000005472672
 
    => Loading Basis Set <=
 
@@ -7870,7 +7870,7 @@ Total time:
     atoms 2-4, 6-8, 10-12, 14-16, 18-20 entry H          line    15 file /home/carlosborca/miniconda3/envs/CrystaLattE/share/psi4/basis/def2-svp.gbs 
 
 
-    Psi4 stopped on: Thursday, 26 September 2019 11:53AM
-    Psi4 wall time for execution: 0:02:06.24
+    Psi4 stopped on: Thursday, 26 September 2019 03:10PM
+    Psi4 wall time for execution: 0:01:43.63
 
 *** Psi4 exiting successfully. Buy a developer a beer!
