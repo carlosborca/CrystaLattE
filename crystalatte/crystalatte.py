@@ -838,9 +838,10 @@ def supercell2monomers(cif_output, r_cut_monomer, verbose=1):
     # filtering out fragments that contain incomplete molecules located
     # at the edges of the supercell.
     if (r_cut_monomer / qcel.constants.bohr2angstroms) > np.min(scell_geom_max_coords):
-        print("\nWARNING: Cutoff (%3.2f A) longer than half the smallest dimension of the supercell (%3.2f A)." \
+        print("\nERROR: Cutoff (%3.2f A) longer than half the smallest dimension of the supercell (%3.2f A)." \
               % (r_cut_monomer, np.min(scell_geom_max_coords)*qcel.constants.bohr2angstroms))
-        print("         Please increase the dimensions of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.")
+        print("       Please increase the dimensions of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.\n")
+        sys.exit()
 
     # Start the BFS timer.
     bfs_start_time = time.time()
