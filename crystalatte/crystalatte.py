@@ -764,14 +764,41 @@ def center_supercell(cif_output, verbose=0):
         1-column array with element symbols of the centered supercell.
     """
     
+    # Find out if there are duplicate coordinates in the XYZ of the
+    # supercell. Generate the indexes of unique atoms to exclude
+    # superimposed atoms.
+    scell_dupl = np.loadtxt(cif_output, skiprows=2, usecols=(0, 1, 2, 3), dtype="str")
+    dirty_cell = [tuple(row) for row in scell_dupl]
+    clean_cell, unique_idx = np.unique(dirty_cell, return_index=True, axis=0)
+
+    # Compare the size of the clean (all unique coordinates) supercell
+    # with that of the dirty supercell. If different, need to clean up
+    # the supercell to avoid superimposed atoms.
+    if len(scell_dupl) != len(clean_cell):
+        print("WARNING: The supercell contains {} duplicate coordinates. Skipping duplicates.".format(len(scell_dupl) - len(clean_cell)))
+    
+        # Creates two NumPy arrays: one with the coordinates of atoms in the
+        # supercell and other with the element symbols of the atoms in it.
+        scell_geom_dupl = np.loadtxt(cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64)
+        scell_elem_dupl = np.loadtxt(cif_output, skiprows=2, usecols=(0), dtype="str")
+
+        # Clean up duplicate coordiantes in the new NumPy arrays.
+        scell_geom = scell_geom_dupl[unique_idx]
+        scell_elem = scell_elem_dupl[unique_idx]
+
+        print("         The lenght of scell_geom and scell_elem is now: {}\n".format(len(clean_cell)))
+
+    else:
+        print("len(scell_dupl) == len(clean_cell)")
+
+        # Creates two NumPy arrays: one with the coordinates of atoms in the
+        # supercell and other with the element symbols of the atoms in it.
+        scell_geom = np.loadtxt(cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64)
+        scell_elem = np.loadtxt(cif_output, skiprows=2, usecols=(0), dtype="str")
+
     if verbose >= 2:
         print("Generating monomers for all complete molecules in the supercell:")
 
-    # Creates two NumPy arrays: one with the coordinates of atoms in the
-    # supercell and other with the element symbols of the atoms in it.
-    scell_geom = np.loadtxt(cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64)
-    scell_elem = np.loadtxt(cif_output, skiprows=2, usecols=(0), dtype="str")
-    
     # Distances will be handled in Bohr.
     scell_geom = scell_geom / qcel.constants.bohr2angstroms
 
@@ -829,7 +856,7 @@ def supercell2monomers(cif_output, r_cut_monomer, verbose=1):
         A dictionary populated with N-mers (monomers at this time) and
         their corresponding atributes.
     """
-    
+
     # Centering the supercell.
     scell_geom_max_coords, scell_geom, scell_elem = center_supercell(cif_output, verbose)
 
