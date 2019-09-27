@@ -786,7 +786,7 @@ def center_supercell(cif_output, verbose=0):
         scell_geom = scell_geom_dupl[unique_idx]
         scell_elem = scell_elem_dupl[unique_idx]
 
-        print("         The lenght of scell_geom and scell_elem is now: {}\n".format(len(clean_cell)))
+        print("         The number of unique coordinates in the supercell is now: {}\n".format(len(clean_cell)))
 
     else:
         print("len(scell_dupl) == len(clean_cell)")
