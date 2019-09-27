@@ -755,7 +755,7 @@ def center_supercell(cif_output, verbose=0):
     scell_geom = np.loadtxt(cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64)
     scell_elem = np.loadtxt(cif_output, skiprows=2, usecols=(0), dtype="str")
     
-    # Distnaces will be handled in Bohr.
+    # Distances will be handled in Bohr.
     scell_geom = scell_geom / qcel.constants.bohr2angstroms
 
     # Calculation of the supercell center as the midpoint of all
@@ -1558,23 +1558,23 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
     if "test" not in cle_run_type:
         psi4.energy(psi4_method, molecule=mymol, bsse_type=[psi4_bsse])
     
-    # Figuring out errors.
-    #import pprint
-    #pprint.pprint(psi4.core.variables())
+        # This is how you print out all the variables to figure out errors.
+        #import pprint
+        #pprint.pprint(psi4.core.variables())
 
-    # Get the non-additive n-body contribution, exclusive of all
-    # previous-body interactions.
-    varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
+        # Get the non-additive n-body contribution, exclusive of all
+        # previous-body interactions.
+        varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
     
-    n_body_energy = psi4.core.variable(varstring)
+        n_body_energy = psi4.core.variable(varstring)
     
-    if len(nmer["monomers"]) > 2:
-        varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
-        n_minus_1_body_energy = psi4.core.variable(varstring)
-        nmer["nambe"] = n_body_energy - n_minus_1_body_energy
-
-    else:
-        nmer["nambe"] = n_body_energy
+        if len(nmer["monomers"]) > 2:
+            varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
+            n_minus_1_body_energy = psi4.core.variable(varstring)
+            nmer["nambe"] = n_body_energy - n_minus_1_body_energy
+        
+        else:
+            nmer["nambe"] = n_body_energy
 # ======================================================================
 
 
@@ -1629,6 +1629,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
 
     # Sort the list in decreasing priority order.
     nmer_keys.sort(key = lambda x: -nmers[x]['priority_min'])
+    #nmer_keys.sort(key = lambda x: -nmers[x]['rmin'])
 
     # The next line was replaced to trigger the calculations in order.
     #for keynmer, nmer in nmers.items():
