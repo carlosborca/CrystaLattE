@@ -142,6 +142,7 @@ def input_parser(in_f_name):
         for kw_key in kw_keys:
             print("  {:15} = {}".format(kw_key, str(keywords[kw_key])))
     
+    # Do we really need this mode?
     if "timings" in keywords["cle_run_type"]:
         
         func_str = "main("
@@ -158,6 +159,18 @@ def input_parser(in_f_name):
         
         import cProfile as profile
         profile.run(func_str)
+
+    if ("makefp" in keywords["cle_run_type"]) and (len(keywords["cle_run_type"]) > 1):
+        print("\nERROR: makefp mode cannot be run at the same time with any other mode.\n")
+        sys.exit()
+
+    if ("quiet" and "psithon") in keywords["cle_run_type"]:
+        print("\nERROR: quiet and psithon modes cannot be run at the same time.\n")
+        sys.exit()
+
+    if ("quiet" in keywords["cle_run_type"]) and (len(keywords["cle_run_type"]) < 2):
+        print("\nERROR: quiet mode be must run together with psi4api or test mode.\n")
+        sys.exit()
 
     if ("psi4api" and "psithon") in keywords["cle_run_type"]:
         print("\nERROR: psi4api and psithon modes cannot be run at the same time.\n")
