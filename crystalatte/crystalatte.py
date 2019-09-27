@@ -158,7 +158,11 @@ def input_parser(in_f_name):
         
         import cProfile as profile
         profile.run(func_str)
-        
+
+    if ("psi4api" and "psithon") in keywords["cle_run_type"]:
+        print("\nERROR: psi4api and psithon modes cannot be run at the same time.\n")
+        sys.exit()
+
     else:
         main(
             keywords["cif_input"], 
@@ -1620,10 +1624,6 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
     crystal_lattice_energy = 0.0
     results = []
     
-    # Produce a MAKEFP input file for gamess.
-    if "makefp" in cle_run_type:
-        monomer2makefp(cif_output, nmers["1mer-0"], verbose)
-   
     # Get the keys of the N-mers dictionary, and put them on a list.
     nmer_keys = list(nmers.keys())
 
@@ -1682,15 +1682,26 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         
         # Calculate execution time.
         energies_wallclock = energies_end - energies_start
-    
-        nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
-                keynmer, 
-                nmer["nambe"] * qcel.constants.hartree2kcalmol * qcel.constants.cal2J, 
-                nmer["replicas"], 
-                nmer["contrib"] * qcel.constants.hartree2kcalmol * qcel.constants.cal2J,
-                crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J,
-                nmer["priority_min"],
-                rminseps)
+        
+        if ("test" or "psithon") in cle_run_type:
+            nmer_result = "{:26} | {:>12} | {:>4} | {:>12} | {:>13} | {:12.6e} | {}".format(
+                    keynmer,
+                    "Not Computed", 
+                    nmer["replicas"],
+                    "Not Computed",
+                    "Not Computed",
+                    nmer["priority_min"],
+                    rminseps)
+
+        else:
+            nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
+                    keynmer, 
+                    nmer["nambe"] * qcel.constants.hartree2kcalmol * qcel.constants.cal2J, 
+                    nmer["replicas"], 
+                    nmer["contrib"] * qcel.constants.hartree2kcalmol * qcel.constants.cal2J,
+                    crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J,
+                    nmer["priority_min"],
+                    rminseps)
         
         results.append(nmer_result)
 
@@ -1788,6 +1799,21 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
     nmers = supercell2monomers(cif_output, r_cut_monomer, verbose)
     total_monomers = len(nmers)
 
+    # If makefp mode requested, produce a MAKEFP input file for gamess
+    # and exit.
+    if "makefp" in cle_run_type:
+        monomer2makefp(cif_output, nmers["1mer-0"], verbose)
+        print("\nThe makefp file for {} has been created.\n".format(cif_output[:-4]))
+        
+        if verbose >= 1:
+            print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+            print("Execution terminated succesfully.")
+            print("Total elapsed wall-clock time: {:.2f} s\n".format(time.time() - start))
+            print("Thank you for using CrystaLattE.\n")
+            print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+
+        sys.exit()
+
     # Loop through all monomers and monomers in the central unit cell
     # to generate dimers with at least one monomer in the central cell.
     # Then loop through all existing N-mers and generate higher-order 
@@ -1832,7 +1858,6 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
         
         if "psithon" in cle_run_type:
             print ("\nWriting N-mer coordinates to Psithon input files:")
-
 
     cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
     # ------------------------------------------------------------------
