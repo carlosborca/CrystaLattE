@@ -102,7 +102,13 @@ def input_parser(in_f_name):
             
             split_line = non_blank_line.split("=")
             keyword_name = split_line[0].lower().strip()
-            keyword_value = split_line[1].split('\n')[0]
+
+            try:
+                keyword_value = split_line[1].split('\n')[0]
+            
+            except IndexError:
+                print("\nERROR: Invalid input file. Check that you provided an acceptable options file.\n")
+                sys.exit()
            
             if keyword_name == "cle_run_type":
                 keyword_value = keyword_value.lower()
@@ -141,42 +147,69 @@ def input_parser(in_f_name):
         
         for kw_key in kw_keys:
             print("  {:15} = {}".format(kw_key, str(keywords[kw_key])))
+
+    #print(keywords["cle_run_type"])
+
+    if "makefp" in keywords["cle_run_type"]:
+
+        if len(keywords["cle_run_type"]) > 1:
+
+            if "timings" not in keywords["cle_run_type"]:
+                print("\nERROR: makefp mode cannot be run at the same time with any other mode, except timings.\n")
+                sys.exit()
     
+    elif "quiet" in keywords["cle_run_type"]:
+        
+        if (len(keywords["cle_run_type"]) < 2):
+            print("\nERROR: quiet mode be must run together with psi4api or test mode.\n")
+            sys.exit()
+        
+        elif "psithon" in keywords["cle_run_type"]:
+            print("\nERROR: quiet and psithon modes cannot be run at the same time.\n")
+            sys.exit()
+
+        elif "timings" in keywords["cle_run_type"]:
+            print("\nERROR: if running quiet and timings modes together, psi4api mode must be included too.\n")
+            sys.exit()
+
+        #else:
+        #    print("HELP!! I AM TRAPPED! elif psithon in keywords[cle_run_type]:")
+
+    elif "psi4api" in keywords["cle_run_type"]:
+
+        if "psithon" in keywords["cle_run_type"]:
+            print("\nERROR: psi4api and psithon modes cannot be run at the same time.\n")
+            sys.exit()
+
+        else:
+            print("HELP!! I AM TRAPPED! elif psi4api in keywords[cle_run_type]:")
+
     # Do we really need this mode?
     if "timings" in keywords["cle_run_type"]:
-        
-        func_str = "main("
 
-        for kw_key in kw_keys:
+        if (len(keywords["cle_run_type"]) < 2):
+            print("\nERROR: timings mode be must run together with another mode.\n")
+            sys.exit()
+
+        else:
+        
+            func_str = "main("
+
+            for kw_key in kw_keys:
+                
+                if type(keywords[kw_key]) == str:
+                    func_str = func_str + "{}='{}', ".format(kw_key, str(keywords[kw_key]))
+                
+                else:
+                    func_str = func_str + "{}={}, ".format(kw_key, str(keywords[kw_key])) 
             
-            if type(keywords[kw_key]) == str:
-                func_str = func_str + "{}='{}', ".format(kw_key, str(keywords[kw_key]))
+            func_str = func_str[:-2] + ")"
             
-            else:
-                func_str = func_str + "{}={}, ".format(kw_key, str(keywords[kw_key])) 
-        
-        func_str = func_str[:-2] + ")"
-        
-        import cProfile as profile
-        profile.run(func_str)
-
-    if ("makefp" in keywords["cle_run_type"]) and (len(keywords["cle_run_type"]) > 1):
-        print("\nERROR: makefp mode cannot be run at the same time with any other mode.\n")
-        sys.exit()
-
-    if ("quiet" and "psithon") in keywords["cle_run_type"]:
-        print("\nERROR: quiet and psithon modes cannot be run at the same time.\n")
-        sys.exit()
-
-    if ("quiet" in keywords["cle_run_type"]) and (len(keywords["cle_run_type"]) < 2):
-        print("\nERROR: quiet mode be must run together with psi4api or test mode.\n")
-        sys.exit()
-
-    if ("psi4api" and "psithon") in keywords["cle_run_type"]:
-        print("\nERROR: psi4api and psithon modes cannot be run at the same time.\n")
-        sys.exit()
+            import cProfile as profile
+            profile.run(func_str)
 
     else:
+        #print("I MANAGED TO GET HERE!")
         main(
             keywords["cif_input"], 
             keywords["cif_output"],
@@ -1724,7 +1757,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         # Calculate execution time.
         energies_wallclock = energies_end - energies_start
         
-        if ("test" or "psithon") in cle_run_type:
+        if "test" or "psithon" in cle_run_type:
             nmer_result = "{:26} | {:>12} | {:>4} | {:>12} | {:>13} | {:12.6e} | {}".format(
                     keynmer,
                     "Not Computed", 
