@@ -8,20 +8,31 @@ import crystalatte
 import pytest
 import sys
 
-def test_crystalatte_imported():
-    """Sample test, will always pass so long as import statement worked"""
-    assert "crystalatte" in sys.modules
-
-def test_ammonia():
-    """Main test with the ammonia crystal."""
-
-    # Required imports
-    import crystalatte
-    import pprint
+def test_psi4api_ammonia():
+    """Main test of the psi4api mode with the ammonia crystal."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers, cle = crystalatte.main(cif_input="data/Ammonia.cif", cif_output="data/Ammonia.xyz", cif_a=3, cif_b=3, cif_c=3, nmers_up_to=5, r_cut_com=6.5, r_cut_monomer=3.5, r_cut_dimer=2.6, r_cut_trimer=3.7, r_cut_tetramer=3.7, r_cut_pentamer=6.1, cle_run_type=["psi4api"], psi4_method="HF/STO-3G", psi4_bsse="nocp", psi4_memory="500 MB", verbose=2)
-    pprint.pprint(nmers)
+    nmers, cle = crystalatte.main(cif_input="data/Ammonia.cif", 
+            cif_output="data/Ammonia.xyz", 
+            cif_a=3, 
+            cif_b=3, 
+            cif_c=3, 
+            nmers_up_to=5, 
+            r_cut_com=6.5, 
+            r_cut_monomer=3.5, 
+            r_cut_dimer=2.6, 
+            r_cut_trimer=3.7, 
+            r_cut_tetramer=3.7, 
+            r_cut_pentamer=6.1, 
+            cle_run_type=["psi4api"], 
+            psi4_method="HF/STO-3G", 
+            psi4_bsse="nocp", 
+            psi4_memory="500 MB", 
+            verbose=2)
+
+    # For debugging.
+    #import pprint
+    #pprint.pprint(nmers)
 
     # Test the number of N-mers.
     number_mono  = len([k for k in nmers.keys() if k.startswith("1mer-")])
