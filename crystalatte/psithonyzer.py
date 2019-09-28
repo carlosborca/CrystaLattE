@@ -151,7 +151,7 @@ def psithonyzer_get_nmer_data(fname, verbose=0):
                 
                 # Take the N-Body energy and the number of monomers in
                 # the N-mer from the last line of the N-Body block. This
-                # number is in Kcal/mol and is now converted to KJ/mol
+                # number is in kcal/mol and is now converted to kJ/mol
                 elif not nbend and i > nbini:
                     lastl = line.strip().split()
                     number_of_monomers = int(lastl[0])
@@ -197,14 +197,14 @@ def psithonyzer_print_results(results, crystal_lattice_energy, verbose=0):
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
         print("N-mer Name                 |    MB Energy | Rep. | Contribution | Lattice Ener. |     Priority | Separations")
-        print("                           |     (KJ/mol) |  (#) |     (KJ/mol) |      (KJ/mol) | (Arb. Units) | (A)")
+        print("                           |     (kJ/mol) |  (#) |     (kJ/mol) |      (kJ/mol) | (Arb. Units) | (A)")
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         for result in results:
             print(result)
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------\n")
         #print("Crystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy / 2625.500)) # Same value as in psi_hartree2kJmol
-        print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy))
-        print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy / 4.184)) # Same value as in psi_cal2J
+        print("Crystal Lattice Energy (kJ/mol)   = {:9.8f}".format(crystal_lattice_energy))
+        print("Crystal Lattice Energy (kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy / 4.184)) # Same value as in psi_cal2J
 # ======================================================================
 
 
@@ -240,9 +240,9 @@ def psithonyzer_main(verbose=0):
     csv_lines = []
     
     csv_header = "N-mer Name,"\
-            + "Non-Additive MB Energy (KJ/mol),"\
-            + "Num. Rep. (#), N-mer Contribution (KJ/mol),"\
-            + "Partial Crys. Lattice Ener. (KJ/mol),"\
+            + "Non-Additive MB Energy (kJ/mol),"\
+            + "Num. Rep. (#), N-mer Contribution (kJ/mol),"\
+            + "Partial Crys. Lattice Ener. (kJ/mol),"\
             + "Calculation Priority (Arb. Units),"\
             + "Minimum Monomer Separations (A)"
 

@@ -1780,7 +1780,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         if verbose >= 2:
 
             if "psi4api" in cle_run_type:
-                print("{} elapsed {:.2f} s processing on {} threads. Cumulative Lattice Energy = {:9.8f} KJ/mol".format(
+                print("{} elapsed {:.2f} s processing on {} threads. Cumulative Lattice Energy = {:9.8f} kJ/mol".format(
                     keynmer, 
                     energies_wallclock, 
                     cpus, 
@@ -1808,14 +1808,14 @@ def print_results(results, crystal_lattice_energy, verbose=0):
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
         print("N-mer Name                 |    MB Energy | Rep. | Contribution | Lattice Ener. |     Priority | Separations")
-        print("                           |     (KJ/mol) |  (#) |     (KJ/mol) |      (KJ/mol) | (Arb. Units) | (A)")
+        print("                           |     (kJ/mol) |  (#) |     (kJ/mol) |      (kJ/mol) | (Arb. Units) | (A)")
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
         for result in results:
             print(result)
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------\n")
         #print("Crystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy))
-        print("Crystal Lattice Energy (KJ/mol)   = {:9.8f}".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J))
-        print("Crystal Lattice Energy (Kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol))
+        print("Crystal Lattice Energy (kJ/mol)   = {:9.8f}".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J))
+        print("Crystal Lattice Energy (kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol))
 # ======================================================================
 
 
