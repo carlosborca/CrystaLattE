@@ -822,8 +822,6 @@ def center_supercell(cif_output, verbose=0):
         print("         The number of unique coordinates in the supercell is now: {}\n".format(len(clean_cell)))
 
     else:
-        print("len(scell_dupl) == len(clean_cell)")
-
         # Creates two NumPy arrays: one with the coordinates of atoms in the
         # supercell and other with the element symbols of the atoms in it.
         scell_geom = np.loadtxt(cif_output, skiprows=2, usecols=(1, 2, 3), dtype=np.float64)
