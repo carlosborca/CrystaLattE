@@ -6,7 +6,7 @@
 # CrystaLattE: The tool for the automated calculation of crystal lattice
 # energies.
 #
-# Copyright (c) 2017-2018
+# Copyright (c) 2017-2019
 # Carlos H. Borca
 # C. David Sherrill
 #
