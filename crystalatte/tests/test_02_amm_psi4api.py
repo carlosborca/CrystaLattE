@@ -12,8 +12,8 @@ def test_psi4api_ammonia():
     """Main test of the psi4api mode with the ammonia crystal."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers, cle = crystalatte.main(cif_input="../data/Ammonia.cif", 
-            cif_output="../data/Ammonia.xyz", 
+    nmers, cle = crystalatte.main(cif_input="Ammonia.cif", 
+            cif_output="Ammonia.xyz", 
             cif_a=3, 
             cif_b=3, 
             cif_c=3, 

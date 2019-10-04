@@ -13,8 +13,8 @@ def test_testing_benzene():
     Sherrill, Chem. Eur. J., 2008, 14, pp 2542–2547."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers, cle = crystalatte.main(cif_input="../data/Benzene.cif", 
-            cif_output="../data/Benzene.xyz", 
+    nmers, cle = crystalatte.main(cif_input="Benzene.cif", 
+            cif_output="Benzene.xyz", 
             cif_a=5, 
             cif_b=5, 
             cif_c=5, 
