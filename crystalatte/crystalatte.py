@@ -45,7 +45,7 @@ import time
 
 # Import parts of Psi4.
 import psi4
-from psi4.driver import qcdb
+#from psi4.driver import qcdb
 from psi4.driver.qcdb.align import B787
 from psi4.driver.qcdb.bfs import BFS
 #from psi4.driver.qcdb.periodictable import el2mass
