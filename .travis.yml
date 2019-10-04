@@ -35,7 +35,6 @@ install:
 
     # Create test environment for package
   - python devtools/scripts/create_conda_env.py -n=test -p=$PYTHON_VER devtools/conda-envs/test_env.yaml
-  #- python devtools/scripts/create_conda_env.py -n=test -p=$PYTHON_VER psi4 psi4-rt pycifrw -c psi4/label/dev -c psi4 -c conda-forge devtools/conda-envs/test_env.yaml
     # Activate the test environment
   - conda activate test
     # Carlos added this line, temporary fix
