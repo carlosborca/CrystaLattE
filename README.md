@@ -1,7 +1,8 @@
 # <img src="https://github.com/carlosborca/CrystaLattE/blob/master/media/logo/Logo.png" height=260>
 
-[//]: # (Badges)
-| **Status** | [![Travis Build Status](https://travis-ci.org/carlosborca/CrystaLattE.png)](https://travis-ci.org/carlosborca/CrystaLattE) <!-- [![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/REPLACE_WITH_APPVEYOR_LINK/branch/master?svg=true)](https://ci.appveyor.com/project/REPLACE_WITH_OWNER_ACCOUNT/CrystaLattE/branch/master) --> [![codecov](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master/graph/badge.svg)](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master) |
+| **Status** | [![Travis Build Status](https://travis-ci.com/carlosborca/CrystaLattE.svg?branch=master)](https://travis-ci.org/carlosborca/CrystaLattE) [![codecov](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master/graph/badge.svg)](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master) |
+|-------------|:-------------:|
+| **Foundation** | [![license](https://img.shields.io/github/license/psi4/psi4.svg)](https://opensource.org/licenses/LGPL-3.0) [![platforms](https://img.shields.io/badge/Platforms-Linux%2C%20MacOS%2C%20Windows%20WSL-orange.svg)](http://psicode.org/psi4manual/master/introduction.html#supported-systems) [![python](https://img.shields.io/badge/python-3.6+-blue.svg)](http://psicode.org/psi4manual/master/introduction.html#supported-systems) |
 
 Automated calculation of crystal lattice energies with the many-body expansion.
 
