@@ -1,10 +1,11 @@
 # <img align="center" src="https://github.com/carlosborca/CrystaLattE/blob/master/media/logo/Logo.png" height=260>
 
-| **Status** | [![Travis Build Status](https://travis-ci.com/carlosborca/CrystaLattE.svg?branch=master)](https://travis-ci.org/carlosborca/CrystaLattE) [![codecov](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master/graph/badge.svg)](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master) |
-|-------------|:-------------:|
-| **Foundation** | [![license](https://img.shields.io/github/license/psi4/psi4.svg)](https://opensource.org/licenses/LGPL-3.0) [![platforms](https://img.shields.io/badge/Platforms-Linux%2C%20MacOS%2C%20Windows%20WSL-orange.svg)](http://psicode.org/psi4manual/master/introduction.html#supported-systems) [![python](https://img.shields.io/badge/python-3.6+-blue.svg)](http://psicode.org/psi4manual/master/introduction.html#supported-systems) |
-
 Automated calculation of crystal lattice energies with the many-body expansion.
+
+| **Status** | [![Travis Build Status](https://travis-ci.com/carlosborca/CrystaLattE.svg?branch=master)](https://travis-ci.org/carlosborca/CrystaLattE) [![codecov](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master/graph/badge.svg)](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master) [![Total alerts](https://img.shields.io/lgtm/alerts/g/carlosborca/CrystaLattE.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/carlosborca/CrystaLattE/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/carlosborca/CrystaLattE.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/carlosborca/CrystaLattE/context:python) |
+|-------------|-------------|
+| **Foundation** | [![License](https://img.shields.io/github/license/carlosborca/CrystaLattE.svg)](https://opensource.org/licenses/LGPL-3.0) [![GitHub Top Languages](https://img.shields.io/github/languages/top/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) |
+| **GitHub Info** | [![GitHub Code Size](https://img.shields.io/github/languages/code-size/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) [![GitHub Commits per Month](https://img.shields.io/github/commit-activity/m/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) [![GitHub Last Commit](https://img.shields.io/github/last-commit/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) |
 
 ## Overview
 
