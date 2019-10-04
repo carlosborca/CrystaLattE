@@ -12,9 +12,13 @@ Automated calculation of crystal lattice energies with the many-body expansion.
 
 This is the overview.
 
-## Installation
+## General Usage information
 
-Minimal set of commands to install and run CrystaLattE on Linux, MacOS, or Windows (with the Windows Subsystem for Linux). Last tested on 4 October 2019:
+Some instructions here.
+
+### Installation
+
+Minimal set of commands to install CrystaLattE on Linux, MacOS, or Windows (with the Windows Subsystem for Linux). Last tested on 4 October 2019:
 
 #### Install miniconda:
 
@@ -80,6 +84,45 @@ git clone https://github.com/carlosborca/CrystaLattE.git
 cd CrystaLattE/; pytest
 ```
 
+### How to run CrystaLattE
+
+#### Preparing the options input
+
+Need a CIF file and an Options input file for CrystaLattE.
+
+```
+# CrystaLattE Input Template:
+
+# Blank lines and lines starting with the hash character are omitted.
+# Padding blank spaces are also ignored.
+
+# The format is:
+# Keywords      = Value
+
+cif_input       = Benzene.cif
+cif_output      = Benzene.xyz
+cif_a           = 5
+cif_b           = 5
+cif_c           = 5
+nmers_up_to     = 5
+r_cut_com       = 8.4
+r_cut_monomer   = 4.43
+r_cut_dimer     = 2.6
+r_cut_trimer    = 2.7
+r_cut_tetramer  = 2.7
+r_cut_pentamer  = 5.1
+cle_run_type    = psi4api + quiet
+psi4_method     = MP2/aug-cc-pV[TQ]Z + D:FNO-CCDS(T)/aug-cc-pVDZ
+psi4_bsse       = cp
+psi4_memory     = 500 MB
+verbose         = 2
+```
+
+#### Running CrystaLattE
+
+```
+crystalatte.py input.cle
+```
 
 #### Copyright
 
