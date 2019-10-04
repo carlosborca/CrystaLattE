@@ -1,4 +1,4 @@
-# <img src="https://github.com/carlosborca/CrystaLattE/media/logo/Logo.png" height=150>
+# <img src="https://github.com/carlosborca/CrystaLattE/blob/master/media/logo/Logo.png" height=130>
 
 CrystaLattE
 ==============================
