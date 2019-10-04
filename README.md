@@ -122,8 +122,8 @@ Description of keywords and their acceptable values.
 
 | Keyword          | Acceptable Values                              | Default      | Example         | Notes           | 
 |------------------|------------------------------------------------|--------------|-----------------|-----------------|
-| `cif_input`      | <FileName>.cif                                 | *No default* | Benzene.cif     | Must be .cif    | 
-| `cif_output`     | <FileName>.xyz                                 | sc.xyz       | Benzene.xyz     | Must be .xyz    |
+| `cif_input`      | \<FileName\>.cif                               | *No default* | Benzene.cif     | Must be .cif    | 
+| `cif_output`     | \<FileName\>.xyz                               | sc.xyz       | Benzene.xyz     | Must be .xyz    |
 | `cif_a`          | Odd positive integer                           | 5            | 9               |                 |
 | `cif_b`          | Odd positive integer                           | 5            | 7               |                 |
 | `cif_c`          | Odd positive integer                           | 5            | 11              |                 |
