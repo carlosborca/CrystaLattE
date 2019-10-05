@@ -1,0 +1,83 @@
+"""
+Unit and regression test for the crystalatte package.
+"""
+
+# Import package, test suite, and other packages as needed
+from qcelemental.testing import compare, compare_values
+import crystalatte
+import pytest
+import sys
+
+def test_supercell_triazine():
+    """Test to reproduce the structures of A. L. Ringer and C. D. 
+    Sherrill, Chem. Eur. J., 2008, 14, pp 2542–2547."""
+
+    # Execute the main function of crystalatte and retrieve the N-mers dictionary.
+    nmers, cle = crystalatte.main(cif_input="crystalatte/data/Triazine.cif", 
+            cif_output="crystalatte/data/Triazine.xyz", 
+            cif_a=3, 
+            cif_b=3, 
+            cif_c=3, 
+            nmers_up_to=2, 
+            r_cut_com=8.0, 
+            r_cut_monomer=8.0, 
+            r_cut_dimer=2.9, 
+            r_cut_trimer=2.9, 
+            r_cut_tetramer=2.9, 
+            r_cut_pentamer=2.9, 
+            cle_run_type=["test"], 
+            psi4_method="HF/STO-3G", 
+            psi4_bsse="nocp", 
+            psi4_memory="500 MB", 
+            verbose=2)
+    
+    # For debug.
+    #import pprint
+    #pprint.pprint(nmers)
+
+    # Test the number of N-mers.
+    number_mono  = len([k for k in nmers.keys() if k.startswith("1mer-")])
+    number_di    = len([k for k in nmers.keys() if k.startswith("2mer-")])
+    
+    assert compare(39, number_mono,  "Number of Monomers: ")
+    assert compare(3, number_di,    "Number of Monomers: ")
+
+    # Test the number of atoms per monomer in each N-mer.
+    for k, v in nmers.items():
+        n = int(k[0])
+        ref = [9]*n
+        if n != 1:
+            assert compare(ref, v["atoms_per_monomer"])
+
+    # Test replicas for each N-mer.
+    assert compare_values(4, nmers["2mer-0+1"]["replicas"],  "2mer-0+1 Replicas: ")
+    assert compare_values(1, nmers["2mer-0+8"]["replicas"],  "2mer-0+1 Replicas: ")
+    assert compare_values(1, nmers["2mer-0+10"]["replicas"], "2mer-0+1 Replicas: ")
+
+    # Test the nuclear repulsion energies for each N-mer.
+    assert compare_values(603.1478166922, nmers["2mer-0+1"]["nre"],  atol=1.e-8)
+    assert compare_values(603.1478268883, nmers["2mer-0+8"]["nre"],  atol=1.e-8)
+    assert compare_values(603.1478008660, nmers["2mer-0+10"]["nre"], atol=1.e-8)
+
+    # Test the COM-based priority for each N-mer.
+    assert compare_values(0.0008000115, nmers["2mer-0+1"]["priority_com"],  atol=1.e-8)
+    assert compare_values(0.0008000115, nmers["2mer-0+8"]["priority_com"],  atol=1.e-8)
+    assert compare_values(0.0008000115, nmers["2mer-0+10"]["priority_com"], atol=1.e-8)
+
+    # Test the N-mer-cutoff-based priority for each N-mer.
+    assert compare_values(0.0067549722, nmers["2mer-0+1"]["priority_min"],  atol=1.e-8)
+    assert compare_values(0.0067549681, nmers["2mer-0+8"]["priority_min"],  atol=1.e-8)
+    assert compare_values(0.0067549700, nmers["2mer-0+10"]["priority_min"], atol=1.e-8)
+
+    # Test the N-mer cutoffs for each N-mer.
+    assert compare_values(5.2900382498,  min(nmers["2mer-0+1"]["min_monomer_separations"]),  atol=1.e-8)
+    assert compare_values(5.2900393127,  min(nmers["2mer-0+8"]["min_monomer_separations"]),  atol=1.e-8)
+    assert compare_values(5.2900388235,  min(nmers["2mer-0+10"]["min_monomer_separations"]), atol=1.e-8)
+
+    ## Test the COM cutoffs for each N-mer.
+    assert compare_values(10.7721217992, min(nmers["2mer-0+1"]["com_monomer_separations"]),  atol=1.e-8)
+    assert compare_values(10.7721212935, min(nmers["2mer-0+8"]["com_monomer_separations"]),  atol=1.e-8)
+    assert compare_values(10.7721220245, min(nmers["2mer-0+10"]["com_monomer_separations"]), atol=1.e-8)
+
+    # Test the crystal lattice energy.
+    assert compare_values(0.0, cle, atol=1.e-8)
