@@ -1,0 +1,41 @@
+# PSI4 file produced by CrystaLattE
+
+# Psithon input for N-mer:      3mer-0+1+2
+# Number of replicas:           3
+# Priority index for input:     7.57085462e-07
+# Minimum monomer separations:  2.428  2.588  2.588 
+# COM priority index for input: 2.37821892e-08
+# Minimum COM separations:      3.418  3.883  3.883 
+
+memory 500 MB
+
+molecule Trimer_0_1_2 {
+  N           -1.68115516      -1.68115516      -1.68115516 
+  H           -2.60026315      -0.14736840      -1.13434212 
+  H           -1.13434212      -2.60026315      -0.14736840 
+  H           -0.14736840      -1.13434212      -2.60026315 
+--
+  N            3.92851196       3.16646478      -0.91910799 
+  H            2.39472520       3.71327782       0.00000000 
+  H            4.84761994       4.70025154      -1.46592103 
+  H            3.38169892       2.24735679      -2.45289475 
+--
+  N            3.16646478      -0.91910799       3.92851196 
+  H            2.24735679      -2.45289475       3.38169892 
+  H            3.71327782       0.00000000       2.39472520 
+  H            4.70025154      -1.46592103       4.84761994 
+units = au
+no_com
+no_reorient
+}
+
+set {
+  e_convergence 9
+  scf_type df
+  mp2_type df
+  cc_type df
+  freeze_core true
+}
+
+energy('scf/STO-3G', bsse_type = 'nocp')
+
