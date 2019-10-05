@@ -8,7 +8,7 @@ import crystalatte
 import pytest
 import sys
 
-def test_testing_benzene():
+def test_testmode_benzene():
     """Test to reproduce the structures of A. L. Ringer and C. D. 
     Sherrill, Chem. Eur. J., 2008, 14, pp 2542–2547."""
 

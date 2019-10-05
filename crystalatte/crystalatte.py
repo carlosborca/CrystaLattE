@@ -77,7 +77,7 @@ def input_parser(in_f_name):
     keywords["r_cut_trimer"] = 8.0
     keywords["r_cut_tetramer"] = 6.0 
     keywords["r_cut_pentamer"] = 4.0 
-    keywords["cle_run_type"] = ["psi4api"]
+    keywords["cle_run_type"] = ["test"]
     keywords["psi4_method"] = "HF/STO-3G"
     keywords["psi4_bsse"] = "cp"
     keywords["psi4_memory"] = "500 MB"
@@ -148,8 +148,6 @@ def input_parser(in_f_name):
         for kw_key in kw_keys:
             print("  {:15} = {}".format(kw_key, str(keywords[kw_key])))
 
-    #print(keywords["cle_run_type"])
-
     if "makefp" in keywords["cle_run_type"]:
 
         if len(keywords["cle_run_type"]) > 1:
@@ -172,9 +170,6 @@ def input_parser(in_f_name):
             print("\nERROR: if running quiet and timings modes together, psi4api mode must be included too.\n")
             sys.exit()
 
-        #else:
-        #    print("HELP!! I AM TRAPPED! elif psithon in keywords[cle_run_type]:")
-
     elif "psi4api" in keywords["cle_run_type"]:
 
         if "psithon" in keywords["cle_run_type"]:
@@ -184,7 +179,6 @@ def input_parser(in_f_name):
         else:
             print("HELP!! I AM TRAPPED! elif psi4api in keywords[cle_run_type]:")
 
-    # Do we really need this mode?
     if "timings" in keywords["cle_run_type"]:
 
         if (len(keywords["cle_run_type"]) < 2):
@@ -209,7 +203,6 @@ def input_parser(in_f_name):
             profile.run(func_str)
 
     else:
-        #print("I MANAGED TO GET HERE!")
         main(
             keywords["cif_input"], 
             keywords["cif_output"],
@@ -1657,15 +1650,6 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
 def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """Manages which mode of CrystaLattE calculation will be employed.
     
-    Global Variables:
-    <float> crystal_lattice_energy
-        The value of the accumulated crystal lattice energy in atomic
-        units.
-    <list> results
-        A summary of the results for all N-mers including energies,
-        replicas, contributions, cumulative lattice energy, priority,
-        and minimum atomic separations; for the print_results function.
-
     Arguments:
     <dict> nmers
         Dictionary containing dictionaries for each N-mer in the 
@@ -1687,10 +1671,11 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
     <float> crystal_lattice_energy
         The value of the accumulated crystal lattice energy in atomic
         units.
+    <list> results
+        A summary of the results for all N-mers including energies,
+        replicas, contributions, cumulative lattice energy, priority,
+        and minimum atomic separations; for the print_results function.
     """
-
-    global crystal_lattice_energy
-    global results
 
     crystal_lattice_energy = 0.0
     results = []
@@ -1788,7 +1773,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
             if "psithon" in cle_run_type:
                 print("{} written.".format(keynmer))
         
-    return crystal_lattice_energy
+    return crystal_lattice_energy, results
 # ======================================================================
 
 
@@ -1839,7 +1824,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["psi4api"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
+def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["test"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -1930,7 +1915,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
         if "psithon" in cle_run_type:
             print ("\nWriting N-mer coordinates to Psithon input files:")
 
-    cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
+    crystal_lattice_energy, results = cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
     # ------------------------------------------------------------------
     
     # Print the final results.
