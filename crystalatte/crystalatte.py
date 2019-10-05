@@ -1878,6 +1878,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
     if nmers_up_to < 2:
         print("\nERROR: CrystaLattE is designed to use at least dimers.")
         print("       Please use 2 <= nmer_up_to < 5.")
+        sys.exit()
     
     if nmers_up_to >= 2:
         
@@ -1906,6 +1907,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
     if nmers_up_to > 5:
         print("\nERROR: The current implementation of CrystaLattE is limited to pentamers.")
         print("       Please use 2 <= nmer_up_to < 5.")
+        sys.exit()
    
     if verbose >= 2:
         
