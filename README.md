@@ -147,7 +147,7 @@ Description of keywords and their acceptable values.
 Finally, to execute the code:
 
 ```
-crystalatte.py input.cle
+./crystalatte.py input.cle
 ```
 
 #### Copyright

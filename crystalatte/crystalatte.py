@@ -221,6 +221,8 @@ def input_parser(in_f_name):
             keywords["psi4_bsse"],
             keywords["psi4_memory"],
             keywords["verbose"])
+
+    return keywords
     
 # ======================================================================
 
