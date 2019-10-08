@@ -639,9 +639,9 @@ def cif_main(args):
     #   c = cx*xhat + cy*yhat + cz*zhat
     #
     cosa = math.cos(alpha)
-    sina = math.sin(alpha)
+    #sina = math.sin(alpha)
     cosb = math.cos(beta)
-    sinb = math.sin(beta)
+    #sinb = math.sin(beta)
     cosg = math.cos(gamma)
     sing = math.sin(gamma)
     
@@ -1234,19 +1234,19 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     build_nmers_start_time = time.time()
 
     if nmer_type == "dimers":
-        nm_dictname_pattern = "1mer-"
+        #nm_dictname_pattern = "1mer-"
         num_monomers = 2
 
     elif nmer_type == "trimers":
-        nm_dictname_pattern = "2mer-"
+        #nm_dictname_pattern = "2mer-"
         num_monomers = 3
 
     elif nmer_type == "tetramers":
-        nm_dictname_pattern = "3mer-"
+        #nm_dictname_pattern = "3mer-"
         num_monomers = 4
 
     elif nmer_type == "pentamers":
-        nm_dictname_pattern = "4mer-"
+        #nm_dictname_pattern = "4mer-"
         num_monomers = 5
     
     else:
@@ -1836,10 +1836,11 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
     
     # Check proper input filename.
     if cif_input.endswith(".cif"):
+        # Should we replace cif_output by this automatically?
         outf = cif_input[:-4] + ".out"
     
     else:
-        print("CrystaLattE needs a .cif file as input file.")
+        print("CrystaLattE needs a .cif file to extract monomer structures from it.")
 
     # Print program header.
     if verbose >= 1:

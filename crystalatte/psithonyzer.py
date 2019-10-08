@@ -299,7 +299,7 @@ def psithonyzer_main(verbose=0):
 
     # The next line was replaced to trigger the calculations in order.
     for keynmer in nmer_keys:
-        nmer = nmers[keynmer]
+        #nmer = nmers[keynmer]
 
         partial_crystal_lattice_energy += nmers[keynmer]["contrib"]
 
