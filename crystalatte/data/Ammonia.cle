@@ -5,7 +5,7 @@
 
 cif_input       = crystalatte/data/Ammonia.cif
 cif_output      = crystalatte/data/Ammonia.xyz
-cif_a           = 3
+cif_a           = 2
 cif_b           = 3
 cif_c           = 3
 nmers_up_to     = 2
