@@ -1870,7 +1870,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
             print("Thank you for using CrystaLattE.\n")
             print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 
-        sys.exit()
+        sys.exit(0)
 
     # Loop through all monomers and monomers in the central unit cell
     # to generate dimers with at least one monomer in the central cell.
