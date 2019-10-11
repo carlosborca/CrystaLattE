@@ -122,25 +122,26 @@ verbose         =  2
 
 Description of keywords and their acceptable values.
 
-| Keyword          | Acceptable Values                              | Default      | Example      | Notes              | 
-|------------------|------------------------------------------------|--------------|--------------|--------------------|
-| `cif_input`      | \<RelativePath\>\/\<FileName\>.cif             | *No default* | Benzene.cif  | Must be a .cif     | 
-| `cif_output`     | \<RelativePath\>\/\<FileName\>.xyz             | sc.xyz       | Benzene.xyz  | Must be a .xyz     |
-| `cif_a`          | Odd positive integer                           | 5            | 9            |                    |
-| `cif_b`          | Odd positive integer                           | 5            | 7            |                    |
-| `cif_c`          | Odd positive integer                           | 5            | 11           |                    |
-| `nmers_up_to`    | 2, 3, 4, 5                                     | 2            | 3            | Dimers, Trimers... |
-| `r_cut_com`      | Positive float                                 | 10.0         | 12.0         | Angstroms          |
-| `r_cut_monomer`  | Positive float                                 | 12.0         | 15.0         | Angstroms          |
-| `r_cut_dimer`    | Positive float                                 | 10.0         | 8.0          | Angstroms          |
-| `r_cut_trimer`   | Positive float                                 | 8.0          | 10.0         | Angstroms          |
-| `r_cut_tetramer` | Positive float                                 | 6.0          | 5.0          | Angstroms          |
-| `r_cut_pentamer` | Positive float                                 | 4.0          | 3.0          | Angstroms          | 
-| `cle_run_type`   | psi4api, psithon, makefp, test, quiet, timings | psi4api      | test + quiet | Separate with +    |
-| `psi4_method`    | String                                         | HF/STO-3G    | HF-3c        | See PSI4 manual    |
-| `psi4_bsse`      | vmfc, cp, nocp                                 | cp           | nocp         |                    |
-| `psi4_memory`    | String                                         | 500 MB       | 2 GB         |                    |
-| `verbose`        | 0, 1, 2                                        | 1            | 2            |                    |
+| Keyword          | Acceptable Values                              | Default      | Example      | Notes                |
+|------------------|------------------------------------------------|--------------|--------------|----------------------|
+| `cif_input`      | \<RelativePath\>\/\<FileName\>.cif             | *No default* | Benzene.cif  | Must be a .cif       |
+| `cif_output`     | \<RelativePath\>\/\<FileName\>.xyz             | sc.xyz       | Benzene.xyz  | Must be a .xyz       |
+| `cif_a`          | Odd positive integer                           | 5            | 9            |                      |
+| `cif_b`          | Odd positive integer                           | 5            | 7            |                      |
+| `cif_c`          | Odd positive integer                           | 5            | 11           |                      |
+| `bfs_thresh`     | Positive float                                 | 1.2          | 1.3          | vdW radii multiplier |
+| `nmers_up_to`    | 2, 3, 4, 5                                     | 2            | 3            | Dimers, Trimers...   |
+| `r_cut_com`      | Positive float                                 | 10.0         | 12.0         | Angstroms            |
+| `r_cut_monomer`  | Positive float                                 | 12.0         | 15.0         | Angstroms            |
+| `r_cut_dimer`    | Positive float                                 | 10.0         | 8.0          | Angstroms            |
+| `r_cut_trimer`   | Positive float                                 | 8.0          | 10.0         | Angstroms            |
+| `r_cut_tetramer` | Positive float                                 | 6.0          | 5.0          | Angstroms            |
+| `r_cut_pentamer` | Positive float                                 | 4.0          | 3.0          | Angstroms            |
+| `cle_run_type`   | psi4api, psithon, makefp, test, quiet, timings | psi4api      | test + quiet | Separate with +      |
+| `psi4_method`    | String                                         | HF/STO-3G    | HF-3c        | See PSI4 manual      |
+| `psi4_bsse`      | vmfc, cp, nocp                                 | cp           | nocp         |                      |
+| `psi4_memory`    | String                                         | 500 MB       | 2 GB         |                      |
+| `verbose`        | 0, 1, 2                                        | 1            | 2            |                      |
 
 #### Running CrystaLattE
 

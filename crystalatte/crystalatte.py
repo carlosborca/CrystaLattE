@@ -71,6 +71,7 @@ def input_parser(in_f_name):
     keywords["cif_a"] = 5
     keywords["cif_b"] = 5
     keywords["cif_c"] = 5
+    keywords["bfs_thresh"] = 1.2
     keywords["r_cut_com"] = 10.0 
     keywords["r_cut_monomer"] = 12.0 
     keywords["r_cut_dimer"] = 10.0 
@@ -209,7 +210,8 @@ def input_parser(in_f_name):
             keywords["cif_a"], 
             keywords["cif_b"],
             keywords["cif_c"], 
-            keywords["nmers_up_to"], 
+            keywords["bfs_thresh"],
+            keywords["nmers_up_to"],
             keywords["r_cut_com"], 
             keywords["r_cut_monomer"], 
             keywords["r_cut_dimer"], 
@@ -851,7 +853,7 @@ def center_supercell(cif_output, verbose=0):
 
 
 # ======================================================================
-def supercell2monomers(cif_output, r_cut_monomer, verbose=1):
+def supercell2monomers(cif_output, r_cut_monomer, bfs_thresh, verbose=1):
     """Takes the supercell cartesian coordinates file produced by
     Read_CIF, and passes it to the `center_supercell()` function which
     translates the supercell to the origin.
@@ -901,7 +903,7 @@ def supercell2monomers(cif_output, r_cut_monomer, verbose=1):
     
     # Passes the supercell geometry and elements to the breadth-first
     # search algorithm of QCDB to obtain fragments.
-    fragments = BFS(scell_geom, scell_elem)
+    fragments = BFS(scell_geom, scell_elem, None, bfs_thresh)
 
     # Stop the BFS timer.
     bfs_stop_time = time.time() - bfs_start_time
@@ -1826,7 +1828,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["test"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
+def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1.2, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["test"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -1855,7 +1857,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, nmers_up_to=
     cif_main(cif_arguments)
     
     # Read the output of the automatic fragmentation.
-    nmers = supercell2monomers(cif_output, r_cut_monomer, verbose)
+    nmers = supercell2monomers(cif_output, r_cut_monomer, bfs_thresh, verbose)
     total_monomers = len(nmers)
 
     # If makefp mode requested, produce a MAKEFP input file for gamess
@@ -1944,6 +1946,7 @@ if __name__ == "__main__":
                 cif_a=3,
                 cif_b=3,
                 cif_c=3,
+                bfs_thresh=1.2,
                 nmers_up_to=2,
                 r_cut_com=6.5,
                 r_cut_monomer=3.5,

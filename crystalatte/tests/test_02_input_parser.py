@@ -22,6 +22,7 @@ def test_input_parser():
     assert compare_values(3, keywords['cif_a'])
     assert compare_values(3, keywords['cif_b'])
     assert compare_values(3, keywords['cif_c'])
+    assert compare_values(1.2, keywords['bfs_thresh'])
     assert compare_values(2, keywords['nmers_up_to'])
     assert compare_values(6.5, keywords['r_cut_com'])
     assert compare_values(2.6, keywords['r_cut_dimer'])
