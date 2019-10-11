@@ -759,7 +759,7 @@ def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose=1):
         Adjusts the level of detail of the printouts.
     """
 
-    cif_arguments = ["", "-i", cif_input, "-o", cif_output, "-b", cif_a, cif_b, cif_c]
+    cif_arguments = ["", "-i", cif_input, "-o", cif_output, "-b", cif_a, cif_b, cif_c, "-r"]
 
     if verbose >= 2:
         print("\nGenerating the supercell .xyz file.")
