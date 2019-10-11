@@ -104,6 +104,7 @@ cif_output      =  ../MyCrystals/SuperCell.xyz
 cif_a           =  5
 cif_b           =  5
 cif_c           =  5
+bfs_thresh      =  1.2
 nmers_up_to     =  3
 r_cut_com       =  12.0
 r_cut_monomer   =  15.0
