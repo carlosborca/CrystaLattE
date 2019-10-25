@@ -132,6 +132,7 @@ Description of keywords and their acceptable values.
 | `cif_b`          | Odd positive integer                           | 5            | 7            |                      |
 | `cif_c`          | Odd positive integer                           | 5            | 11           |                      |
 | `bfs_thresh`     | Positive float                                 | 1.2          | 1.3          | vdW radii multiplier |
+| `uniq_filter`    | ChSEV, Dreamaligner                            | ChSEV        | Dreamaligner |                      |
 | `nmers_up_to`    | 2, 3, 4, 5                                     | 2            | 3            | Dimers, Trimers...   |
 | `r_cut_com`      | Positive float                                 | 10.0         | 12.0         | Angstroms            |
 | `r_cut_monomer`  | Positive float                                 | 12.0         | 15.0         | Angstroms            |
