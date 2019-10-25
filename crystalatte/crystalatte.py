@@ -45,11 +45,7 @@ import time
 
 # Import parts of Psi4.
 import psi4
-#from psi4.driver import qcdb
-#from psi4.driver.qcdb.align import B787
-from psi4.driver.qcdb.bfs import BFS
-#from psi4.driver.qcdb.periodictable import el2mass
-#from psi4.driver.qcdb.periodictable import el2z
+#from psi4.driver.qcdb.bfs import BFS
 
 # Import QCEelemental
 import qcelemental as qcel
@@ -907,7 +903,8 @@ def supercell2monomers(cif_output, r_cut_monomer, bfs_thresh, verbose=1):
     
     # Passes the supercell geometry and elements to the breadth-first
     # search algorithm of QCDB to obtain fragments.
-    fragments = BFS(scell_geom, scell_elem, None, bfs_thresh)
+    #fragments = BFS(scell_geom, scell_elem, None, bfs_thresh)
+    fragments = psi4.driver.qcdb.bfs.BFS(scell_geom, scell_elem, None, bfs_thresh)
 
     # Stop the BFS timer.
     bfs_stop_time = time.time() - bfs_start_time
