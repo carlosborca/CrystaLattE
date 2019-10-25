@@ -7,6 +7,7 @@ Automated calculation of crystal lattice energies with the many-body expansion.
 | **Status** | [![Travis Build Status](https://travis-ci.com/carlosborca/CrystaLattE.svg?branch=master)](https://travis-ci.org/carlosborca/CrystaLattE) [![codecov](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master/graph/badge.svg)](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master) [![Total alerts](https://img.shields.io/lgtm/alerts/g/carlosborca/CrystaLattE.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/carlosborca/CrystaLattE/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/carlosborca/CrystaLattE.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/carlosborca/CrystaLattE/context:python) |
 | **Foundation** | [![License](https://img.shields.io/github/license/carlosborca/CrystaLattE.svg)](https://opensource.org/licenses/LGPL-3.0) [![GitHub Top Languages](https://img.shields.io/github/languages/top/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) |
 | **GitHub Info** | [![GitHub Code Size](https://img.shields.io/github/languages/code-size/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) [![GitHub Commits per Month](https://img.shields.io/github/commit-activity/m/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) [![GitHub Last Commit](https://img.shields.io/github/last-commit/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) |
+| **Citation** | [![doi](https://img.shields.io/badge/DOI-10.1063%2F1.5120520-blue)](http://dx.doi.org/10.1063/1.5120520) |
 
 ## Overview
 
@@ -113,7 +114,7 @@ r_cut_trimer    =  12.0
 r_cut_tetramer  =  6.0
 r_cut_pentamer  =  4.0
 cle_run_type    =  psi4api + quiet
-psi4_method     =  MP2/aug-cc-pV[TQ]Z + D:FNO-CCDS(T)/aug-cc-pVDZ
+psi4_method     =  MP2/aug-cc-pV[TQ]Z + D:FNO-CCSD(T)/aug-cc-pVDZ
 psi4_bsse       =  cp
 psi4_memory     =  8 GB
 verbose         =  2
