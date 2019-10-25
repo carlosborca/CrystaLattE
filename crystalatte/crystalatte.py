@@ -46,11 +46,12 @@ import time
 # Import parts of Psi4.
 import psi4
 #from psi4.driver import qcdb
-#from psi4.driver.qcdb.molutil import B787
-from psi4.driver.qcdb.align import B787
+#from psi4.driver.qcdb.align import B787
 from psi4.driver.qcdb.bfs import BFS
 #from psi4.driver.qcdb.periodictable import el2mass
 #from psi4.driver.qcdb.periodictable import el2z
+
+# Import QCEelemental
 import qcelemental as qcel
 
 # Import parts of PyCIFRW
@@ -1374,7 +1375,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                             np.seterr(divide='ignore')
 
                             # Call the dreamliner from QCDB.
-                            rmsd, mill = B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], run_mirror=True, verbose=2)
+                            rmsd, mill = qcel.molutil.B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], run_mirror=True, verbose=2)
                             rmsd_filter_ran = True
 
                             # Reanable printout
