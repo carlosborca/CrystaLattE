@@ -34,6 +34,7 @@ def test_input_parser():
     assert compare("crystalatte/data/Ammonia.cif", keywords['cif_input'])
     assert compare("crystalatte/data/Ammonia.xyz", keywords['cif_output'])
     assert compare(["test"], keywords['cle_run_type'])
+    assert compare("ChSEV", keywords['uniq_filter'])
     assert compare("nocp", keywords['psi4_bsse'])
     assert compare("500 MB", keywords['psi4_memory'])
     assert compare('HF/STO-3G', keywords['psi4_method'])

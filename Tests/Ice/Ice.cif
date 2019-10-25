@@ -1,53 +1,83 @@
-data_global
-_chemical_name_mineral 'Ice Ih'
-loop_
-_publ_author_name
-'Bernal J'
-'Fowler R'
-_journal_name_full 'Journal of Chemical Physics'
-_journal_volume 1 
-_journal_year 1933
-_journal_page_first 515
-_journal_page_last 548
-_publ_section_title
-;
- A Theory of Water and Ionic Solution, with Particular Reference to
- Hydrogen and Hydroxyl Ions
- _cod_database_code 1011023
-;
-_database_code_amcsd 0017930
-_chemical_formula_sum 'O H2'
-_cell_length_a 7.82
-_cell_length_b 7.82
-_cell_length_c 7.36
-_cell_angle_alpha 90
-_cell_angle_beta 90
-_cell_angle_gamma 120
-_cell_volume 389.782
-_exptl_crystal_density_diffrn      0.921
-_symmetry_space_group_name_H-M 'P 63 c m'
-loop_
-_space_group_symop_operation_xyz
-  'x,y,z'
-  '-x,-x+y,z'
-  'x-y,x,1/2+z'
-  '-y,-x,1/2+z'
-  '-y,x-y,z'
-  'x-y,-y,z'
-  '-x,-y,1/2+z'
-  'x,x-y,1/2+z'
-  '-x+y,-x,z'
-  'y,x,z'
-  'y,-x+y,1/2+z'
-  '-x+y,y,1/2+z'
-loop_
-_atom_site_label
-_atom_site_fract_x
-_atom_site_fract_y
-_atom_site_fract_z
-O1   0.33333   0.00000   0.06250
-O2   0.66667   0.00000   0.93750
-H1   0.33333   0.00000   0.17400
-H2   0.43800   0.00000   0.02600
-H3   0.77200   0.10500   0.97500
-
+#------------------------------------------------------------------------------
+#$Date: 2018-09-27 07:13:35 +0300 (Thu, 27 Sep 2018) $
+#$Revision: 211196 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/1/53/81/1538173.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_1538173
+loop_
+_publ_author_name
+'Goto, A.'
+'Hondoh, T.'
+'Mae, S.'
+_publ_section_title
+;
+ The electron density distribution in ice Ih determined by single-crystal
+ X-ray diffractometry
+;
+_journal_name_full               'Journal of Chemical Physics'
+_journal_page_first              1412
+_journal_page_last               1417
+_journal_volume                  93
+_journal_year                    1990
+_chemical_formula_sum            'H2 O'
+_space_group_IT_number           194
+_symmetry_space_group_name_Hall  '-P 6c 2c'
+_symmetry_space_group_name_H-M   'P 63/m m c'
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                120
+_cell_formula_units_Z            4
+_cell_length_a                   4.506
+_cell_length_b                   4.506
+_cell_length_c                   7.346
+_cell_volume                     129.171
+_citation_journal_id_ASTM        JCPSA6
+_cod_data_source_file            Goto_JCPSA6_1990_1232.cif
+_cod_data_source_block           H2O1
+_cod_original_cell_volume        129.1707
+_cod_original_formula_sum        'H2 O1'
+_cod_database_code               1538173
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+x-y,x,z+1/2
+-y,x-y,z
+-x,-y,z+1/2
+-x+y,-x,z
+y,-x+y,z+1/2
+-y,-x,-z+1/2
+x-y,-y,-z
+x,x-y,-z+1/2
+y,x,-z
+-x+y,y,-z+1/2
+-x,-x+y,-z
+-x,-y,-z
+-x+y,-x,-z-1/2
+y,-x+y,-z
+x,y,-z-1/2
+x-y,x,-z
+-y,x-y,-z-1/2
+y,x,z-1/2
+-x+y,y,z
+-x,-x+y,z-1/2
+-y,-x,z
+x-y,-y,z-1/2
+x,x-y,z
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_U_iso_or_equiv
+O1 O-2 0.3333 0.6667 0.0618 1 0.0
+H2 H+1 0.437 0.874 0.028 0.5 0.0
+H1 H+1 0.3333 0.6667 0.198 0.5 0.0

@@ -46,6 +46,7 @@ import time
 # Import parts of Psi4.
 import psi4
 #from psi4.driver import qcdb
+#from psi4.driver.qcdb.molutil import B787
 from psi4.driver.qcdb.align import B787
 from psi4.driver.qcdb.bfs import BFS
 #from psi4.driver.qcdb.periodictable import el2mass
@@ -72,6 +73,7 @@ def input_parser(in_f_name):
     keywords["cif_b"] = 5
     keywords["cif_c"] = 5
     keywords["bfs_thresh"] = 1.2
+    keywords["uniq_filter"] = "ChSEV"
     keywords["r_cut_com"] = 10.0 
     keywords["r_cut_monomer"] = 12.0 
     keywords["r_cut_dimer"] = 10.0 
@@ -115,7 +117,7 @@ def input_parser(in_f_name):
                 keyword_value = keyword_value.lower()
                 keyword_value = keyword_value.replace(" ", "").split("+")
                    
-            elif keyword_name in ["psi4_bsse", "psi4_memory", "psi4_method", "cif_input", "cif_output"]:
+            elif keyword_name in ["uniq_filter", "psi4_bsse", "psi4_memory", "psi4_method", "cif_input", "cif_output"]:
                 keyword_value = keyword_value.strip()
 
             elif keyword_name in ["nmers_up_to", "verbose"]:
@@ -211,6 +213,7 @@ def input_parser(in_f_name):
             keywords["cif_b"],
             keywords["cif_c"], 
             keywords["bfs_thresh"],
+            keywords["uniq_filter"], 
             keywords["nmers_up_to"],
             keywords["r_cut_com"], 
             keywords["r_cut_monomer"], 
@@ -1226,7 +1229,7 @@ def chemical_space(elem, geom):
 
 
 # ======================================================================
-def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_separation_cutoff, verbose=1):
+def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_separation_cutoff, uniq_filter, verbose=1):
     """Takes a float indicating a cutoff distance in Angstroms.
     Returns dimer files that pass through the filter.
     """
@@ -1310,11 +1313,14 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
             else:
                 found_duplicate = False
                 
-                chemical_space = True
-                dreamliner = False
+                #if False:
+                if uniq_filter == "Dreamaligner":
+                    chemical_space = False
+                    dreamliner = True
                 
-                #chemical_space = False
-                #dreamliner = True
+                else:
+                    chemical_space = True
+                    dreamliner = False
 
                 nre_filter_ran = False
                 chsev_filter_ran = False
@@ -1828,7 +1834,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1.2, nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["test"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
+def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1.2, uniq_filter="ChSEV", nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["test"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -1889,25 +1895,25 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
         
         if verbose >= 2:
             print("\nMerging monomers with monomers to obtain dimers.")
-        build_nmer(nmers, total_monomers, "dimers", r_cut_dimer, r_cut_com, verbose)
+        build_nmer(nmers, total_monomers, "dimers", r_cut_dimer, r_cut_com, uniq_filter, verbose)
 
     if nmers_up_to >= 3:
         
         if verbose >= 2:
             print("\nMerging dimers with monomers to obtain trimers.")
-        build_nmer(nmers, total_monomers, "trimers", r_cut_trimer, r_cut_com, verbose)
+        build_nmer(nmers, total_monomers, "trimers", r_cut_trimer, r_cut_com, uniq_filter, verbose)
 
     if nmers_up_to >= 4:
         
         if verbose >= 2:
             print("\nMerging trimers with monomers to obtain tetramers.")
-        build_nmer(nmers, total_monomers, "tetramers", r_cut_tetramer, r_cut_com, verbose)
+        build_nmer(nmers, total_monomers, "tetramers", r_cut_tetramer, r_cut_com, uniq_filter, verbose)
 
     if nmers_up_to == 5:
         
         if verbose >= 2:
             print("\nMerging tetramers with monomers to obtain pentamers.")
-        build_nmer(nmers, total_monomers, "pentamers", r_cut_pentamer, r_cut_com, verbose)
+        build_nmer(nmers, total_monomers, "pentamers", r_cut_pentamer, r_cut_com, uniq_filter, verbose)
 
     if nmers_up_to > 5:
         print("\nERROR: The current implementation of CrystaLattE is limited to pentamers.")
@@ -1947,6 +1953,7 @@ if __name__ == "__main__":
                 cif_b=3,
                 cif_c=3,
                 bfs_thresh=1.2,
+                uniq_filter="ChSEV",
                 nmers_up_to=2,
                 r_cut_com=6.5,
                 r_cut_monomer=3.5,
