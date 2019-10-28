@@ -1368,9 +1368,6 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                             # Block B787 printout
                             sys.stdout = open(os.devnull, 'w')
                             
-                            #TODO: (Double-check) Block NumPy divide over zero warning printout.
-                            np.seterr(divide='ignore')
-
                             # Call the dreamliner from QCDB.
                             rmsd, mill = qcel.molutil.B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], run_mirror=True, verbose=2)
                             rmsd_filter_ran = True
