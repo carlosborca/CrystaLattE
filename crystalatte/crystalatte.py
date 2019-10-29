@@ -121,10 +121,16 @@ def input_parser(in_f_name):
                 keyword_value = int(keyword_value)
             
             elif keyword_name in ["cif_a", "cif_b", "cif_c"]:
-                keyword_value = int(keyword_value)
                 
-                if (keyword_value%2) == 0:
-                    keyword_value += 1
+                try:
+                    keyword_value = int(keyword_value)
+                    
+                    if (keyword_value%2) == 0:
+                        keyword_value += 1
+
+                except ValueError:
+                    print("\nERROR: Invalid input file. Check that given cif_a, cif_b, and cif_c are integers.\n")
+                    sys.exit()
 
             else:
                 try:
