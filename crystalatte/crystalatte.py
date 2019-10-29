@@ -99,7 +99,7 @@ def input_parser(in_f_name):
                 non_blank_lines.append(line_inp_f)
 
         for non_blank_line in non_blank_lines:
-            
+
             split_line = non_blank_line.split("=")
             keyword_name = split_line[0].lower().strip()
 
@@ -123,7 +123,7 @@ def input_parser(in_f_name):
                     keyword_value = int(keyword_value)
 
                 except ValueError:
-                    print("\nERROR: Invalid input file. Check that given nmers_up_to or verbose are integers.\n")
+                    print("\nERROR: Invalid input file. Check that given {} is an integer.\n".format(keyword_name))
                     sys.exit()
             
             elif keyword_name in ["cif_a", "cif_b", "cif_c"]:
@@ -135,7 +135,7 @@ def input_parser(in_f_name):
                         keyword_value += 1
 
                 except ValueError:
-                    print("\nERROR: Invalid input file. Check that given cif_a, cif_b, and cif_c are integers.\n")
+                    print("\nERROR: Invalid input file. Check that given {} is an integer.\n".format(keyword_name))
                     sys.exit()
 
             else:
@@ -143,8 +143,8 @@ def input_parser(in_f_name):
                     keyword_value = float(keyword_value)
 
                 except:
-                    print("\nERROR: Invalid input file. Check that you provided an acceptable options file.\n")
-                    #pass
+                    print("\nERROR: Invalid input file. Check that given {} is an acceptable value.\n".format(keyword_name))
+                    sys.exit()
 
             keywords[keyword_name] = keyword_value
 
