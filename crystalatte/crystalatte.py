@@ -107,7 +107,7 @@ def input_parser(in_f_name):
                 keyword_value = split_line[1].split('\n')[0]
             
             except IndexError:
-                print("\nERROR: Invalid input file. Check that you provided an acceptable options file.\n")
+                print("\nERROR: Invalid input file. Check that keywords and values are separated by an equal sign.\n")
                 sys.exit()
            
             if keyword_name == "cle_run_type":
@@ -143,7 +143,8 @@ def input_parser(in_f_name):
                     keyword_value = float(keyword_value)
 
                 except:
-                    pass
+                    print("\nERROR: Invalid input file. Check that you provided an acceptable options file.\n")
+                    #pass
 
             keywords[keyword_name] = keyword_value
 
