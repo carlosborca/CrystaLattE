@@ -118,7 +118,13 @@ def input_parser(in_f_name):
                 keyword_value = keyword_value.strip()
 
             elif keyword_name in ["nmers_up_to", "verbose"]:
-                keyword_value = int(keyword_value)
+                
+                try:
+                    keyword_value = int(keyword_value)
+
+                except ValueError:
+                    print("\nERROR: Invalid input file. Check that given nmers_up_to or verbose are integers.\n")
+                    sys.exit()
             
             elif keyword_name in ["cif_a", "cif_b", "cif_c"]:
                 
