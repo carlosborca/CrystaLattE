@@ -147,10 +147,18 @@ def input_parser(in_f_name):
                     sys.exit()
 
             keywords[keyword_name] = keyword_value
+    
+    # Print program header.
+    if keywords["verbose"] >= 1:
+        print("")
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+        print("                              CrystaLattE                              \n")
+        print("  The tool for the automated calculation of crystal lattice energies.  \n")
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 
     if keywords["verbose"] >= 2:
 
-        print("\nCrystaLattE execution setup:\n")
+        print("CrystaLattE execution setup:\n")
         
         # Get the keys of the keywords dictionary, and put them on a list.
         kw_keys = list(keywords.keys())
@@ -1858,14 +1866,6 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
     else:
         print("CrystaLattE needs a .cif file to extract monomer structures from it.")
 
-    # Print program header.
-    if verbose >= 1:
-        print("")
-        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-        print("                              CrystaLattE                              \n")
-        print("  The tool for the automated calculation of crystal lattice energies.  \n")
-        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-
     # Read a CIF file and generate the unit cell.
     cif_arguments = cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose)
     cif_main(cif_arguments)
@@ -1955,6 +1955,13 @@ if __name__ == "__main__":
 
     # Hard-coded Test
     if "crystalatte.py" in sys.argv[-1]:
+        
+        print("")
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+        print("                              CrystaLattE                              \n")
+        print("  The tool for the automated calculation of crystal lattice energies.  \n")
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+
         main(   cif_input="../Tests/Ammonia/Ammonia.cif",
                 cif_output="../Tests/Ammonia/Ammonia.xyz",
                 cif_a=3,
