@@ -66,7 +66,6 @@ def input_parser(in_f_name):
 
     keywords = {}
     keywords["nmers_up_to"] = 2 
-    keywords["cif_output"] = "sc.xyz"
     keywords["cif_a"] = 5
     keywords["cif_b"] = 5
     keywords["cif_c"] = 5
@@ -148,7 +147,19 @@ def input_parser(in_f_name):
                     sys.exit()
 
             keywords[keyword_name] = keyword_value
+
+    # Attempt to create a filename for the supercell XYZ file.
+    if "cif_output" not in keywords.keys():
     
+        # Check proper CIF input filename.
+        if keywords["cif_input"].endswith(".cif"):
+            # Create supercell filename changing the extension of the input.
+            keywords["cif_output"] = keywords["cif_input"][:-4] + ".xyz"
+
+        else:
+            print("\nERROR: Invalid CIF file name. Check that given file ends with a .cif extension.\n")
+            sys.exit()
+
     # Print program header.
     if keywords["verbose"] >= 1:
 
@@ -1870,15 +1881,6 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
    
     # Start counting time.
     start = time.time()
-
-    
-    # Check proper input filename.
-    if cif_input.endswith(".cif"):
-        # Should we replace cif_output by this automatically?
-        outf = cif_input[:-4] + ".out"
-    
-    else:
-        print("CrystaLattE needs a .cif file to extract monomer structures from it.")
 
     # Read a CIF file and generate the unit cell.
     cif_arguments = cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose)
