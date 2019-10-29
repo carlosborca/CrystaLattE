@@ -41,6 +41,7 @@ import multiprocessing
 import numpy as np
 import os
 import sys
+import shutil
 import time
 
 # Import parts of Psi4.
@@ -150,11 +151,8 @@ def input_parser(in_f_name):
     
     # Print program header.
     if keywords["verbose"] >= 1:
-        print("")
-        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-        print("                              CrystaLattE                              \n")
-        print("  The tool for the automated calculation of crystal lattice energies.  \n")
-        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+
+        print_header()
 
     if keywords["verbose"] >= 2:
 
@@ -982,7 +980,9 @@ def supercell2monomers(cif_output, r_cut_monomer, bfs_thresh, verbose=1):
             nmers[name]["priority_com"] = 0.0
 
     total_number_of_monomers = len(nmers.keys())
-    print("\nThe BFS algorithm found {} monomers in the supercell in {:.2f} s".format(total_number_of_monomers, bfs_stop_time))
+
+    if verbose >= 2:
+        print("\nThe BFS algorithm found {} monomers in the supercell in {:.2f} s".format(total_number_of_monomers, bfs_stop_time))
     
     return nmers
 # ======================================================================
@@ -1804,6 +1804,19 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
 
 
 # ======================================================================
+def print_header():
+    """.
+    """
+
+    print("")
+    print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+    print("                              CrystaLattE                              \n")
+    print("  The tool for the automated calculation of crystal lattice energies.  \n")
+    print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+# ======================================================================
+
+
+# ======================================================================
 def print_results(results, crystal_lattice_energy, verbose=0):
     """Prints a summary of the energy results at the end of the
     execution.
@@ -1815,14 +1828,14 @@ def print_results(results, crystal_lattice_energy, verbose=0):
 
     if verbose >= 1:
         print("Summary of results:")
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(shutil.get_terminal_size().columns - 112)))
         print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
         print("N-mer Name                 |    MB Energy | Rep. | Contribution | Lattice Ener. |     Priority | Separations")
         print("                           |     (kJ/mol) |  (#) |     (kJ/mol) |      (kJ/mol) | (Arb. Units) | (A)")
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(shutil.get_terminal_size().columns - 112)))
         for result in results:
             print(result)
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------\n")
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}\n".format("-"*(shutil.get_terminal_size().columns - 112)))
         #print("Crystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy))
         print("Crystal Lattice Energy (kJ/mol)   = {:9.8f}".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J))
         print("Crystal Lattice Energy (kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy * qcel.constants.hartree2kcalmol))
@@ -1857,6 +1870,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
    
     # Start counting time.
     start = time.time()
+
     
     # Check proper input filename.
     if cif_input.endswith(".cif"):
@@ -1938,9 +1952,11 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
 
     crystal_lattice_energy, results = cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
     # ------------------------------------------------------------------
-    
+
+    if verbose >= 2:
+        print("")
+
     # Print the final results.
-    print("")
     print_results(results, crystal_lattice_energy, verbose)
     
     # Print exit message and timings information.
@@ -1956,11 +1972,7 @@ if __name__ == "__main__":
     # Hard-coded Test
     if "crystalatte.py" in sys.argv[-1]:
         
-        print("")
-        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-        print("                              CrystaLattE                              \n")
-        print("  The tool for the automated calculation of crystal lattice energies.  \n")
-        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+        print_header()
 
         main(   cif_input="../Tests/Ammonia/Ammonia.cif",
                 cif_output="../Tests/Ammonia/Ammonia.xyz",
