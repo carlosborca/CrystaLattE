@@ -142,8 +142,8 @@ def input_parser(in_f_name):
                 try:
                     keyword_value = float(keyword_value)
 
-                except:
-                    print("\nERROR: Invalid input file. Check that given {} is an acceptable value.\n".format(keyword_name))
+                except ValueError:
+                    print("\nERROR: Invalid input file. Check that given {} is an float.\n".format(keyword_name))
                     sys.exit()
 
             keywords[keyword_name] = keyword_value
