@@ -1904,16 +1904,12 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
     # If makefp mode requested, produce a MAKEFP input file for gamess
     # and exit.
     if "makefp" in cle_run_type:
+
         monomer2makefp(cif_output, nmers["1mer-0"], verbose)
+        
         print("\nThe makefp file for {} has been created.\n".format(cif_output[:-4]))
         
-        if verbose >= 1:
-            print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-            print("Execution terminated succesfully.")
-            print("Total elapsed wall-clock time: {:.2f} s\n".format(time.time() - start))
-            print("Thank you for using CrystaLattE.\n")
-            print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-
+        print_end_msg(start, verbose)
         sys.exit(0)
 
     # Loop through all monomers and monomers in the central unit cell
