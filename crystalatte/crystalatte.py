@@ -148,6 +148,17 @@ def input_parser(in_f_name):
 
             keywords[keyword_name] = keyword_value
 
+    # Check CIF is provided.
+    if "cif_input" not in keywords.keys():
+        print("\nERROR: No CIF given as input.\n")
+        sys.exit()
+
+    # Check CIF extension.
+    else:
+        if not keywords["cif_input"].endswith(".cif"):
+            print("\nERROR: Invalid CIF file name. Check that given file ends with a .cif extension.\n")
+            sys.exit()
+
     # Attempt to create a filename for the supercell XYZ file.
     if "cif_output" not in keywords.keys():
     
