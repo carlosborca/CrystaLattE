@@ -1630,7 +1630,7 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
     """
 
     # If the output is going to be kept, setup the filename.
-    if "quiet" or "test" in cle_run_type:
+    if ("quiet" in cle_run_type) or ("test" in cle_run_type):
         psi4.core.be_quiet()
         
     # If the output is not kept, do not print to screen.
@@ -1649,7 +1649,7 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
         os.chdir(p4folder)
         
         p4out = keynmer + ".dat"
-        psi4.core.set_output_file(p4out)
+        psi4.core.set_output_file(p4out, True)
         
         os.chdir(owd)
 
@@ -2001,7 +2001,7 @@ if __name__ == "__main__":
                 r_cut_trimer=3.7,
                 r_cut_tetramer=3.7,
                 r_cut_pentamer=6.1,
-                cle_run_type=["psi4api"],
+                cle_run_type=["psi4api", "quiet"],
                 psi4_method="HF/STO-3G",
                 psi4_bsse="nocp",
                 psi4_memory="500 MB",
