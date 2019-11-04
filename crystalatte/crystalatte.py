@@ -1100,7 +1100,10 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
             nm_new["min_monomer_separations"].append(r_min)
             nm_new["com_monomer_separations"].append(np.linalg.norm(nmers[a_name]["com"] - nmers[b_name]["com"]))
     
-    
+    # Distance to compare against cutoff values.
+    nm_new["max_mon_sep"] = max(nm_new["min_monomer_separations"])
+    nm_new["max_com_sep"] = max(nm_new["com_monomer_separations"])
+
     # Criterion to launch energy calculations.
     nm_new["priority_min"] = 0.0
 
@@ -1323,10 +1326,11 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
             new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, other_monomers, verbose)
 
-            max_mon_sep = max(new_nmer["min_monomer_separations"])
-            max_com_sep = max(new_nmer["com_monomer_separations"])
+            #max_mon_sep = max(new_nmer["min_monomer_separations"])
+            #max_com_sep = max(new_nmer["com_monomer_separations"])
 
-            if max_mon_sep > (nmer_separation_cutoff / qcel.constants.bohr2angstroms):
+            #if max_mon_sep > (nmer_separation_cutoff / qcel.constants.bohr2angstroms):
+            if new_nmer["max_mon_sep"] > (nmer_separation_cutoff / qcel.constants.bohr2angstroms):
                 
                 if verbose >= 2:
                     
@@ -1335,11 +1339,11 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                     print(
                         "{} discarded in {:.2f} s: Maximum separation between closest atoms of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
-                            new_nmer_name, nmer_stop_time, max_mon_sep*qcel.constants.bohr2angstroms, nmer_separation_cutoff))
+                            new_nmer_name, nmer_stop_time, new_nmer["max_mon_sep"]*qcel.constants.bohr2angstroms, nmer_separation_cutoff))
                         
                     counter_dscrd_sep += 1
             
-            elif max_com_sep > (coms_separation_cutoff / qcel.constants.bohr2angstroms):
+            elif new_nmer["max_com_sep"] > (coms_separation_cutoff / qcel.constants.bohr2angstroms):
                 
                 if verbose >= 2:
                     
@@ -1347,7 +1351,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     nmer_stop_time = time.time() - nmer_start_time
                     print(
                         "{} discarded in {:.2f} s: Maximum separation between closest COMs of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
-                            new_nmer_name, nmer_stop_time, max_com_sep*qcel.constants.bohr2angstroms, coms_separation_cutoff))
+                            new_nmer_name, nmer_stop_time, new_nmer["max_com_sep"]*qcel.constants.bohr2angstroms, coms_separation_cutoff))
 
                     counter_dscrd_com += 1
 
