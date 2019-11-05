@@ -1,11 +1,15 @@
 # PSI4 file produced by CrystaLattE
 
+# Generated from:               crystalatte/data/Ammonia.xyz
 # Psithon input for N-mer:      3mer-0+1+5
+# Number of Atoms per Monomer:  [4, 4, 4]
 # Number of replicas:           3
-# Priority index for input:     6.25510905e-07
+# Cutoff Priority:              6.255109049994e-07
 # Minimum monomer separations:  2.588  2.588  2.588 
-# COM priority index for input: 1.62271419e-08
+# Separation Priority:          6.255109048743e-07
 # Minimum COM separations:      3.883  3.883  3.883 
+# COM priority:                 1.622714191636e-08
+# Nuclear Repulsion:            77.87320866497402 a.u.
 
 memory 500 MB
 

@@ -75,12 +75,19 @@ def test_psithon_ammonia():
     assert compare_values(8.289215938603657e-16,  nmers["4mer-0+1+2+3"]["priority_com"],   atol=1.e-18)
     assert compare_values(3.2435020503790996e-27, nmers["5mer-0+1+2+3+4"]["priority_com"], atol=1.e-29)
 
-    # Test the N-mer-cutoff-based priority for each N-mer.
+    # Test the N-mer-separation-based priority for each N-mer.
     assert compare_values(0.008552208792327147,  nmers["2mer-0+1"]["priority_min"],       atol=1.e-5)
     assert compare_values(7.570854620127571e-07, nmers["3mer-0+1+2"]["priority_min"],     atol=1.e-9)
     assert compare_values(6.255109048743461e-07, nmers["3mer-0+1+5"]["priority_min"],     atol=1.e-9)
     assert compare_values(6.937449498781642e-13, nmers["4mer-0+1+2+3"]["priority_min"],   atol=1.e-15)
     assert compare_values(1.441820074805934e-22, nmers["5mer-0+1+2+3+4"]["priority_min"], atol=1.e-24)
+
+    # Test the N-mer-cutoff-based priority for each N-mer.
+    assert compare_values(1.7489244e-03, nmers["2mer-0+1"]["priority_cutoff"],       atol=1.e-10)
+    assert compare_values(6.2551090e-07, nmers["3mer-0+1+2"]["priority_cutoff"],     atol=1.e-14)
+    assert compare_values(6.2551090e-07, nmers["3mer-0+1+5"]["priority_cutoff"],     atol=1.e-14)
+    assert compare_values(9.3558713e-12, nmers["4mer-0+1+2+3"]["priority_cutoff"],   atol=1.e-19)
+    assert compare_values(4.0052011e-25, nmers["5mer-0+1+2+3+4"]["priority_cutoff"], atol=1.e-32)
 
     # Test the N-mer cutoffs for each N-mer.
     assert compare_values(4.889981712498321, min(nmers["2mer-0+1"]["min_monomer_separations"]),       atol=1.e-8)

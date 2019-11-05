@@ -64,10 +64,15 @@ def test_supercell_triazine():
     assert compare_values(0.0008000115, nmers["2mer-0+8"]["priority_com"],  atol=1.e-8)
     assert compare_values(0.0008000115, nmers["2mer-0+10"]["priority_com"], atol=1.e-8)
 
-    # Test the N-mer-cutoff-based priority for each N-mer.
+    # Test the N-mer-separation-based priority for each N-mer.
     assert compare_values(0.0067549722, nmers["2mer-0+1"]["priority_min"],  atol=1.e-8)
     assert compare_values(0.0067549681, nmers["2mer-0+8"]["priority_min"],  atol=1.e-8)
     assert compare_values(0.0067549700, nmers["2mer-0+10"]["priority_min"], atol=1.e-8)
+
+    # Test the N-mer-cutoff-based priority for each N-mer.
+    assert compare_values(0.0012769231, nmers["2mer-0+1"]["priority_cutoff"],  atol=1.e-8)
+    assert compare_values(0.0012769220, nmers["2mer-0+8"]["priority_cutoff"],  atol=1.e-8)
+    assert compare_values(0.0012769225, nmers["2mer-0+10"]["priority_cutoff"], atol=1.e-8)
 
     # Test the N-mer cutoffs for each N-mer.
     assert compare_values(5.2900382498,  min(nmers["2mer-0+1"]["min_monomer_separations"]),  atol=1.e-8)

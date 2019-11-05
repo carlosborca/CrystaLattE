@@ -1092,6 +1092,8 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     nm_new["max_mon_sep"] = max(nm_new["min_monomer_separations"])
     nm_new["max_com_sep"] = max(nm_new["com_monomer_separations"])
 
+    #TODO: Create a keyword to select which criterion to use.
+
     # Criterion to launch energy calculations.
     nm_new["priority_min"] = 0.0
 
@@ -1121,7 +1123,19 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     priority_cutoff = 1.0
 
     max_sep = max(nm_new["min_monomer_separations"])
-    priority_cutoff = 1.0/(max_sep**(len(nm_new_monomers)**2.0))
+    main_contrib = 1.0/(max_sep**(len(nm_new_monomers)**2.0))
+
+    idx = 0
+    add = 0.0
+    for rmin in nm_new["min_monomer_separations"]:
+
+        if idx != 0:
+            one_over_rmin3 = 1.0e-10/(rmin**(len(nm_new_monomers)**2.0))
+            add += one_over_rmin3
+
+        idx += 1
+
+    priority_cutoff = main_contrib + add
 
     nm_new["priority_cutoff"] = priority_cutoff
 
@@ -1553,12 +1567,16 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     """
     
     psithon_input =  "# PSI4 file produced by CrystaLattE\n\n"
+    psithon_input += "# Generated from:               {}\n".format(cif_output)
     psithon_input += "# Psithon input for N-mer:      {}\n".format(keynmer)
+    psithon_input += "# Number of Atoms per Monomer:  {}\n".format(nmer["atoms_per_monomer"])
     psithon_input += "# Number of replicas:           {}\n".format(nmer["replicas"])
-    psithon_input += "# Priority index for input:     {:12.8e}\n".format(nmer["priority_min"])
+    psithon_input += "# Cutoff Priority:              {:12.12e}\n".format(nmer["priority_cutoff"])
     psithon_input += "# Minimum monomer separations:  {}\n".format(rminseps.lstrip(" "))
-    psithon_input += "# COM priority index for input: {:12.8e}\n".format(nmer["priority_com"])
+    psithon_input += "# Separation Priority:          {:12.12e}\n".format(nmer["priority_min"])
     psithon_input += "# Minimum COM separations:      {}\n".format(rcomseps.lstrip(" "))
+    psithon_input += "# COM priority:                 {:12.12e}\n".format(nmer["priority_com"])
+    psithon_input += "# Nuclear Repulsion:            {} a.u.\n".format(nmer["nre"])
     
     psithon_input += "\nmemory {}\n".format(psi4_memory)
     
@@ -1966,6 +1984,10 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
     
     # Print exit message and timings information.
     print_end_msg(start, verbose)
+
+    # Debug only.
+    #import pprint
+    #pprint.pprint(nmers)
 
     return nmers, crystal_lattice_energy
 

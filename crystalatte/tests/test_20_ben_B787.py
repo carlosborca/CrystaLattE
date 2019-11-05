@@ -110,7 +110,7 @@ def test_testmode_benzene():
     assert compare_values(0.0001987883, nmers["2mer-0+15"]["priority_com"], atol=1.e-8)
     assert compare_values(0.0001783188, nmers["2mer-0+27"]["priority_com"], atol=1.e-8)
 
-    # Test the N-mer-cutoff-based priority for each N-mer.
+    # Test the N-mer-separation-based priority for each N-mer.
     assert compare_values(0.0090014493, nmers["2mer-0+1"]["priority_min"],  atol=1.e-8)
     assert compare_values(0.0081275168, nmers["2mer-0+2"]["priority_min"],  atol=1.e-8)
     assert compare_values(0.0077024945, nmers["2mer-0+6"]["priority_min"],  atol=1.e-8)
@@ -121,6 +121,18 @@ def test_testmode_benzene():
     assert compare_values(0.0009506992, nmers["2mer-0+14"]["priority_min"], atol=1.e-8)
     assert compare_values(0.0006261051, nmers["2mer-0+15"]["priority_min"], atol=1.e-8)
     assert compare_values(0.0003528237, nmers["2mer-0+27"]["priority_min"], atol=1.e-8)
+
+    # Test the N-mer-cutoff-based priority for each N-mer.
+    assert compare_values(0.0018724774, nmers["2mer-0+1"]["priority_cutoff"],  atol=1.e-8)
+    assert compare_values(0.0016340945, nmers["2mer-0+2"]["priority_cutoff"],  atol=1.e-8)
+    assert compare_values(0.0015211610, nmers["2mer-0+6"]["priority_cutoff"],  atol=1.e-8)
+    assert compare_values(0.0001584838, nmers["2mer-0+16"]["priority_cutoff"], atol=1.e-8)
+    assert compare_values(0.0001299297, nmers["2mer-0+5"]["priority_cutoff"],  atol=1.e-8)
+    assert compare_values(0.0001196829, nmers["2mer-0+21"]["priority_cutoff"], atol=1.e-8)
+    assert compare_values(0.0001109367, nmers["2mer-0+12"]["priority_cutoff"], atol=1.e-8)
+    assert compare_values(0.0000934811, nmers["2mer-0+14"]["priority_cutoff"], atol=1.e-8)
+    assert compare_values(0.0000535627, nmers["2mer-0+15"]["priority_cutoff"], atol=1.e-8)
+    assert compare_values(0.0000249312, nmers["2mer-0+27"]["priority_cutoff"], atol=1.e-8)
 
     # Test the N-mer cutoffs for each N-mer.
     assert compare_values(4.8072405390,  min(nmers["2mer-0+1"]["min_monomer_separations"]),  atol=1.e-8)
