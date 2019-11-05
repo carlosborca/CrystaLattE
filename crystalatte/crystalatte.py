@@ -1120,8 +1120,6 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
     # on the maximum separation between monomers in an N-mer.
     nm_new["priority_cutoff"] = 0.0
 
-    priority_cutoff = 1.0
-
     max_sep = max(nm_new["min_monomer_separations"])
     main_contrib = 1.0/(max_sep**(len(nm_new_monomers)**2.0))
 

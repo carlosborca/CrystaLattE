@@ -23,6 +23,7 @@ __all__ = ["input_parser",
         "nmer2psithon",
         "psi4api_energies",
         "cle_manager",
+        "print_header",
         "print_results",
         "print_end_msg",
         "main"]
