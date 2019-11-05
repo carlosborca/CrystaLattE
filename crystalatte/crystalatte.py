@@ -46,7 +46,6 @@ import time
 
 # Import parts of Psi4.
 import psi4
-#from psi4.driver.qcdb.bfs import BFS
 
 # Import QCEelemental
 import qcelemental as qcel
@@ -269,12 +268,6 @@ def input_parser(in_f_name):
     
 # ======================================================================
 
-
-
-
-
-
-# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 # ======================================================================
 def extract_element(label):
@@ -768,13 +761,7 @@ def cif_main(args):
         print('\nERROR: Failed to write to output file')
     
     fOut.close()
-    
-
-# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
-
-
-
+# ======================================================================
 
 
 # ======================================================================
@@ -1000,6 +987,7 @@ def supercell2monomers(cif_output, r_cut_monomer, bfs_thresh, verbose=1):
             nmers[name]["com"] = center_of_mass(frag_elems[index], frag_geoms[index])
             nmers[name]["priority_min"] = 0.0
             nmers[name]["priority_com"] = 0.0
+            nmers[name]["priority_cutoff"] = 0.0
 
     total_number_of_monomers = len(nmers.keys())
 
@@ -1125,6 +1113,17 @@ def create_nmer(nmers, ref_monomer, other_monomers, verbose=1):
         priority_com *= one_over_rcom3
     
     nm_new["priority_com"] = priority_com
+
+    # Another alternative criterion to launc energy calculations based
+    # on the maximum separation between monomers in an N-mer.
+    nm_new["priority_cutoff"] = 0.0
+
+    priority_cutoff = 1.0
+
+    max_sep = max(nm_new["min_monomer_separations"])
+    priority_cutoff = 1.0/(max_sep**(len(nm_new_monomers)**2.0))
+
+    nm_new["priority_cutoff"] = priority_cutoff
 
     # Key of the new N-mer in the nmers dictionary.
     nm_new_name = str(len(nm_new_monomers)) + "mer-" + "+".join(map(str, nm_new_monomers))
@@ -1283,19 +1282,15 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     build_nmers_start_time = time.time()
 
     if nmer_type == "dimers":
-        #nm_dictname_pattern = "1mer-"
         num_monomers = 2
 
     elif nmer_type == "trimers":
-        #nm_dictname_pattern = "2mer-"
         num_monomers = 3
 
     elif nmer_type == "tetramers":
-        #nm_dictname_pattern = "3mer-"
         num_monomers = 4
 
     elif nmer_type == "pentamers":
-        #nm_dictname_pattern = "4mer-"
         num_monomers = 5
     
     else:
@@ -1326,10 +1321,6 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
             new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, other_monomers, verbose)
 
-            #max_mon_sep = max(new_nmer["min_monomer_separations"])
-            #max_com_sep = max(new_nmer["com_monomer_separations"])
-
-            #if max_mon_sep > (nmer_separation_cutoff / qcel.constants.bohr2angstroms):
             if new_nmer["max_mon_sep"] > (nmer_separation_cutoff / qcel.constants.bohr2angstroms):
                 
                 if verbose >= 2:
@@ -1736,14 +1727,15 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
     nmer_keys = list(nmers.keys())
 
     # Sort the list in decreasing priority order.
-    nmer_keys.sort(key = lambda x: -nmers[x]['priority_min'])
-    #nmer_keys.sort(key = lambda x: -nmers[x]['rmin'])
+    nmer_keys.sort(key = lambda x: -nmers[x]['priority_cutoff'])
 
-    # The next line was replaced to trigger the calculations in order.
+    # The next line was replaced to trigger the calculations in
+    # priority order, and not in the order the N-mers were created.
     #for keynmer, nmer in nmers.items():
     for keynmer in nmer_keys:
 
         nmer = nmers[keynmer]
+
         # Energies are not calculated for monomers. Rigid body approximation.
         if len(nmer["monomers"]) == 1:
             continue
@@ -1798,7 +1790,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
                     nmer["replicas"],
                     "Not Computed",
                     "Not Computed",
-                    nmer["priority_min"],
+                    nmer["priority_cutoff"],
                     rminseps)
 
         else:
@@ -1808,7 +1800,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
                     nmer["replicas"], 
                     nmer["contrib"] * qcel.constants.hartree2kcalmol * qcel.constants.cal2J,
                     crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J,
-                    nmer["priority_min"],
+                    nmer["priority_cutoff"],
                     rminseps)
         
         results.append(nmer_result)
