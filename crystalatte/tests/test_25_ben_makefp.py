@@ -6,6 +6,7 @@ Unit and regression test for the crystalatte package.
 from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
+import subprocess
 import sys
 
 def test_makefp_benzene():
@@ -22,3 +23,7 @@ def test_makefp_benzene():
             r_cut_monomer=2.0, 
             cle_run_type=["makefp"], 
             verbose=2)
+
+    # Clean-up generated test files
+    subprocess.call(["rm", "-r", "sc/"])
+    subprocess.call(["rm", "sc.xyz"])

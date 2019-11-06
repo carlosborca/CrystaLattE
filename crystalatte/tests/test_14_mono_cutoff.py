@@ -6,6 +6,7 @@ Unit and regression test for the crystalatte package.
 from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
+import subprocess
 import sys
 
 def test_psi4api_ammonia():
@@ -20,4 +21,7 @@ def test_psi4api_ammonia():
             nmers_up_to=2, 
             r_cut_monomer=8.2, 
             cle_run_type=["test"]
-            ) 
+            )
+    
+    # Clean-up generated test files
+    subprocess.call(["rm", "crystalatte/data/Carbon_Dioxide.xyz"])

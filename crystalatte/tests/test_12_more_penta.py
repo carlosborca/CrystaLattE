@@ -6,10 +6,12 @@ Unit and regression test for the crystalatte package.
 from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
+import subprocess
 import sys
 
 def test_more_than_pentamers():
-    """Main test of the psi4api mode with the ammonia crystal."""
+    """.
+    """
 
     with pytest.raises(SystemExit):
         crystalatte.main(cif_input="crystalatte/data/Carbon_Dioxide.cif", 
@@ -21,4 +23,7 @@ def test_more_than_pentamers():
             r_cut_com=1.0,
             r_cut_monomer=3.0, 
             cle_run_type=["test"]
-            ) 
+            )
+
+    # Clean-up generated test files
+    subprocess.call(["rm", "crystalatte/data/Carbon_Dioxide.xyz"])

@@ -6,6 +6,7 @@ Unit and regression test for the crystalatte package.
 from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
+import subprocess
 import sys
 
 def test_timings_ammonia():
@@ -105,3 +106,6 @@ def test_timings_ammonia():
 
     # Test the crystal lattice energy.
     assert compare_values(0.0, cle, atol=1.e-8)
+    
+    # Clean-up generated test files.
+    subprocess.call(["rm", "crystalatte/data/Ammonia.xyz"])

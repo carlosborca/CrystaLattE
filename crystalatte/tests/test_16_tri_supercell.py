@@ -6,11 +6,12 @@ Unit and regression test for the crystalatte package.
 from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
+import subprocess
 import sys
 
 def test_supercell_triazine():
-    """Test to reproduce the structures of A. L. Ringer and C. D. 
-    Sherrill, Chem. Eur. J., 2008, 14, pp 2542–2547."""
+    """.
+    """
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
     nmers, cle = crystalatte.main(cif_input="crystalatte/data/Triazine.cif", 
@@ -86,3 +87,6 @@ def test_supercell_triazine():
 
     # Test the crystal lattice energy.
     assert compare_values(0.0, cle, atol=1.e-8)
+    
+    # Clean-up generated test files
+    subprocess.call(["rm", "crystalatte/data/Triazine.xyz"])

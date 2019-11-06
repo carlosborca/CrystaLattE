@@ -6,6 +6,7 @@ Unit and regression test for the crystalatte package.
 from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
+import subprocess
 import sys
 
 def test_input_parser():
@@ -38,3 +39,6 @@ def test_input_parser():
     assert compare("nocp", keywords['psi4_bsse'])
     assert compare("500 MB", keywords['psi4_memory'])
     assert compare('HF/STO-3G', keywords['psi4_method'])
+
+    # Clean-up generated test files
+    subprocess.call(["rm", "crystalatte/data/Ammonia.xyz"])
