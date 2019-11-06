@@ -35,7 +35,7 @@
 # Import standard Python modules.
 import os
 import time
-
+import shutil
 
 # ======================================================================
 def psithonyzer_success_check(fname, verbose=0):
@@ -108,28 +108,69 @@ def psithonyzer_get_nmer_data(fname, verbose=0):
             if "Psithon input for N-mer:" in line:
                 splt = line[:-1].split(":")
                 key = splt[-1].strip()
-            
+
+            # TODO: Only works on Linux and MacOS.
+            # Find the name of the XYZ from which this file generated.
+            if "Generated from:" in line:
+                splt = line[:-1].split(":")
+                cif_path = splt[-1].strip()
+                tree = cif_path.split("/")
+                cif_output = tree[-1].strip()
+
+                # Remove .xyz extension in case it has it.
+                if cif_output.endswith(".xyz"):
+                    cif_output = cif_output[:-4]
+
             # Find the number of replicas of the N-mer.
             if "Number of replicas:" in line:
                 splt = line[:-1].split(":")
                 replicas = int(splt[-1].strip())
 
-            # Find the number of replicas of the N-mer.
-            if "Priority index for input:" in line:
+            # NOTE: Strings deprecated in nmer2psithon() function.
+            # These chunks are kept here for backward compatibility.
+            if "# COM Priority index for input:" in line:
+                splt = line[:-1].split(":")
+                priority_com = float(splt[-1].strip())
+
+            if "# Priority index for input:" in line:
+                splt = line[:-1].split(":")
+                priority_min = float(splt[-1].strip())
+                # Because this type of priority was not originally
+                # implemented, will be replaced with the legacy type.
+                priority_cutoff = float(splt[-1].strip())
+
+            # Get the cutoff-based priority of the N-mer.
+            if "# Cutoff priority" in line:
+                splt = line[:-1].split(":")
+                priority_cutoff = float(splt[-1].strip())
+
+            # Get the atomic-separation-based priority of the N-mer.
+            if "# Separation priority" in line:
                 splt = line[:-1].split(":")
                 priority_min = float(splt[-1].strip())
 
+            # Get the COM-separation-based priority of the N-mer.
+            if "# COM priority" in line:
+                splt = line[:-1].split(":")
+                priority_com = float(splt[-1].strip())
+
             # Find the list of minimum monomer separations of the N-mer.
-            if "Minimum monomer separations:" in line:
+            if "# Minimum monomer separations:" in line:
                 splt = line[:-1].split(":")
                 msps = splt[-1].strip()
                 min_monomer_separations = msps.split()
 
             # Find the list of COM monomer separations of the N-mer.
-            if "Minimum COM separations:" in line:
+            if "# Minimum COM separations:" in line:
                 splt = line[:-1].split(":")
                 csps = splt[-1].strip()
                 com_monomer_separations = csps.split()
+
+            # Find the nuclear repulsion energy of the N-mer.
+            if "# Nuclear repulsion energy:" in line:
+                splt = line[:-1].split(":")
+                nuclear_repulsion_energy = splt[-1].strip()
+                nre = nuclear_repulsion_energy.split()
             
             # Find where the start of the N-Body decomposition 
             # information is.
@@ -156,9 +197,8 @@ def psithonyzer_get_nmer_data(fname, verbose=0):
                     lastl = line.strip().split()
                     number_of_monomers = int(lastl[0])
                     n_body_energy = float(lastl[-1]) * 4.184 # Same value as in qcdb.psi_cal2J
-                    #print(line[:-1]) #debug
             
-    return key, number_of_monomers, replicas, priority_min, min_monomer_separations, com_monomer_separations, n_body_energy
+    return key, number_of_monomers, replicas, priority_cutoff, priority_min, priority_com, min_monomer_separations, com_monomer_separations, nre, n_body_energy
     
 # ======================================================================
 
@@ -194,14 +234,14 @@ def psithonyzer_print_results(results, crystal_lattice_energy, verbose=0):
 
     if verbose >= 1:
         print("Summary of results:")
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(shutil.get_terminal_size().columns - 112)))
         print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
         print("N-mer Name                 |    MB Energy | Rep. | Contribution | Lattice Ener. |     Priority | Separations")
         print("                           |     (kJ/mol) |  (#) |     (kJ/mol) |      (kJ/mol) | (Arb. Units) | (A)")
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------")
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(shutil.get_terminal_size().columns - 112)))
         for result in results:
             print(result)
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------------------------------------------------------------\n")
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}\n".format("-"*(shutil.get_terminal_size().columns - 112)))
         #print("Crystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy / 2625.500)) # Same value as in psi_hartree2kJmol
         print("Crystal Lattice Energy (kJ/mol)   = {:9.8f}".format(crystal_lattice_energy))
         print("Crystal Lattice Energy (kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy / 4.184)) # Same value as in psi_cal2J
@@ -266,7 +306,7 @@ def psithonyzer_main(verbose=0):
                 # If the output was ran successufully, get the N-mer name
                 # to create a key for its soon-to-be created dictionary
                 # and get the data to populate such N-mer dictionary.
-                key, number_of_monomers, replicas, priority_min, min_monomer_separations, com_monomer_separations, n_body_energy = psithonyzer_get_nmer_data(f)
+                key, number_of_monomers, replicas, p_cutoff, p_min, p_com, min_mon_seps, com_mon_seps, nre, n_body_energy = psithonyzer_get_nmer_data(f)
 
                 # Create a new dictionary for the current N-mer.
                 nmers[key]= {}
@@ -274,20 +314,17 @@ def psithonyzer_main(verbose=0):
                 # Populate the current N-mer dictionary with the data
                 # from the Psi4 output file.
                 nmers[key]["replicas"] = replicas
-                nmers[key]["priority_min"] = priority_min
-                nmers[key]["min_monomer_separations"] = min_monomer_separations
-                nmers[key]["com_monomer_separations"] = com_monomer_separations
+                nmers[key]["priority_cutoff"] = p_cutoff
+                nmers[key]["priority_min"] = p_min
+                nmers[key]["priority_com"] = p_com
+                nmers[key]["min_monomer_separations"] = min_mon_seps
+                nmers[key]["com_monomer_separations"] = com_mon_seps
+                nmers[key]["nre"] = nre
                 nmers[key]["nambe"] = n_body_energy 
                 nmers[key]["contrib"] = n_body_energy * replicas / number_of_monomers
                 
                 crystal_lattice_energy += nmers[key]["contrib"]
 
-                #print(n_body_energy) #debug
-                #print(replicas) #debug
-                #print(number_of_monomers) #debug
-                #print(nmers[key]["contrib"]) #debug
-                #print(crystal_lattice_energy) #debug
-                
         else:
             continue
 
@@ -295,7 +332,7 @@ def psithonyzer_main(verbose=0):
     nmer_keys = list(nmers.keys())
 
     # Sort the list in decreasing priority order.
-    nmer_keys.sort(key = lambda x: -nmers[x]['priority_min'])
+    nmer_keys.sort(key = lambda x: -nmers[x]['priority_cutoff'])
 
     # The next line was replaced to trigger the calculations in order.
     for keynmer in nmer_keys:

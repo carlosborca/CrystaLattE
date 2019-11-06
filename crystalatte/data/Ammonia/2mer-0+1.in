@@ -2,14 +2,14 @@
 
 # Generated from:               crystalatte/data/Ammonia.xyz
 # Psithon input for N-mer:      2mer-0+1
-# Number of Atoms per Monomer:  [4, 4]
+# Number of atoms per monomer:  [4, 4]
 # Number of replicas:           6
-# Cutoff Priority:              1.748924494026e-03
+# Cutoff priority:              1.748924494026e-03
 # Minimum monomer separations:  2.588 
-# Separation Priority:          8.552208792327e-03
+# Separation priority:          8.552208792327e-03
 # Minimum COM separations:      3.883 
 # COM priority:                 2.531710317258e-03
-# Nuclear Repulsion:            38.18102741857883 a.u.
+# Nuclear repulsion energy:     38.18102741857883 a.u.
 
 memory 500 MB
 
