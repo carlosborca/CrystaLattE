@@ -1565,16 +1565,18 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     """
 
     # This strings are used by the psithonyzer script. Any changes
-    # applied to them here must be synchronized there.
+    # applied to them here must be synchronized there The order in
+    # which they are printed is also important, especially for the
+    # different types of priorities.
     psithon_input =  "# PSI4 file produced by CrystaLattE\n\n"
     psithon_input += "# Generated from:               {}\n".format(cif_output)
     psithon_input += "# Psithon input for N-mer:      {}\n".format(keynmer)
     psithon_input += "# Number of atoms per monomer:  {}\n".format(nmer["atoms_per_monomer"])
     psithon_input += "# Number of replicas:           {}\n".format(nmer["replicas"])
-    psithon_input += "# Separation priority:          {:12.12e}\n".format(nmer["priority_min"])
-    psithon_input += "# Minimum monomer separations:  {}\n".format(rminseps.lstrip(" "))
     psithon_input += "# COM priority:                 {:12.12e}\n".format(nmer["priority_com"])
     psithon_input += "# Minimum COM separations:      {}\n".format(rcomseps.lstrip(" "))
+    psithon_input += "# Separation priority:          {:12.12e}\n".format(nmer["priority_min"])
+    psithon_input += "# Minimum monomer separations:  {}\n".format(rminseps.lstrip(" "))
     psithon_input += "# Cutoff priority:              {:12.12e}\n".format(nmer["priority_cutoff"])
     psithon_input += "# Nuclear repulsion energy:     {} a.u.\n".format(nmer["nre"])
     

@@ -109,22 +109,66 @@ def psithonyzer_get_nmer_data(fname, verbose=0):
                 splt = line[:-1].split(":")
                 key = splt[-1].strip()
 
-            # TODO: Only works on Linux and MacOS.
+            # NOTE: This only works on Linux and MacOS.
             # Find the name of the XYZ from which this file generated.
             if "Generated from:" in line:
                 splt = line[:-1].split(":")
-                cif_path = splt[-1].strip()
-                tree = cif_path.split("/")
-                cif_output = tree[-1].strip()
+                xyz_path = splt[-1].strip()
+                tree = xyz_path.split("/")
+                sc_xyz = tree[-1].strip()
 
                 # Remove .xyz extension in case it has it.
-                if cif_output.endswith(".xyz"):
-                    cif_output = cif_output[:-4]
+                if sc_xyz.endswith(".xyz"):
+                    sc_xyz = sc_xyz[:-4]
 
             # Find the number of replicas of the N-mer.
             if "Number of replicas:" in line:
                 splt = line[:-1].split(":")
                 replicas = int(splt[-1].strip())
+
+            # Find the list of minimum monomer separations of the N-mer.
+            if "# Minimum monomer separations:" in line:
+                splt = line[:-1].split(":")
+                msps = splt[-1].strip()
+                min_monomer_separations = msps.split()
+
+                # NOTE: Because the cutoff priority was not originally
+                # implemented in CrystaLattE, if it is not found in the
+                # psithon output, it will be approximated from the list
+                # of minimum monomer separations.
+                max_sep = float(max(min_monomer_separations))
+
+                if len(min_monomer_separations) == 1:
+                    num_mon = 2.0
+
+                if len(min_monomer_separations) == 3:
+                    num_mon = 3.0
+
+                if len(min_monomer_separations) == 6:
+                    num_mon = 4.0
+
+                if len(min_monomer_separations) == 10:
+                    num_mon = 5.0
+
+                main_contrib = 1.0/(max_sep**(num_mon**2.0))
+
+                idx = 0
+                add = 0.0
+                for rmin in min_monomer_separations:
+
+                    if idx != 0:
+                        one_over_rmin3 = 1.0e-10/(float(rmin)**(num_mon**2.0))
+                        add += one_over_rmin3
+
+                    idx += 1
+
+                priority_cutoff = main_contrib + add
+
+            # Find the list of COM monomer separations of the N-mer.
+            if "# Minimum COM separations:" in line:
+                splt = line[:-1].split(":")
+                csps = splt[-1].strip()
+                com_monomer_separations = csps.split()
 
             # NOTE: Strings deprecated in nmer2psithon() function.
             # These chunks are kept here for backward compatibility.
@@ -135,9 +179,6 @@ def psithonyzer_get_nmer_data(fname, verbose=0):
             if "# Priority index for input:" in line:
                 splt = line[:-1].split(":")
                 priority_min = float(splt[-1].strip())
-                # Because this type of priority was not originally
-                # implemented, will be replaced with the legacy type.
-                priority_cutoff = float(splt[-1].strip())
 
             # Get the cutoff-based priority of the N-mer.
             if "# Cutoff priority" in line:
@@ -154,33 +195,21 @@ def psithonyzer_get_nmer_data(fname, verbose=0):
                 splt = line[:-1].split(":")
                 priority_com = float(splt[-1].strip())
 
-            # Find the list of minimum monomer separations of the N-mer.
-            if "# Minimum monomer separations:" in line:
-                splt = line[:-1].split(":")
-                msps = splt[-1].strip()
-                min_monomer_separations = msps.split()
-
-            # Find the list of COM monomer separations of the N-mer.
-            if "# Minimum COM separations:" in line:
-                splt = line[:-1].split(":")
-                csps = splt[-1].strip()
-                com_monomer_separations = csps.split()
-
             # Find the nuclear repulsion energy of the N-mer.
             if "# Nuclear repulsion energy:" in line:
                 splt = line[:-1].split(":")
                 nuclear_repulsion_energy = splt[-1].strip()
                 nre = nuclear_repulsion_energy.split()
-            
+
             # Find where the start of the N-Body decomposition 
             # information is.
             if "n-Body" in line:
                 nbini = i
-            
+
             # Find where the end of the N-Body decomposition 
             # information is.
             if nbini:
-                
+
                 # If the line is blank, record the line number as the
                 # end of the N-Body decomposition block, unless it has
                 # been recorded alredy.
@@ -189,7 +218,7 @@ def psithonyzer_get_nmer_data(fname, verbose=0):
                         continue
                     else:
                         nbend = i
-                
+
                 # Take the N-Body energy and the number of monomers in
                 # the N-mer from the last line of the N-Body block. This
                 # number is in kcal/mol and is now converted to kJ/mol
@@ -197,9 +226,9 @@ def psithonyzer_get_nmer_data(fname, verbose=0):
                     lastl = line.strip().split()
                     number_of_monomers = int(lastl[0])
                     n_body_energy = float(lastl[-1]) * 4.184 # Same value as in qcdb.psi_cal2J
-            
-    return key, number_of_monomers, replicas, priority_cutoff, priority_min, priority_com, min_monomer_separations, com_monomer_separations, nre, n_body_energy
-    
+
+    return sc_xyz, key, number_of_monomers, replicas, priority_cutoff, priority_min, priority_com, min_monomer_separations, com_monomer_separations, nre, n_body_energy
+
 # ======================================================================
 
 # ======================================================================
@@ -306,7 +335,7 @@ def psithonyzer_main(verbose=0):
                 # If the output was ran successufully, get the N-mer name
                 # to create a key for its soon-to-be created dictionary
                 # and get the data to populate such N-mer dictionary.
-                key, number_of_monomers, replicas, p_cutoff, p_min, p_com, min_mon_seps, com_mon_seps, nre, n_body_energy = psithonyzer_get_nmer_data(f)
+                sc_xyz, key, number_of_monomers, replicas, p_cutoff, p_min, p_com, min_mon_seps, com_mon_seps, nre, n_body_energy = psithonyzer_get_nmer_data(f)
 
                 # Create a new dictionary for the current N-mer.
                 nmers[key]= {}
@@ -358,10 +387,9 @@ def psithonyzer_main(verbose=0):
                 nmers[keynmer]["replicas"],
                 nmers[keynmer]["contrib"],
                 partial_crystal_lattice_energy,
-                nmers[keynmer]["priority_min"],
+                nmers[keynmer]["priority_cutoff"],
                 rminseps)
         
-        #print(nmer_result) #debug
         results.append(nmer_result)
 
         nmer_csv = "{:26} , {:>12.8f} , {:>4} , {:>12.8f} , {:>13.8f} , {:12.6e} , {}".format(
@@ -373,24 +401,21 @@ def psithonyzer_main(verbose=0):
                 nmers[keynmer]["priority_min"],
                 rminsepscsv)
         
-        #print(nmer_csv) #debug
         csv_lines.append(nmer_csv) #debug
 
     psithonyzer_print_header(verbose)
     psithonyzer_print_results(results, crystal_lattice_energy, verbose)
     psithonyzer_print_end_msg(start, verbose)
 
-    #TODO: This should be the CIF file name, when that is inclued in 
-    #      the Psi4 output
-    csvname = "Results.csv"
+    try:
+        csvname = sc_xyz + ".csv"
+
+    except NameError:
+        csvname = "Results.csv"
 
     with open(csvname, 'w') as csvf:
         for line in csv_lines:
-            #print(line) #debug
             csvf.write(line + "\n")
     
-    #print("\nThe N-mers Dictionary looks like this:\n") #debug
-    #print(nmers) #debug
-
 if __name__ == "__main__":
     psithonyzer_main(1)
