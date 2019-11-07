@@ -38,7 +38,7 @@ import time
 import shutil
 
 # ======================================================================
-def psithonyzer_success_check(fname, verbose=0):
+def psz_success_check(fname, verbose=0):
     """Takes a Psi4 output file and checks if it contains the string
     'coffee' to decide if the calculation was successful or not.
 
@@ -67,7 +67,7 @@ def psithonyzer_success_check(fname, verbose=0):
 
 
 # ======================================================================
-def psithonyzer_get_nmer_data(fname, verbose=0):
+def psz_get_nmer_data(fname, verbose=0):
     """.
     
     Arguments:
@@ -235,7 +235,7 @@ def psithonyzer_get_nmer_data(fname, verbose=0):
 # ======================================================================
 
 # ======================================================================
-def psithonyzer_print_header(verbose=0):
+def psz_print_header(verbose=0):
     """Prints a the header of the program when starting the
     execution.
     
@@ -255,7 +255,7 @@ def psithonyzer_print_header(verbose=0):
 # ======================================================================
 
 # ======================================================================
-def psithonyzer_print_results(results, crystal_lattice_energy, verbose=0):
+def psz_print_results(results, crystal_lattice_energy, verbose=0):
     """Prints a summary of the energy results at the end of the
     execution.
     
@@ -281,7 +281,7 @@ def psithonyzer_print_results(results, crystal_lattice_energy, verbose=0):
 
 
 # ======================================================================
-def psithonyzer_print_end_msg(start, verbose=0):
+def psz_print_end_msg(start, verbose=0):
     """.
     """
 
@@ -295,7 +295,7 @@ def psithonyzer_print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def psithonyzer_main(verbose=0):
+def psz_main(verbose=0):
 
     # Start counting execution time.
     start = time.time()
@@ -331,14 +331,14 @@ def psithonyzer_main(verbose=0):
 
             # Check if Psi4 exited successfully.
             # Why bothering analyzing a file otherwise?
-            success = psithonyzer_success_check(f)
+            success = psz_success_check(f)
             #print(success) #debug
     
             if success:
                 # If the output was ran successufully, get the N-mer name
                 # to create a key for its soon-to-be created dictionary
                 # and get the data to populate such N-mer dictionary.
-                sc_xyz, key, number_of_monomers, replicas, p_cutoff, p_min, p_com, min_mon_seps, com_mon_seps, nre, n_body_energy = psithonyzer_get_nmer_data(f)
+                sc_xyz, key, number_of_monomers, replicas, p_cutoff, p_min, p_com, min_mon_seps, com_mon_seps, nre, n_body_energy = psz_get_nmer_data(f)
 
                 # Create a new dictionary for the current N-mer.
                 nmers[key]= {}
@@ -406,9 +406,9 @@ def psithonyzer_main(verbose=0):
         
         csv_lines.append(nmer_csv) #debug
 
-    psithonyzer_print_header(verbose)
-    psithonyzer_print_results(results, crystal_lattice_energy, verbose)
-    psithonyzer_print_end_msg(start, verbose)
+    psz_print_header(verbose)
+    psz_print_results(results, crystal_lattice_energy, verbose)
+    psz_print_end_msg(start, verbose)
 
     try:
         csvname = sc_xyz + ".csv"
@@ -421,4 +421,4 @@ def psithonyzer_main(verbose=0):
             csvf.write(line + "\n")
     
 if __name__ == "__main__":
-    psithonyzer_main(1)
+    psz_main(1)
