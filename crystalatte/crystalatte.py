@@ -440,6 +440,40 @@ def read_cif(fNameIn):
 # =============================================================================
 
 
+# ======================================================================
+def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose=1):
+    """Takes the name of a CIF input file and the name of a .xyz output
+    file, as well as the number of replicas of the rectangular cell in
+    each direction (A, B, and C). It then calls Read_CIF() and passes
+    that information as arguments to generate an .xyz file of the
+    supercell.
+
+    Arguments:
+    <str> cif_input
+        CIF input filename.
+    <str> cif_output
+        XYZ output filename.
+    <int> cif_a
+        Number of replicas of the cartesian unit cell in `a` direction.
+    <int> cif_b
+        Number of replicas of the cartesian unit cell in `b` direction.
+    <int> cif_c
+        Number of replicas of the cartesian unit cell in `c` direction.
+    <int> verbose
+        Adjusts the level of detail of the printouts.
+    """
+
+    cif_arguments = ["", "-i", cif_input, "-o", cif_output, "-b", cif_a, cif_b, cif_c, "-r"]
+
+    if verbose >= 2:
+        print("\nGenerating the supercell .xyz file.")
+        print("\nThe following arguments will be passed to the CIF reader script:")
+        print("./Read_CIF.py" + " ".join(str(cif_argument) for cif_argument in cif_arguments) + "\n")
+
+    return cif_arguments
+# ======================================================================
+
+
 # =============================================================================
 def cif_main(args):
 
@@ -761,40 +795,6 @@ def cif_main(args):
         print('\nERROR: Failed to write to output file')
     
     fOut.close()
-# ======================================================================
-
-
-# ======================================================================
-def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose=1):
-    """Takes the name of a CIF input file and the name of a .xyz output
-    file, as well as the number of replicas of the rectangular cell in
-    each direction (A, B, and C). It then calls 
-    Read_CIF() and passes that information as arguments to generate an
-    .xyz file of the supercell.
-
-    Arguments:
-    <str> cif_input
-        CIF input filename.
-    <str> cif_output
-        XYZ output filename.
-    <int> cif_a
-        Number of replicas of the cartesian unit cell in `a` direction.
-    <int> cif_b
-        Number of replicas of the cartesian unit cell in `b` direction.
-    <int> cif_c
-        Number of replicas of the cartesian unit cell in `c` direction.
-    <int> verbose
-        Adjusts the level of detail of the printouts.
-    """
-
-    cif_arguments = ["", "-i", cif_input, "-o", cif_output, "-b", cif_a, cif_b, cif_c, "-r"]
-
-    if verbose >= 2:
-        print("\nGenerating the supercell .xyz file.")
-        print("\nThe following arguments will be passed to the CIF reader script:")
-        print("./Read_CIF.py" + " ".join(str(cif_argument) for cif_argument in cif_arguments) + "\n")
-    
-    return cif_arguments
 # ======================================================================
 
 
