@@ -7,30 +7,25 @@ from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
 import subprocess
-import sys
 
 def test_supercell_triazine():
-    """.
-    """
+    """Checks that the program prints a warning message indicating that
+    the supercell contains duplicate coordinates and that they will be
+    skipped. Then, it should state the new number of unique coordinates
+    in the supercell."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers, cle = crystalatte.main(cif_input="crystalatte/data/Triazine.cif", 
-            cif_output="crystalatte/data/Triazine.xyz", 
+    nmers, cle = crystalatte.main(
+            cif_input="crystalatte/data/cif/Triazine.cif", 
             cif_a=3, 
             cif_b=3, 
             cif_c=3, 
             nmers_up_to=2, 
-            r_cut_com=8.0, 
             r_cut_monomer=8.0, 
             r_cut_dimer=2.9, 
-            r_cut_trimer=2.9, 
-            r_cut_tetramer=2.9, 
-            r_cut_pentamer=2.9, 
             cle_run_type=["test"], 
-            psi4_method="HF/STO-3G", 
-            psi4_bsse="nocp", 
-            psi4_memory="500 MB", 
-            verbose=2)
+            verbose=2
+            )
     
     # For debug.
     #import pprint
@@ -89,4 +84,4 @@ def test_supercell_triazine():
     assert compare_values(0.0, cle, atol=1.e-8)
     
     # Clean-up generated test files
-    subprocess.call(["rm", "crystalatte/data/Triazine.xyz"])
+    subprocess.call(["rm", "sc.xyz"])

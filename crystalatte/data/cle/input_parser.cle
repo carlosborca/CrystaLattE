@@ -3,7 +3,7 @@
 # Blank lines and lines starting with the hash character are omitted.
 # Padding blank spaces are also ignored.
 
-cif_input       = crystalatte/data/Ammonia.cle
+cif_input       = crystalatte/data/cif/Ammonia.cif
 cif_output      = crystalatte/data/Ammonia.xyz
 cif_a           = 2
 cif_b           = 3

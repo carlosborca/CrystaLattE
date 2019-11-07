@@ -7,31 +7,26 @@ from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
 import subprocess
-import sys
 
 def test_testmode_benzene():
-    """Test to reproduce the structures of A. L. Ringer and C. D. 
-    Sherrill, Chem. Eur. J., 2008, 14, pp 2542–2547."""
+    """Checks that the program is able to reproduce the generation of
+    the structures communicated in A. L. Ringer and C. D. Sherrill,
+    Chem. Eur. J., 2008, 14, pp 2542–2547, using the chemical space
+    eigenvalues filter in test mode."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers, cle = crystalatte.main(cif_input="crystalatte/data/Benzene.cif", 
-            cif_output="crystalatte/data/Benzene.xyz", 
+    nmers, cle = crystalatte.main(
+            cif_input="crystalatte/data/cif/Benzene.cif", 
             cif_a=5, 
             cif_b=5, 
             cif_c=5, 
-            uniq_filter="Dreamaligner",
             nmers_up_to=2, 
             r_cut_com=9.5, 
             r_cut_monomer=11.4, 
             r_cut_dimer=11.4, 
-            r_cut_trimer=11.4, 
-            r_cut_tetramer=11.4, 
-            r_cut_pentamer=11.4, 
             cle_run_type=["test"], 
-            psi4_method="HF/STO-3G", 
-            psi4_bsse="nocp", 
-            psi4_memory="500 MB", 
-            verbose=2)
+            verbose=2
+            )
     
     # For debug.
     #import pprint
@@ -147,7 +142,6 @@ def test_testmode_benzene():
     assert compare_values(11.6891856781, min(nmers["2mer-0+15"]["min_monomer_separations"]), atol=1.e-8)
     assert compare_values(14.1518785972, min(nmers["2mer-0+27"]["min_monomer_separations"]), atol=1.e-8)
 
-
     # Test the COM cutoffs for each N-mer.
     assert compare_values(11.3126785806, min(nmers["2mer-0+1"]["com_monomer_separations"]),  atol=1.e-8)
     assert compare_values(10.9828900652, min(nmers["2mer-0+2"]["com_monomer_separations"]),  atol=1.e-8)
@@ -163,5 +157,5 @@ def test_testmode_benzene():
     # Test the crystal lattice energy.
     assert compare_values(0.0, cle, atol=1.e-8)
 
-    # Clean-up generated test files.
-    subprocess.call(["rm", "crystalatte/data/Benzene.xyz"])
+    # Clean-up generated test files
+    subprocess.call(["rm", "sc.xyz"])

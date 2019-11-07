@@ -7,14 +7,15 @@ from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
 import subprocess
-import sys
 
 def test_psi4api_ammonia():
-    """Main test of the psi4api mode with the ammonia crystal."""
+    """Checks that the program prints an error message when an invalid
+    monomer cutoff, that is loger than half the smallest dimension of
+    the supercell has been chosen."""
 
     with pytest.raises(SystemExit):
-        crystalatte.main(cif_input="crystalatte/data/Carbon_Dioxide.cif", 
-            cif_output="crystalatte/data/Carbon_Dioxide.xyz", 
+        crystalatte.main(
+            cif_input="crystalatte/data/cif/Carbon_Dioxide.cif", 
             cif_a=3, 
             cif_b=3, 
             cif_c=3, 
@@ -24,4 +25,4 @@ def test_psi4api_ammonia():
             )
     
     # Clean-up generated test files
-    subprocess.call(["rm", "crystalatte/data/Carbon_Dioxide.xyz"])
+    subprocess.call(["rm", "sc.xyz"])

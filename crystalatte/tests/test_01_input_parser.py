@@ -7,20 +7,18 @@ from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
 import subprocess
-import sys
 
 def test_input_parser():
-    """
-    ."""
+    """Test the input parser function of the CrystaLattE program."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    keywords = crystalatte.input_parser("crystalatte/data/Ammonia.cle")
+    keywords = crystalatte.input_parser("crystalatte/data/cle/input_parser.cle")
     
     # For debug.
     #import pprint
     #pprint.pprint(keywords)
 
-    assert compare_values(3, keywords['cif_a'])
+    assert compare_values(3, keywords['cif_a']) # Checks automatic choosing of odd a.
     assert compare_values(3, keywords['cif_b'])
     assert compare_values(3, keywords['cif_c'])
     assert compare_values(1.2, keywords['bfs_thresh'])
@@ -32,7 +30,7 @@ def test_input_parser():
     assert compare_values(3.7, keywords['r_cut_tetramer'])
     assert compare_values(3.7, keywords['r_cut_trimer'])
     assert compare_values(2, keywords['verbose'])
-    assert compare("crystalatte/data/Ammonia.cif", keywords['cif_input'])
+    assert compare("crystalatte/data/cif/Ammonia.cif", keywords['cif_input'])
     assert compare("crystalatte/data/Ammonia.xyz", keywords['cif_output'])
     assert compare(["test"], keywords['cle_run_type'])
     assert compare("ChSEV", keywords['uniq_filter'])

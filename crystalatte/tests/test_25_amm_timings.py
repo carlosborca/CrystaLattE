@@ -7,14 +7,14 @@ from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
 import subprocess
-import sys
 
 def test_timings_ammonia():
-    """Main test of the timings mode with the ammonia crystal."""
+    """Checks the timings mode with the ammonia crystal."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers, cle = crystalatte.main(cif_input="crystalatte/data/Ammonia.cif", 
-            cif_output="crystalatte/data/Ammonia.xyz", 
+    nmers, cle = crystalatte.main(
+            cif_input="crystalatte/data/cif/Ammonia.cif", 
+            cif_output="crystalatte/data/cif/Ammonia.xyz", 
             cif_a=3, 
             cif_b=3, 
             cif_c=3, 
@@ -29,7 +29,8 @@ def test_timings_ammonia():
             psi4_method="HF/STO-3G", 
             psi4_bsse="nocp", 
             psi4_memory="500 MB", 
-            verbose=2)
+            verbose=2
+            )
 
     # For debugging.
     #import pprint
@@ -108,4 +109,4 @@ def test_timings_ammonia():
     assert compare_values(0.0, cle, atol=1.e-8)
     
     # Clean-up generated test files.
-    subprocess.call(["rm", "crystalatte/data/Ammonia.xyz"])
+    subprocess.call(["rm", "crystalatte/data/cif/Ammonia.xyz"])

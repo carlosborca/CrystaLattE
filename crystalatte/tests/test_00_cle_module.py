@@ -9,4 +9,5 @@ import sys
 
 def test_crystalatte_imported():
     """Sample test, will always pass so long as import statement worked"""
+    
     assert "crystalatte" in sys.modules

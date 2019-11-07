@@ -1,0 +1,6 @@
+# Default CrystaLattE Test:
+
+# Blank lines and lines starting with the hash character are omitted.
+# Padding blank spaces are also ignored.
+
+cif_input       = crystalatte/data/cif/Ammonia.cif

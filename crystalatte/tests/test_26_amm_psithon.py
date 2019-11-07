@@ -7,14 +7,15 @@ from qcelemental.testing import compare, compare_values
 import crystalatte
 import pytest
 import subprocess
-import sys
 
 def test_psithon_ammonia():
-    """Main test of the psi4api mode with the ammonia crystal."""
+    """Checks that the program can run in psithon mode and generate
+    PSI4 input files for the ammonia crystal."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers, cle = crystalatte.main(cif_input="crystalatte/data/Ammonia.cif", 
-            cif_output="crystalatte/data/Ammonia.xyz", 
+    nmers, cle = crystalatte.main(
+            cif_input="crystalatte/data/cif/Ammonia.cif", 
+            cif_output="crystalatte/data/cif/Ammonia.xyz", 
             cif_a=3, 
             cif_b=3, 
             cif_c=3, 
@@ -29,7 +30,8 @@ def test_psithon_ammonia():
             psi4_method="HF/STO-3G", 
             psi4_bsse="nocp", 
             psi4_memory="500 MB", 
-            verbose=2)
+            verbose=2
+            )
 
     # For debugging.
     #import pprint
@@ -108,5 +110,5 @@ def test_psithon_ammonia():
     assert compare_values(0.0, cle, atol=1.e-8)
 
     # Clean-up generated test files.
-    subprocess.call(["rm", "-r", "crystalatte/data/Ammonia"])
-    subprocess.call(["rm", "crystalatte/data/Ammonia.xyz"])
+    subprocess.call(["rm", "-r", "crystalatte/data/cif/Ammonia"])
+    subprocess.call(["rm", "crystalatte/data/cif/Ammonia.xyz"])
