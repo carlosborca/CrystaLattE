@@ -115,11 +115,14 @@ def psithonyzer_get_nmer_data(fname, verbose=0):
                 splt = line[:-1].split(":")
                 xyz_path = splt[-1].strip()
                 tree = xyz_path.split("/")
-                sc_xyz = tree[-1].strip()
+                sc = tree[-1].strip()
 
                 # Remove .xyz extension in case it has it.
-                if sc_xyz.endswith(".xyz"):
-                    sc_xyz = sc_xyz[:-4]
+                if sc.endswith(".xyz"):
+                    sc_xyz = sc[:-4]
+
+                else:
+                    sc_xyz = sc
 
             # Find the number of replicas of the N-mer.
             if "Number of replicas:" in line:
