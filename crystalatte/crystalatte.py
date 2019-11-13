@@ -1593,7 +1593,7 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     psithon_input += "# Separation priority:          {:12.12e}\n".format(nmer["priority_min"])
     psithon_input += "# Minimum monomer separations:  {}\n".format(rminseps.lstrip(" "))
     psithon_input += "# Cutoff priority:              {:12.12e}\n".format(nmer["priority_cutoff"])
-    psithon_input += "# Nuclear repulsion energy:     {} a.u.\n".format(nmer["nre"])
+    psithon_input += "# Nuclear repulsion energy:     {}\n".format(nmer["nre"])
     
     psithon_input += "\nmemory {}\n".format(psi4_memory)
     

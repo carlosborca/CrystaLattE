@@ -201,8 +201,7 @@ def psz_get_nmer_data(fname, verbose=0):
             # Find the nuclear repulsion energy of the N-mer.
             if "# Nuclear repulsion energy:" in line:
                 splt = line[:-1].split(":")
-                nuclear_repulsion_energy = splt[-1].strip()
-                nre = nuclear_repulsion_energy.split()
+                nre = float(splt[-1].strip())
 
             # Find where the start of the N-Body decomposition 
             # information is.
