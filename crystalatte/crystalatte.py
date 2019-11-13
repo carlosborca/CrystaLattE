@@ -359,6 +359,10 @@ def read_cif(fNameIn):
         print("\nERROR: Failed to find CIF file '{0}'".format(fNameIn))
         sys.exit()
 
+    except:
+        print("\nERROR: An unknown error occured when opening or reading CIF file '{0}'".format(fNameIn))
+        sys.exit()
+
     # Use the CifFile parser to extract the data. Although there might
     # be multiple data blocks, we'll only use the first one.
     
@@ -793,16 +797,18 @@ def cif_main(args):
     
         if (fNameOut.endswith('.xyz')):
             write_xyz(atoms, box, fOut)
-    
-        elif (fNameOut.endswith('.lammpstrj')):
-            write_lammpstrj(atoms, box, fOut)
-    
-        elif (fNameOut.endswith('.gro')):
-            write_gro(atoms, box, fOut)
-    
+
+    except TypeError:
+        print("\nERROR: A type error occured when opening or writting XYZ file '{0}'".format(fNameOut))
+        sys.exit()
+
+    except NameError:
+        print("\nERROR: Failed to open XYZ file.")
+        sys.exit()
+
     except:
-        print('\nERROR: Failed to write to output file')
-    
+        print('\nERROR: Failed to write to XYZ output file')
+
     fOut.close()
 # ======================================================================
 

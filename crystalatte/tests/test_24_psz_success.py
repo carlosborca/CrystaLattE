@@ -14,6 +14,7 @@ def test_psz_success_check():
     string."""
 
     with open("beer.out", "w") as f:
+        f.write("# This is a dummy Psi4 output test file.")
         f.write("Psi4 exiting successfully. Buy a developer a beer!")
     
     with open("coffee.out", "w") as f:
