@@ -96,6 +96,9 @@ def psz_get_nmer_data(fname, verbose=0):
         nbini = None
         nbend = None
 
+        # Initialize the value of required variables.
+        sc_xyz = None
+        nre = None
         n_body_energy = None
 
         for line in outf:
