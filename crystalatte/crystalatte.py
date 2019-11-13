@@ -346,8 +346,17 @@ def read_cif(fNameIn):
             stripped = line.strip()
 
             if (len(stripped) > 0):  lines.append(stripped)
-    except:
+
+    except TypeError:
+        print("\nERROR: A type error occured when opening or reading CIF file '{0}'".format(fNameIn))
+        sys.exit()
+
+    except NameError:
         print("\nERROR: Failed to open CIF file '{0}'".format(fNameIn))
+        sys.exit()
+
+    except FileNotFoundError:
+        print("\nERROR: Failed to find CIF file '{0}'".format(fNameIn))
         sys.exit()
 
     # Use the CifFile parser to extract the data. Although there might
