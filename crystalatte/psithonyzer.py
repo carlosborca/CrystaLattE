@@ -388,11 +388,10 @@ def psz_main(verbose=0):
         rminsepscsv = ""
         
         nmer_min_monomer_separations = nmers[keynmer]["min_monomer_separations"] 
-        #nmer_min_monomer_separations.sort() #debug
         
         for r in nmer_min_monomer_separations:
             rminseps    += "{:6.3f} ".format(float(r))
-            rminsepscsv += "{:6.3f},".format(float(r))
+            rminsepscsv += "{:.3f},".format(float(r))
 
         nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
                 keynmer,
@@ -405,16 +404,16 @@ def psz_main(verbose=0):
         
         results.append(nmer_result)
 
-        nmer_csv = "{:26} , {:>12.8f} , {:>4} , {:>12.8f} , {:>13.8f} , {:12.6e} , {}".format(
+        nmer_csv = "{:},{:.8f},{:},{:.8f},{:.8f},{:.6e},{}".format(
                 keynmer,
                 nmers[keynmer]["nambe"],
                 nmers[keynmer]["replicas"],
                 nmers[keynmer]["contrib"],
                 partial_crystal_lattice_energy,
                 nmers[keynmer]["priority_min"],
-                rminsepscsv)
+                rminsepscsv[:-1])
         
-        csv_lines.append(nmer_csv) #debug
+        csv_lines.append(nmer_csv)
 
     psz_print_header(verbose)
     psz_print_results(results, crystal_lattice_energy, verbose)
@@ -427,6 +426,7 @@ def psz_main(verbose=0):
         csvname = "Results.csv"
 
     with open(csvname, 'w') as csvf:
+
         for line in csv_lines:
             csvf.write(line + "\n")
 

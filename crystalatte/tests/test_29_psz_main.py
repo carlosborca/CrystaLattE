@@ -38,5 +38,4 @@ def test_psz_main():
     os.chdir(root)
 
     # Clean-up generated test files.
-    #TODO: I'd be a good idea to test contents of the CSV file too.
     subprocess.call(["rm", "crystalatte/data/out/Ammonia.csv"])
