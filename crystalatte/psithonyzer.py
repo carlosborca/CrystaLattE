@@ -203,7 +203,15 @@ def psz_get_nmer_data(fname, verbose=0):
 
             # Find the nuclear repulsion energy of the N-mer.
             if "# Nuclear repulsion energy:".lower() in line.lower():
-                splt = line[:-1].split(":")
+
+                # Remove units if present.
+                if "a.u." in line.lower():
+                    text = line[:-5]
+
+                else:
+                    text = line
+
+                splt = text[:-1].split(":")
                 nre = float(splt[-1].strip())
 
             # Find where the start of the N-Body decomposition 
@@ -421,6 +429,8 @@ def psz_main(verbose=0):
     with open(csvname, 'w') as csvf:
         for line in csv_lines:
             csvf.write(line + "\n")
+
+    return results, crystal_lattice_energy
     
 if __name__ == "__main__":
     psz_main(1)

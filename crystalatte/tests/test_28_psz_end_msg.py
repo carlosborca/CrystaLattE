@@ -8,10 +8,9 @@ import crystalatte
 import pytest
 import time
 
-def test_psz_print_header():
-    """Checks that the psithonyzer success checker function retruns a
-    True boolean value when it finds a Psi4's successful execution
-    string."""
+def test_psz_print_end_msg():
+    """.
+    """
 
     start = time.time()
     crystalatte.psz_print_end_msg(start, 2)
