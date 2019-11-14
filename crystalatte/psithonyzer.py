@@ -108,13 +108,13 @@ def psz_get_nmer_data(fname, verbose=0):
 
             # Find the name of the N-mer, and use it to create
             # the key for its entry in the nmers dictionary.
-            if "Psithon input for N-mer:" in line:
+            if "Psithon input for N-mer:".lower() in line.lower():
                 splt = line[:-1].split(":")
                 key = splt[-1].strip()
 
             # NOTE: This only works on Linux and MacOS.
             # Find the name of the XYZ from which this file generated.
-            if "Generated from:" in line:
+            if "Generated from:".lower() in line.lower():
                 splt = line[:-1].split(":")
                 xyz_path = splt[-1].strip()
                 tree = xyz_path.split("/")
@@ -128,12 +128,12 @@ def psz_get_nmer_data(fname, verbose=0):
                     sc_xyz = sc
 
             # Find the number of replicas of the N-mer.
-            if "Number of replicas:" in line:
+            if "Number of replicas:".lower() in line.lower():
                 splt = line[:-1].split(":")
                 replicas = int(splt[-1].strip())
 
             # Find the list of minimum monomer separations of the N-mer.
-            if "# Minimum monomer separations:" in line:
+            if "# Minimum monomer separations:".lower() in line.lower():
                 splt = line[:-1].split(":")
                 msps = splt[-1].strip()
                 min_monomer_separations = msps.split()
@@ -171,38 +171,38 @@ def psz_get_nmer_data(fname, verbose=0):
                 priority_cutoff = main_contrib + add
 
             # Find the list of COM monomer separations of the N-mer.
-            if "# Minimum COM separations:" in line:
+            if "# Minimum COM separations:".lower() in line.lower():
                 splt = line[:-1].split(":")
                 csps = splt[-1].strip()
                 com_monomer_separations = csps.split()
 
             # NOTE: Strings deprecated in nmer2psithon() function.
             # These chunks are kept here for backward compatibility.
-            if "# COM Priority index for input:" in line:
+            if "# COM Priority index for input:".lower() in line.lower():
                 splt = line[:-1].split(":")
                 priority_com = float(splt[-1].strip())
 
-            if "# Priority index for input:" in line:
+            if "# Priority index for input:".lower() in line.lower():
                 splt = line[:-1].split(":")
                 priority_min = float(splt[-1].strip())
 
             # Get the cutoff-based priority of the N-mer.
-            if "# Cutoff priority" in line:
+            if "# Cutoff priority".lower() in line.lower():
                 splt = line[:-1].split(":")
                 priority_cutoff = float(splt[-1].strip())
 
             # Get the atomic-separation-based priority of the N-mer.
-            if "# Separation priority" in line:
+            if "# Separation priority".lower() in line.lower():
                 splt = line[:-1].split(":")
                 priority_min = float(splt[-1].strip())
 
             # Get the COM-separation-based priority of the N-mer.
-            if "# COM priority" in line:
+            if "# COM priority".lower() in line.lower():
                 splt = line[:-1].split(":")
                 priority_com = float(splt[-1].strip())
 
             # Find the nuclear repulsion energy of the N-mer.
-            if "# Nuclear repulsion energy:" in line:
+            if "# Nuclear repulsion energy:".lower() in line.lower():
                 splt = line[:-1].split(":")
                 nre = float(splt[-1].strip())
 
