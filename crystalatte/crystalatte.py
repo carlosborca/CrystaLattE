@@ -290,7 +290,9 @@ def extract_element(label):
     if (label[0] in elem1):
         return label[0]
 
+    print("{}".format("~"*(shutil.get_terminal_size().columns)))
     print('WARNING: could not convert "%s" into element name!' % label)
+    print("{}".format("~"*(shutil.get_terminal_size().columns)))
     return label
 # ======================================================================
 
@@ -745,7 +747,9 @@ def cif_main(args):
     V = ax*by*cz
     
     if ( abs(V - volume) > 0.1):
+        print("{}".format("~"*(shutil.get_terminal_size().columns)))
         print('WARNING: Volume of the unit cell declared in CIF ({:.2f} A^3) is different than the calculated from primitive vectors ({:.2f} A^3).\n'.format(volume, V))
+        print("{}".format("~"*(shutil.get_terminal_size().columns)))
     
     # Check if we have a rectangular box.
     if (bx < eps  and  cx < eps  and cy < eps):
@@ -848,6 +852,7 @@ def center_supercell(cif_output, verbose=0):
     # with that of the dirty supercell. If different, need to clean up
     # the supercell to avoid superimposed atoms.
     if len(scell_dupl) != len(clean_cell):
+        print("{}".format("~"*(shutil.get_terminal_size().columns)))
         print("WARNING: The supercell contains {} duplicate coordinates. Skipping duplicates.".format(len(scell_dupl) - len(clean_cell)))
     
         # Creates two NumPy arrays: one with the coordinates of atoms in the
@@ -860,6 +865,7 @@ def center_supercell(cif_output, verbose=0):
         scell_elem = scell_elem_dupl[unique_idx]
 
         print("         The number of unique coordinates in the supercell is now: {}\n".format(len(clean_cell)))
+        print("{}".format("~"*(shutil.get_terminal_size().columns)))
 
     else:
         # Creates two NumPy arrays: one with the coordinates of atoms in the
@@ -1671,10 +1677,9 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
         
         try:
             os.mkdir(p4folder)
+
         except FileExistsError:
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            print("WARNING: A folder with the same name as the CIF file already exists.")
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+            pass
 
         os.chdir(p4folder)
         
@@ -1817,8 +1822,8 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         
         # Calculate execution time.
         energies_wallclock = energies_end - energies_start
-        
-        if "test" or "psithon" in cle_run_type:
+
+        if ("test" in cle_run_type) or ("psithon" in cle_run_type):
             nmer_result = "{:26} | {:>12} | {:>4} | {:>12} | {:>13} | {:12.6e} | {}".format(
                     keynmer,
                     "Not Computed", 
@@ -2038,9 +2043,9 @@ if __name__ == "__main__":
                 psi4_memory="500 MB",
                 verbose=2)
 
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("{}".format("~"*(shutil.get_terminal_size().columns)))
         print("WARNING: No input was provided. The previous execution was just a test.")
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("{}".format("~"*(shutil.get_terminal_size().columns)))
         print("\nCrystaLattE execution command:  ./crystalatte.py YourInput.cle\n")
 
     # Normal execution using an input file.
