@@ -273,17 +273,21 @@ def psz_print_results(results, crystal_lattice_energy, verbose=0):
     <int> verbose
         Adjusts the level of detail of the printouts.
     """
+    try:
+        term_size = shutil.get_terminal_size().columns
+    except AttributeError:
+        term_size = 0
 
     if verbose >= 1:
         print("Summary of results:")
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(shutil.get_terminal_size().columns - 112)))
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(term_size - 112)))
         print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
         print("N-mer Name                 |    MB Energy | Rep. | Contribution | Lattice Ener. |     Priority | Separations")
         print("                           |     (kJ/mol) |  (#) |     (kJ/mol) |      (kJ/mol) | (Arb. Units) | (A)")
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(shutil.get_terminal_size().columns - 112)))
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(term_size - 112)))
         for result in results:
             print(result)
-        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}\n".format("-"*(shutil.get_terminal_size().columns - 112)))
+        print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}\n".format("-"*(term_size - 112)))
         #print("Crystal Lattice Energy (Eh)       = {:5.8f}".format(crystal_lattice_energy / 2625.500)) # Same value as in psi_hartree2kJmol
         print("Crystal Lattice Energy (kJ/mol)   = {:9.8f}".format(crystal_lattice_energy))
         print("Crystal Lattice Energy (kcal/mol) = {:9.8f}\n".format(crystal_lattice_energy / 4.184)) # Same value as in psi_cal2J
@@ -421,6 +425,9 @@ def psz_main(verbose=0):
 
     try:
         csvname = sc_xyz + ".csv"
+
+    except TypeError:
+        csvname = "Results.csv"
 
     except NameError:
         csvname = "Results.csv"
