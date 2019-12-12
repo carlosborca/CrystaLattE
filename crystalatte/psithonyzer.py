@@ -240,6 +240,13 @@ def psz_get_nmer_data(fname, verbose=0):
                     number_of_monomers = int(lastl[0])
                     n_body_energy = float(lastl[-1]) * 4.184 # Same value as in qcdb.psi_cal2J
 
+    # Just in case the COM priority was not defined.
+    try:
+        priority_com
+
+    except UnboundLocalError:
+        priority_com = priority_min
+
     return sc_xyz, key, number_of_monomers, replicas, priority_cutoff, priority_min, priority_com, min_monomer_separations, com_monomer_separations, nre, n_body_energy
 
 # ======================================================================
