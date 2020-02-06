@@ -157,7 +157,7 @@ Finally, to execute the code:
 
 #### Copyright
 
-Copyright (c) 2019, Carlos H. Borca
+Copyright (c) 2020, Carlos H. Borca
 
 
 #### Acknowledgements
