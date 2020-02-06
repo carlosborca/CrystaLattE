@@ -59,7 +59,7 @@ def reorder_file(fname):
                   for row in csvdata]
     
         # Sort by contribution and then by each separation.
-        sortset1 = sorted(parsed, key=operator.itemgetter(3), reverse=True)
+        sortset1 = sorted(parsed, key=operator.itemgetter(3), reverse=False)
         sortset2 = sorted(sortset1, key=operator.itemgetter(6))
         sortset3 = sorted(sortset2, key=operator.itemgetter(7))
         sortsetf = sorted(sortset3, key=operator.itemgetter(8))
