@@ -7,7 +7,7 @@ dependencies:
   - python
   - pip
   - psi4
-  - psi4-rt
+    #  - psi4-rt
   - pycifrw
 
     # Testing
