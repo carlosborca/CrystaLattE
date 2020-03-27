@@ -1620,7 +1620,8 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     psithon_input += "}\n"
 
     psithon_input += "\nset {\n"
-    psithon_input += "  e_convergence 9\n"
+    psithon_input += "  e_convergence 10\n"
+    psithon_input += "  d_convergence 10\n"
     psithon_input += "  scf_type df\n"
     psithon_input += "  mp2_type df\n" 
     psithon_input += "  cc_type df\n"
@@ -1698,7 +1699,7 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
     psi4.set_memory(psi4_memory)
     
     # Set Psi4 block of options.
-    psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'cc_type': 'df', 'freeze_core': 'true', 'e_convergence': '9'})
+    psi4.set_options({'scf_type': 'df', 'mp2_type': 'df', 'cc_type': 'df', 'freeze_core': 'true', 'e_convergence': '10', 'd_convergence': '10'})
     
     # Execute Psi4 energy calculations, unless running on test mode.
 
