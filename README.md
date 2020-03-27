@@ -155,9 +155,9 @@ Finally, to execute the code:
 ./crystalatte.py input.cle
 ```
 
-### Known Issues
+#### Known Issues
 
-Precision issues may arise when computing a large number of structures at default energy and density convergence criteria if using Psi4 1.3.2 and newer versions. Although the default energy and density convergence criteria for Psi4 calculations has been increased in CrystaLattE, the user should be nonetheless careful.
+Precision issues may arise when computing a large number of structures at default energy and density convergence criteria if using Psi4 1.3.2 and newer versions. Although the default energy and density convergence criteria for Psi4 calculations has been increased in CrystaLattE, the user should be careful.
 
 #### Copyright
 
