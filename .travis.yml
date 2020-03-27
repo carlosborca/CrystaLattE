@@ -42,7 +42,7 @@ install:
     # Activate the test environment
   - conda activate test
     # Carlos added this line, temporary fix
-  - conda remove v2rdm_casscf
+    #  - conda remove v2rdm_casscf
     # Build and install package
   - python setup.py develop --no-deps
 
