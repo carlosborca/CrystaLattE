@@ -11,7 +11,7 @@ Automated calculation of crystal lattice energies with the many-body expansion.
 
 ## Overview
 
-CyrstaLattE is a software that automates the computation of crystal lattice energies using the many-body cluster expansion. The required computations on dimers, trimers, etc., within the crystal are independent of each other, leading to a naturally parallel approach. The algorithm exploits the long-range three-dimensional periodic order of crystals to automatically detect and avoid redundant or unnecessary computations.
+CrystaLattE is a software that automates the computation of crystal lattice energies using the many-body cluster expansion. The required computations on dimers, trimers, etc., within the crystal are independent of each other, leading to a naturally parallel approach. The algorithm exploits the long-range three-dimensional periodic order of crystals to automatically detect and avoid redundant or unnecessary computations.
 
 ## General Information
 
