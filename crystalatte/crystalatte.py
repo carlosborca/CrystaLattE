@@ -192,7 +192,7 @@ def input_parser(in_f_name):
 
         if len(keywords["cle_run_type"]) > 1:
 
-            if "timings" not in keywords["cle_run_type"]:
+            if "timings" not in keywords["cle_run_type"]: # TODO: What if there are more than two methods?!
                 print("\nERROR: makefp mode cannot be run at the same time with any other mode, except timings.\n")
                 sys.exit()
     
@@ -206,6 +206,10 @@ def input_parser(in_f_name):
             print("\nERROR: quiet and psithon modes cannot be run at the same time.\n")
             sys.exit()
 
+        elif "libefpmbe" in keywords["cle_run_type"]:
+            print("\nERROR: quiet and libefpmbe modes cannot be run at the same time.\n")
+            sys.exit()
+
         elif "timings" in keywords["cle_run_type"]:
             print("\nERROR: if running quiet and timings modes together, psi4api mode must be included too.\n")
             sys.exit()
@@ -214,6 +218,10 @@ def input_parser(in_f_name):
 
         if "psithon" in keywords["cle_run_type"]:
             print("\nERROR: psi4api and psithon modes cannot be run at the same time.\n")
+            sys.exit()
+
+        elif "libefpmbe" in keywords["cle_run_type"]:
+            print("\nERROR: psi4api and libefpmbe modes cannot be run at the same time.\n")
             sys.exit()
 
         else:
@@ -1695,6 +1703,69 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
 
 
 # ======================================================================
+def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose=0):
+    """.
+    """
+
+    # This strings are used by the analysis script. Any changes
+    # applied to them here must be synchronized there The order in
+    # which they are printed is also important, especially for the
+    # different types of priorities.
+    libefpmbe_input =  "# LibEFP file produced by CrystaLattE\n\n"
+    libefpmbe_input += "# Generated from:               {}\n".format(cif_output)
+    libefpmbe_input += "# LibEFP input for N-mer:       {}\n".format(keynmer)
+    libefpmbe_input += "# Number of atoms per monomer:  {}\n".format(nmer["atoms_per_monomer"])
+    libefpmbe_input += "# Number of replicas:           {}\n".format(nmer["replicas"])
+    libefpmbe_input += "# COM priority:                 {:12.12e}\n".format(nmer["priority_com"])
+    libefpmbe_input += "# Minimum COM separations:      {}\n".format(rcomseps.lstrip(" "))
+    libefpmbe_input += "# Separation priority:          {:12.12e}\n".format(nmer["priority_min"])
+    libefpmbe_input += "# Minimum monomer separations:  {}\n".format(rminseps.lstrip(" "))
+    libefpmbe_input += "# Cutoff priority:              {:12.12e}\n".format(nmer["priority_cutoff"])
+    libefpmbe_input += "# Nuclear repulsion energy:     {}\n".format(nmer["nre"])
+
+    for at in range(nmer["coords"].shape[0]):
+
+        if at in nmer["delimiters"]:
+            libefpmbe_input += "--\n"
+
+        libefpmbe_input += "  {:6} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+
+    libefpmbe_input += "\nset {\n"
+    libefpmbe_input += "  e_convergence 10\n"
+    libefpmbe_input += "  d_convergence 10\n"
+    libefpmbe_input += "  scf_type df\n"
+    libefpmbe_input += "  mp2_type df\n"
+    libefpmbe_input += "  cc_type df\n"
+    libefpmbe_input += "  freeze_core true\n"
+    libefpmbe_input += "}\n"
+
+    # Create the inputs folder.
+    # First, get the current working directory.
+    owd = os.getcwd()
+    libefpmbe_folder = cif_output[:-4]
+
+    # Check if the directory exist, and if not, create it.
+    try:
+        os.mkdir(libefpmbe_folder)
+
+    except FileExistsError:
+        pass
+
+    # Go to the directory where the file is supposed to be written.
+    os.chdir(libefpmbe_folder)
+    libefpmbe_filename = keynmer + ".in"
+
+    # Create the new input file.
+    with open(libefpmbe_filename, "w") as libefpmbe_f:
+
+        for line in libefpmbe_input:
+            libefpmbe_f.write(line)
+
+    os.chdir(owd)
+# ======================================================================
+
+
+# ======================================================================
 def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """
     Arguments:
@@ -1842,9 +1913,13 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         for r in nmer_min_com_separations:
             rcomseps += "{:6.3f} ".format(r * qcel.constants.bohr2angstroms)
 
-        # Produce Psithon inputs
+        # Produce Psithon inputs.
         if "psithon" in cle_run_type:
             nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose)
+
+        # Produce LibEFP inputs with non-embedded N-mers as fragments.
+        elif "libefpmbe" in cle_run_type:
+            nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose)
 
         # Run energies in PSI4 API.
         else:
@@ -1859,7 +1934,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         # Calculate execution time.
         energies_wallclock = energies_end - energies_start
 
-        if ("test" in cle_run_type) or ("psithon" in cle_run_type):
+        if ("test" in cle_run_type) or ("psithon" in cle_run_type) or ("libefpmbe" in cle_run_type):
             nmer_result = "{:26} | {:>12} | {:>4} | {:>12} | {:>13} | {:12.6e} | {}".format(
                     keynmer,
                     "Not Computed", 
@@ -1890,7 +1965,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
                     cpus, 
                     crystal_lattice_energy * qcel.constants.hartree2kcalmol * qcel.constants.cal2J))
 
-            if "psithon" in cle_run_type:
+            if ("psithon" in cle_run_type) or ("libefpmbe" in cle_run_type):
                 print("{} written.".format(keynmer))
         
     return crystal_lattice_energy, results
@@ -2029,7 +2104,10 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
             print ("\nComputing interaction energies of N-mers:")
         
         if "psithon" in cle_run_type:
-            print ("\nWriting N-mer coordinates to Psithon input files:")
+            print ("\nWriting N-mers coordinates to Psithon input files:")
+
+        if "libefpmbe" in cle_run_type:
+            print ("\nWriting N-mers coordinates as a non-embedded framgents into LibEFP input files:")
 
     crystal_lattice_energy, results = cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
     # ------------------------------------------------------------------
