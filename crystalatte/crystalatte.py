@@ -1707,11 +1707,17 @@ def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose
     """.
     """
 
+    libefpmbe_input =  "# LibEFP input file produced by CrystaLattE\n\n"
+
+    libefpmbe_input += "# WARNING: Name of the fragment are assigned based on the CIF name.\n"
+    libefpmbe_input += "#          Check that the name of the fragments corresponds to the\n" 
+    libefpmbe_input += "#          fragment name field in the .efp potential file.\n\n"
+    
     # This strings are used by the analysis script. Any changes
     # applied to them here must be synchronized there The order in
     # which they are printed is also important, especially for the
     # different types of priorities.
-    libefpmbe_input =  "# LibEFP file produced by CrystaLattE\n\n"
+
     libefpmbe_input += "# Generated from:               {}\n".format(cif_output)
     libefpmbe_input += "# LibEFP input for N-mer:       {}\n".format(keynmer)
     libefpmbe_input += "# Number of atoms per monomer:  {}\n".format(nmer["atoms_per_monomer"])
@@ -1723,21 +1729,31 @@ def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose
     libefpmbe_input += "# Cutoff priority:              {:12.12e}\n".format(nmer["priority_cutoff"])
     libefpmbe_input += "# Nuclear repulsion energy:     {}\n".format(nmer["nre"])
 
+    libefpmbe_input += "\n"
+    libefpmbe_input += " run_type sp\n"
+    libefpmbe_input += " coord points\n"
+    libefpmbe_input += " terms elec pol disp xr\n"
+    libefpmbe_input += " elec_damp overlap\n" #TODO: Support for other EFP damping methods.
+    libefpmbe_input += " disp_damp overlap\n" #TODO: Support for other EFP damping methods.
+    libefpmbe_input += " pol_damp tt\n"       #TODO: Support for other EFP damping methods.
+    libefpmbe_input += " userlib_path .\n"
+
+    libefpmbe_input += "\nfragment {}\n".format(cif_output.split(".")[0])
+    
+    line_idx = 0
+
     for at in range(nmer["coords"].shape[0]):
-
+        
         if at in nmer["delimiters"]:
-            libefpmbe_input += "--\n"
+            libefpmbe_input += "\nfragment {}\n".format(cif_output.split(".")[0])
+            line_idx = 0
 
-        libefpmbe_input += "  {:6} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+        if line_idx < 3:
+            libefpmbe_input += "{:16.8f} {:16.8f} {:16.8f} \n".format(nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+        
+        line_idx += 1
 
-    libefpmbe_input += "\nset {\n"
-    libefpmbe_input += "  e_convergence 10\n"
-    libefpmbe_input += "  d_convergence 10\n"
-    libefpmbe_input += "  scf_type df\n"
-    libefpmbe_input += "  mp2_type df\n"
-    libefpmbe_input += "  cc_type df\n"
-    libefpmbe_input += "  freeze_core true\n"
-    libefpmbe_input += "}\n"
+    libefpmbe_input += "\n"
 
     # Create the inputs folder.
     # First, get the current working directory.
