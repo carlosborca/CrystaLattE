@@ -1306,12 +1306,39 @@ def chemical_space(elem, geom):
 
 # ======================================================================
 def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_separation_cutoff, uniq_filter, verbose=1):
-    """Takes a float indicating a cutoff distance in Angstroms.
-    Returns dimer files that pass through the filter.
+    """Takes the nmers dictionary and the filters criteria and builds a
+    dictionary with generated N-mers of a given order, i.e. dimers. Such
+    N-mers are generated after filtering out all other combinations that
+    do not fit the filters criteria.
+
+    Arguments:
+    <dict> nmers
+        Dictionary containing dictionaries for each N-mer in the system.
+    <int> total_monomers
+        Number of total monomers in the supercell, as determined by the
+        BFS algorithm.
+    <str> nmer_type
+        The order of the new N-mers to be created in string format.
+    <float> nmer_separation_cutoff
+        Maximum allowed separation between closest atoms of different
+        monomers in the new N-mers.
+    <float> coms_separation_cutoff
+        Maximum allowed separation between closest COMs of different 
+        monomers in the new N-mers.
+    <string> uniq_filter
+        Type of filter to be used to determine chemical equivalency.
+        Either the chemical-space or the dreamaligner filter.
+    <int> verbose
+        Adjusts the level of detail of the printouts.
+
+    Returns:
+    <dict> nmers
+        Dictionary containing dictionaries for each N-mer in the system.
+        Updated to include any newly generated N-mers.
     """
 
+
     # Function reused for different types of N-mers.
-    
     build_nmers_start_time = time.time()
 
     if nmer_type == "dimers":
@@ -1327,7 +1354,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
         num_monomers = 5
     
     else:
-        print("\nERROR: The N-mer type must be defined as 'dimers', 'trimers', 'tetramers', or 'pentamer'.")
+        print("\nERROR: The N-mer type must be defined as 'dimers', 'trimers', 'tetramers', or 'pentamers'.")
 
     if verbose >= 2:
         print("")
@@ -1343,17 +1370,22 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     #       primitive unit cell.
     num_ref_monomers = 1
 
+    # Take the first monomer as the reference, aka 1mer-0.
     for ref_monomer_idx in range(num_ref_monomers):
         monomer_key = "1mer-" + str(ref_monomer_idx)
         ref_monomer = nmers[monomer_key]
 
+        # Iterate over combinations that include all other monomers in unrepeated fashion.
         for other_monomers in itertools.combinations(range(ref_monomer_idx+1, total_monomers), num_monomers-1):
 
             # Start N-mer building timer.
             nmer_start_time = time.time()
 
+            # Combine reference monomer with other monomers to create a new N-mer.
             new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, other_monomers, verbose)
 
+            # Start applying N-mer filters to weed out unnecessary calculations.
+            # First, use the corresponding N-mer cutoff (dimer cutoff, trimer cutoff, ...)
             if new_nmer["max_mon_sep"] > (nmer_separation_cutoff / qcel.constants.bohr2angstroms):
                 
                 if verbose >= 2:
@@ -1367,6 +1399,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                         
                     counter_dscrd_sep += 1
             
+            # Second, use the global COM cutoff. Same distance applies to all N-mer orders.
             elif new_nmer["max_com_sep"] > (coms_separation_cutoff / qcel.constants.bohr2angstroms):
                 
                 if verbose >= 2:
@@ -1379,6 +1412,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                     counter_dscrd_com += 1
 
+            # Third, employ more sophisticated filters: NRE and ChSEV or Dreamaligner.
             else:
                 found_duplicate = False
                 
@@ -1397,7 +1431,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                 for kexisting, existing in new_nmers.items():
 
-                    # Nuclear repulsion energy filter.
+                    # Fourth, the nuclear repulsion energy filter.
                     nre_diff = abs(existing["nre"] - new_nmer["nre"])
                     nre_filter_ran = True
 
@@ -1409,7 +1443,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                         chsev_filter_ran = False
                         rmsd_filter_ran = False                        
                     
-                    # The NRE is small, proceed to next filters.
+                    # Fifth, if the NRE is small, proceed to next filters.
                     else:
                         # Chemical space eigenvalues filter.
                         if chemical_space == True:
@@ -1437,14 +1471,14 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                         if dreamliner == True:
                         
                             # Block B787 printout
-                            sys.stdout = open(os.devnull, 'w')
+                            sys.stdout = open(os.devnull, 'w') #NOTE: Check if this is still needed (?)
                             
                             # Call the dreamliner from QCDB.
                             rmsd, mill = qcel.molutil.B787(rgeom=existing["coords"], cgeom=new_nmer["coords"], runiq=existing["elem"], cuniq=new_nmer["elem"], run_mirror=True, verbose=2)
                             rmsd_filter_ran = True
 
                             # Reanable printout
-                            sys.stdout = sys.__stdout__
+                            sys.stdout = sys.__stdout__ #NOTE: Check if this is still needed (?)
 
                             if rmsd < 1.e-3:
                                 found_duplicate = True
@@ -1462,6 +1496,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
                                 break
 
+                # If the structure was not filtered out, then store the new N-mer.
                 if not found_duplicate:
                     new_nmers[new_nmer_name] = new_nmer
 
