@@ -1704,81 +1704,136 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
 
 # ======================================================================
 def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose=0):
-    """.
+    """This function will write to disk a LibEFP input for the passed
+    N-mer. To be able to compute the non-additive many-body energy, a
+    trick has been implemented. N calculations will be performed for an
+    N-mer, those will contain all possible dimers. At the moment, this
+    should not be used for tetramers and pentamers.
+
+    Arguments:
+    <str> cif_output
+        Name of the file with the cartesian coordinates of the 
+        supercell.
+    <dict> nmers
+        Dictionary containing dictionaries for each N-mer in the system.
+    <str> keynmer
+        Name of the N-mer as it appears in the key of its corresponding
+        entry in the nmers dictionary.
+    <dict> nmer
+        Dictionary containing all the information of one N-mer of the
+        system.
+    <str> rminseps
+        List of separations between closest atoms of different monomers
+        in the N-mer.
+    <str> rcomseps
+        List of separations between COMs of different monomers in the
+        N-mer.
+    <int> verbose
+        Adjusts the level of detail of the printouts.
+
+    Returns:
+    None
     """
 
-    libefpmbe_input =  "# LibEFP input file produced by CrystaLattE\n\n"
+    # List to use pairwise energy substractions
+    ligands = ["a","b","c","d","e"]
 
-    libefpmbe_input += "# WARNING: Name of the fragment are assigned based on the CIF name.\n"
-    libefpmbe_input += "#          Check that the name of the fragments corresponds to the\n" 
-    libefpmbe_input += "#          fragment name field in the .efp potential file.\n\n"
-    
-    # This strings are used by the analysis script. Any changes
-    # applied to them here must be synchronized there The order in
-    # which they are printed is also important, especially for the
-    # different types of priorities.
+    # Generate as many inputs as monomers exist in the N-mer.
+    # This is an intent to circumvent the problem of computing the
+    # substraction of (N-1)-body energies from N-mers.
+    for i in range(len(nmer['monomers'])):
 
-    libefpmbe_input += "# Generated from:               {}\n".format(cif_output)
-    libefpmbe_input += "# LibEFP input for N-mer:       {}\n".format(keynmer)
-    libefpmbe_input += "# Number of atoms per monomer:  {}\n".format(nmer["atoms_per_monomer"])
-    libefpmbe_input += "# Number of replicas:           {}\n".format(nmer["replicas"])
-    libefpmbe_input += "# COM priority:                 {:12.12e}\n".format(nmer["priority_com"])
-    libefpmbe_input += "# Minimum COM separations:      {}\n".format(rcomseps.lstrip(" "))
-    libefpmbe_input += "# Separation priority:          {:12.12e}\n".format(nmer["priority_min"])
-    libefpmbe_input += "# Minimum monomer separations:  {}\n".format(rminseps.lstrip(" "))
-    libefpmbe_input += "# Cutoff priority:              {:12.12e}\n".format(nmer["priority_cutoff"])
-    libefpmbe_input += "# Nuclear repulsion energy:     {}\n".format(nmer["nre"])
+        libefpmbe_input =  "# LibEFP input file produced by CrystaLattE\n\n"
 
-    libefpmbe_input += "\n"
-    libefpmbe_input += " run_type sp\n"
-    libefpmbe_input += " coord points\n"
-    libefpmbe_input += " terms elec pol disp xr\n"
-    libefpmbe_input += " elec_damp overlap\n" #TODO: Support for other EFP damping methods.
-    libefpmbe_input += " disp_damp overlap\n" #TODO: Support for other EFP damping methods.
-    libefpmbe_input += " pol_damp tt\n"       #TODO: Support for other EFP damping methods.
-    libefpmbe_input += " enable_pairwise true\n" #NOTE: Requires fork from https://github.com/libefp2/libefp.git
-    libefpmbe_input += " userlib_path .\n"
-
-    libefpmbe_input += "\nfragment {}\n".format(cif_output.split(".")[0])
-    
-    line_idx = 0
-
-    for at in range(nmer["coords"].shape[0]):
+        libefpmbe_input += "# WARNING: Name of the fragment are assigned based on the CIF name.\n"
+        libefpmbe_input += "#          Check that the name of the fragments corresponds to the\n" 
+        libefpmbe_input += "#          fragment name field in the .efp potential file.\n\n"
         
-        if at in nmer["delimiters"]:
-            libefpmbe_input += "\nfragment {}\n".format(cif_output.split(".")[0])
-            line_idx = 0
+        # This strings are used by the analysis script. Any changes
+        # applied to them here must be synchronized there The order in
+        # which they are printed is also important, especially for the
+        # different types of priorities.
 
-        if line_idx < 3:
-            libefpmbe_input += "{:16.8f} {:16.8f} {:16.8f} \n".format(nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+        libefpmbe_input += "# Generated from:               {}\n".format(cif_output)
+        libefpmbe_input += "# LibEFP input for N-mer:       {}\n".format(keynmer)
+        libefpmbe_input += "# Number of atoms per monomer:  {}\n".format(nmer["atoms_per_monomer"])
+        libefpmbe_input += "# Number of replicas:           {}\n".format(nmer["replicas"])
+        libefpmbe_input += "# COM priority:                 {:12.12e}\n".format(nmer["priority_com"])
+        libefpmbe_input += "# Minimum COM separations:      {}\n".format(rcomseps.lstrip(" "))
+        libefpmbe_input += "# Separation priority:          {:12.12e}\n".format(nmer["priority_min"])
+        libefpmbe_input += "# Minimum monomer separations:  {}\n".format(rminseps.lstrip(" "))
+        libefpmbe_input += "# Cutoff priority:              {:12.12e}\n".format(nmer["priority_cutoff"])
+        libefpmbe_input += "# Nuclear repulsion energy:     {}\n".format(nmer["nre"])
+
+        libefpmbe_input += "\n"
+        libefpmbe_input += " run_type sp\n"
+        libefpmbe_input += " coord points\n"
+        libefpmbe_input += " terms elec pol disp xr\n"
+        libefpmbe_input += " elec_damp overlap\n" #TODO: Support for other EFP damping methods.
+        libefpmbe_input += " disp_damp overlap\n" #TODO: Support for other EFP damping methods.
+        libefpmbe_input += " pol_damp tt\n"       #TODO: Support for other EFP damping methods.
+
+        # To compute the non-addditive many-body energy using LibEFP
+        # we are going to use the pairwise experimental feature of the
+        # code. However, for dimers there is no need to use such 
+        # feature. Ideally, in the future, this will be fix on LibEFP.
+        if len(nmer["monomers"]) > 2:
+            libefpmbe_input += " enable_pairwise true\n" #NOTE: Requires fork from https://github.com/libefp2/libefp.git
+            libefpmbe_input += " ligand {}\n".format(i)  #NOTE: Requires fork from https://github.com/libefp2/libefp.git
         
-        line_idx += 1
+        libefpmbe_input += " userlib_path .\n"
 
-    libefpmbe_input += "\n"
+        libefpmbe_input += "\nfragment {}\n".format(cif_output.split(".")[0])
+        
+        # Because LibEFP only requests the first three atoms of a 
+        # fragment, we skip writting the coordinates of atoms with
+        # indexes greater than 2 for each fragment.
+        line_idx = 0
 
-    # Create the inputs folder.
-    # First, get the current working directory.
-    owd = os.getcwd()
-    libefpmbe_folder = cif_output[:-4]
+        for at in range(nmer["coords"].shape[0]):
+            
+            if at in nmer["delimiters"]:
+                libefpmbe_input += "\nfragment {}\n".format(cif_output.split(".")[0])
+                line_idx = 0
 
-    # Check if the directory exist, and if not, create it.
-    try:
-        os.mkdir(libefpmbe_folder)
+            if line_idx < 3:
+                libefpmbe_input += "{:16.8f} {:16.8f} {:16.8f} \n".format(nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+            
+            line_idx += 1
 
-    except FileExistsError:
-        pass
+        # Is this blank line needed?
+        libefpmbe_input += "\n"
 
-    # Go to the directory where the file is supposed to be written.
-    os.chdir(libefpmbe_folder)
-    libefpmbe_filename = keynmer + ".in"
+        # Create the inputs folder.
+        # First, get the current working directory.
+        owd = os.getcwd()
+        libefpmbe_folder = cif_output[:-4]
 
-    # Create the new input file.
-    with open(libefpmbe_filename, "w") as libefpmbe_f:
+        # Check if the directory exist, and if not, create it.
+        try:
+            os.mkdir(libefpmbe_folder)
 
-        for line in libefpmbe_input:
-            libefpmbe_f.write(line)
+        except FileExistsError:
+            pass
 
-    os.chdir(owd)
+        # Go to the directory where the file is supposed to be written.
+        os.chdir(libefpmbe_folder)
+        
+        # Ligands trick is only applied to (N>2)-mers.
+        if len(nmer["monomers"]) > 2:
+            libefpmbe_filename = "{}-{}.in".format(keynmer, ligands[i])
+
+        # This is the normal way of naming files.
+        else:
+            libefpmbe_filename = "{}.in".format(keynmer)
+
+        # Create the new input file.
+        with open(libefpmbe_filename, "w") as libefpmbe_f:
+
+            for line in libefpmbe_input:
+                libefpmbe_f.write(line)
+
+        os.chdir(owd)
 # ======================================================================
 
 
