@@ -1738,12 +1738,26 @@ def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose
     # List to use pairwise energy substractions
     ligands = ["a","b","c","d","e"]
 
+    # Name of the EFP fragments. Can be found in the .efp pothential
+    # file preceeded by a $, i.e. $BENZENE_L or $water
+    frgname = cif_output.split(".")[0] #TODO: Implement input keyword for fragment names.
+
     # Generate as many inputs as monomers exist in the N-mer.
     # This is an intent to circumvent the problem of computing the
     # substraction of (N-1)-body energies from N-mers.
     for i in range(len(nmer['monomers'])):
 
         libefpmbe_input =  "# LibEFP input file produced by CrystaLattE\n\n"
+        
+        libefpmbe_input += "# WARNING: This part of the CrystaLattE code is designed to work with\n"
+        libefpmbe_input += "#          Prof. Lyudmila V. Slipchenko's fork of LibEFP 1.5.0 which can\n"
+        libefpmbe_input += "#          be found at:\n"
+        libefpmbe_input += "#          https://github.com/libefp2/libefp.git\n\n"
+
+        libefpmbe_input += "# WARNING: This implementation should be limited to the computation of\n"
+        libefpmbe_input += "#          dimers and trimers. This is due to the limitation introduced\n"
+        libefpmbe_input += "#          by the usage of LibEFP, which at the moment is not able to\n"
+        libefpmbe_input += "#          decompose the many-body energy into lower-order energies.\n\n"
 
         libefpmbe_input += "# WARNING: Name of the fragment are assigned based on the CIF name.\n"
         libefpmbe_input += "#          Check that the name of the fragments corresponds to the\n" 
@@ -1769,9 +1783,9 @@ def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose
         libefpmbe_input += " run_type sp\n"
         libefpmbe_input += " coord points\n"
         libefpmbe_input += " terms elec pol disp xr\n"
-        libefpmbe_input += " elec_damp overlap\n" #TODO: Support for other EFP damping methods.
-        libefpmbe_input += " disp_damp overlap\n" #TODO: Support for other EFP damping methods.
-        libefpmbe_input += " pol_damp tt\n"       #TODO: Support for other EFP damping methods.
+        libefpmbe_input += " elec_damp overlap\n" #TODO: Implement input keywords to support for other EFP damping methods.
+        libefpmbe_input += " disp_damp overlap\n" #TODO: Implement input keywords to support for other EFP damping methods.
+        libefpmbe_input += " pol_damp tt\n"       #TODO: Implement input keywords to support for other EFP damping methods.
 
         # To compute the non-addditive many-body energy using LibEFP
         # we are going to use the pairwise experimental feature of the
@@ -1783,7 +1797,7 @@ def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose
         
         libefpmbe_input += " userlib_path .\n"
 
-        libefpmbe_input += "\nfragment {}\n".format(cif_output.split(".")[0])
+        libefpmbe_input += "\nfragment {}\n".format(frgname)
         
         # Because LibEFP only requests the first three atoms of a 
         # fragment, we skip writting the coordinates of atoms with
@@ -1793,7 +1807,7 @@ def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose
         for at in range(nmer["coords"].shape[0]):
             
             if at in nmer["delimiters"]:
-                libefpmbe_input += "\nfragment {}\n".format(cif_output.split(".")[0])
+                libefpmbe_input += "\nfragment {}\n".format(frgname)
                 line_idx = 0
 
             if line_idx < 3:
