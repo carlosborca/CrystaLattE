@@ -1736,6 +1736,7 @@ def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose
     libefpmbe_input += " elec_damp overlap\n" #TODO: Support for other EFP damping methods.
     libefpmbe_input += " disp_damp overlap\n" #TODO: Support for other EFP damping methods.
     libefpmbe_input += " pol_damp tt\n"       #TODO: Support for other EFP damping methods.
+    libefpmbe_input += " enable_pairwise true\n" #NOTE: Requires fork from https://github.com/libefp2/libefp.git
     libefpmbe_input += " userlib_path .\n"
 
     libefpmbe_input += "\nfragment {}\n".format(cif_output.split(".")[0])
