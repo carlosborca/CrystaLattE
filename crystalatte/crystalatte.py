@@ -1288,6 +1288,96 @@ def chemical_space(elem, geom):
 
 
 # ======================================================================
+def insert_nmer_nre(sorted_list, new_value):
+    """Inserts the tuple "new_value" into the sorted list of tuples
+    "sorted_list." The tuples are sorted by their first index, which is 
+    the nuclear repulsion energy.
+
+    Arguments:
+    <list of (float, string)> sorted_list
+        sorted list of tuples, each tuple is a (nmer_nre, nmer_name)
+    <(float, string)> new_value
+        new tuple to be inserted into the list of tuples
+    """
+
+    # use binary search to find insert location
+    left_index, right_index = 0, len(sorted_list)
+    while left_index != right_index:
+        
+        new_index = (left_index + right_index) // 2
+
+        if sorted_list[new_index][0] < new_value[0]:
+            left_index = new_index + 1
+        elif sorted_list[new_index][0] > new_value[0]:
+            right_index = new_index
+        else:
+            left_index = new_index
+            right_index = new_index
+
+    sorted_list.insert(left_index, new_value)
+# ======================================================================
+
+
+# ======================================================================
+def close_nmers(sorted_list, nre):
+    """Finds nmers in the sorted list of tuples "sorted_list" with 
+    nuclear repulsion energies within 1e-5 of "nre." The tuples are 
+    sorted by their first index, which is the nuclear repulsion energy.
+
+    Arguments:
+    <list of (float, string)> sorted_list
+        sorted list of tuples, each tuple is a (nmer_nre, nmer_name)
+    <float)> nre 
+        nuclear repulsion energy of a new nmer
+
+    Returns:
+    <list of string> close_nmers
+        list of nmer names from "sorted_list" for which the nuclear
+        repulsion energy is within 1e-5 of "nre."
+    """
+
+    # binary search for the min nre bound (1e-5 tolerance)
+    left_index, right_index = 0, len(sorted_list)
+    while left_index != right_index:
+        
+        new_index = (left_index + right_index) // 2
+
+        if sorted_list[new_index][0] < (nre - 1e-5):
+            left_index = new_index + 1
+        elif sorted_list[new_index][0] > (nre - 1e-5):
+            right_index = new_index
+        else:
+            left_index = new_index
+            right_index = new_index
+
+    min_index = max(0, left_index-1)
+
+    # binary search for the maxnre bound (1e-5 tolerance)
+    left_index, right_index = 0, len(sorted_list)
+    while left_index != right_index:
+        
+        new_index = (left_index + right_index) // 2
+
+        if sorted_list[new_index][0] < (nre + 1e-5):
+            left_index = new_index + 1
+        elif sorted_list[new_index][0] > (nre + 1e-5):
+            right_index = new_index
+        else:
+            left_index = new_index
+            right_index = new_index
+
+    max_index = min(len(sorted_list), left_index+1)
+
+    # use min/max bounds to get close nmers
+    close_nmers = [tup[1] for tup in sorted_list[min_index:max_index]]
+
+    return close_nmers
+    
+
+# ======================================================================
+
+
+# ======================================================================
 def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_separation_cutoff, uniq_filter, verbose=1):
     """Takes the nmers dictionary and the filters criteria and builds a
     dictionary with generated N-mers of a given order, i.e. dimers. Such
@@ -1348,6 +1438,10 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     counter_dscrd_rep = 0 # N-mers filtered out as a replicas
 
     new_nmers = {}
+
+    # List of (nre, nmer_name) tuples sorted by nre
+    # Allows for easy lookup of new nmers with similar nre
+    new_nmers_nre_sorted = []
 
     # TODO: Support for crystals with more than one molecule in the
     #       primitive unit cell.
@@ -1412,7 +1506,11 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                 chsev_filter_ran = False
                 rmsd_filter_ran = False
 
-                for kexisting, existing in new_nmers.items():
+                # list of existing nmer names with similar nre
+                close_nmer_keys = close_nmers(new_nmers_nre_sorted, new_nmer["nre"])
+
+                for kexisting in close_nmer_keys:
+                    existing = new_nmers[kexisting]
 
                     # Fourth, the nuclear repulsion energy filter.
                     nre_diff = abs(existing["nre"] - new_nmer["nre"])
@@ -1482,6 +1580,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                 # If the structure was not filtered out, then store the new N-mer.
                 if not found_duplicate:
                     new_nmers[new_nmer_name] = new_nmer
+                    insert_nmer_nre(new_nmers_nre_sorted, (new_nmer["nre"], new_nmer_name))
 
                     if verbose >= 2:
 
@@ -1664,14 +1763,12 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     
     except FileExistsError:
         pass
-
     os.chdir(psithon_folder)
     psithon_filename = keynmer + ".in"
 
     with open(psithon_filename, "w") as psithon_f:
         
-        for line in psithon_input:
-            psithon_f.write(line)
+       psithon_f.write(psithon_input)
 
     os.chdir(owd)
 # ======================================================================
