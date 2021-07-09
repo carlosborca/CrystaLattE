@@ -1212,12 +1212,8 @@ def distance_matrix(a, b):
     """
 
     assert(a.shape[1] == b.shape[1])
-    distm = np.zeros([a.shape[0], b.shape[0]])
-    
-    for i in range(a.shape[0]):
-    
-        for j in range(b.shape[0]):
-            distm[i, j] = np.linalg.norm(a[i] - b[j])
+
+    distm = np.sqrt(np.sum((a[:, np.newaxis, :] - b[np.newaxis, :, :]) ** 2, axis=2))
 
     r_min = np.min(distm)
 
@@ -1232,12 +1228,11 @@ def nre(elem, geom):
     computed nuclear repulsion energy.
     """
     
-    nre = 0.
-    for at1 in range(geom.shape[0]):
-
-        for at2 in range(at1):
-            dist = np.linalg.norm(geom[at1] - geom[at2])
-            nre += qcel.periodictable.to_Z(elem[at1]) * qcel.periodictable.to_Z(elem[at2]) / dist
+    Z = np.array([qcel.periodictable.to_Z(e) for e in elem])
+    dist = np.sqrt(np.sum((geom[:, np.newaxis, :] - geom[np.newaxis, :, :]) ** 2, axis=2))
+    np.fill_diagonal(dist, np.inf)
+    oodist = np.reciprocal(dist)
+    nre = np.einsum('x,xy,y', Z, oodist, Z, optimize=True) / 2.0
 
     return nre
 # ======================================================================
@@ -1262,36 +1257,16 @@ def chemical_space(elem, geom):
         system, where x is the number of atoms in the system.
     """
 
-    # Get the number of atoms in the N-mer
-    natoms = geom.shape[0]
-    
-    # Create a NumPy matrix
-    M = np.zeros((natoms,natoms))
+    Z = np.array([qcel.periodictable.to_Z(e) for e in elem])
+    dist = np.sqrt(np.sum((geom[:, np.newaxis, :] - geom[np.newaxis, :, :]) ** 2, axis=2))
 
-    # Iterate over atoms
-    for i in range(natoms):
-   
-        # Get the charge of atom i
-        charge_i = qcel.periodictable.to_Z(elem[i])
-        
-        # Fill the diagonal with the special polynomial from of:
-        # DOI: 10.1103/PhysRevLett.108.058301     
-        M[i,i] = 0.5 * np.power(charge_i, 2.4)
-    
-        for j in range(i):
-            
-            # Get the charge of atom j
-            charge_j = qcel.periodictable.to_Z(elem[j])
-            
-            # Compute distance between i and j
-            dist = np.linalg.norm(geom[i] - geom[j])
-            
-            # Compute Coulomb interaction between i and j
-            ij_elem = charge_i * charge_j / dist
+    np.fill_diagonal(dist, np.inf)
+    oodist = np.reciprocal(dist)
 
-            M[i,j] = ij_elem
-            # Symmetric Matrix 
-            M[j,i] = ij_elem
+    # Fill the diagonal with the special polynomial from:
+    # DOI: 10.1103/PhysRevLett.108.058301     
+    M = np.einsum('x,xy,y->xy', Z, oodist, Z, optimize=True)
+    np.fill_diagonal(M, (Z ** 2.4) / 2.0)
 
     # Solve the eigenvalue problem
     eigenvalues, eigenvectors = np.linalg.eig(M)
