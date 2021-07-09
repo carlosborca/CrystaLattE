@@ -17,7 +17,8 @@ def test_psz_main():
     d = os.path.join(root, "crystalatte", "data", "out")
     os.chdir(d)
 
-    results, crystal_lattice_energy = crystalatte.psz_main(2)
+    kwargs = {'com_mode': False, 'sort_by_avg_com_dist': False, 'sort_by_nmer_cutoff': False, 'target_directory': ""}
+    results, crystal_lattice_energy = crystalatte.psz_main(2, **kwargs)
 
 
     a = []

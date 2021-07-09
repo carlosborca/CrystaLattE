@@ -33,9 +33,10 @@
 #
 
 # Import standard Python modules.
-import os
+import os, sys
 import time
 import shutil
+import numpy as np
 
 # ======================================================================
 def psz_success_check(fname, verbose=0):
@@ -272,11 +273,17 @@ def psz_print_header(verbose=0):
 # ======================================================================
 
 # ======================================================================
-def psz_print_results(results, crystal_lattice_energy, verbose=0):
+def psz_print_results(results, crystal_lattice_energy, com_mode, verbose=0):
     """Prints a summary of the energy results at the end of the
     execution.
     
     Arguments:
+    <list> results
+        List of results
+    <float> crystal_lattice_energy
+        Total crystal lattice energy (kJ/mol)
+    <bool> com_mode
+        Print center of mass distances instead of interatomic distances
     <int> verbose
         Adjusts the level of detail of the printouts.
     """
@@ -288,7 +295,10 @@ def psz_print_results(results, crystal_lattice_energy, verbose=0):
     if verbose >= 1:
         print("Summary of results:")
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(term_size - 112)))
-        print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
+        if not com_mode:
+            print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
+        else:
+            print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | COM Monomer")
         print("N-mer Name                 |    MB Energy | Rep. | Contribution | Lattice Ener. |     Priority | Separations")
         print("                           |     (kJ/mol) |  (#) |     (kJ/mol) |      (kJ/mol) | (Arb. Units) | (A)")
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(term_size - 112)))
@@ -316,13 +326,27 @@ def psz_print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def psz_main(verbose=0):
+def psz_main(verbose=0, **kwargs):
+    """Main routine to process psithon output files, print a summary, and dump
+    corresponding .dat and .csv files.
+
+    Arguments:
+    <int> verbose
+        Adjusts the level of detail of the printouts.
+    **kwargs
+        Keyword arguments as specified in psz_process_args_and_run()
+    """
 
     # Start counting execution time.
     start = time.time()
 
-    d = os.getcwd()
+    if kwargs['target_directory'] == "":
+        d = os.getcwd()
+    else:
+        d = kwargs['target_directory']
     
+    com_mode = kwargs['com_mode']
+
     # A dictionary for storing N-mers will be created.
     nmers = {}
 
@@ -336,8 +360,15 @@ def psz_main(verbose=0):
             + "Non-Additive MB Energy (kJ/mol),"\
             + "Num. Rep. (#), N-mer Contribution (kJ/mol),"\
             + "Partial Crys. Lattice Ener. (kJ/mol),"\
-            + "Calculation Priority (Arb. Units),"\
-            + "Minimum Monomer Separations (A)"
+            + "Calculation Priority (Arb. Units)," \
+            + "Avg COM Separation (A)," \
+            + "Avg Monomer Separation (A)," \
+
+    if not com_mode:
+        csv_header = csv_header + "Minimum Monomer Separations (A)"
+    else:
+        csv_header = csv_header + "COM Monomer Separations (A)"
+        
 
     csv_lines.append(csv_header)
     #print(csv_header) #degub
@@ -371,7 +402,9 @@ def psz_main(verbose=0):
                 nmers[key]["priority_min"] = p_min
                 nmers[key]["priority_com"] = p_com
                 nmers[key]["min_monomer_separations"] = min_mon_seps
+                nmers[key]["average_min_monomer_separation"] = np.average(np.array(min_mon_seps, dtype=np.float64))
                 nmers[key]["com_monomer_separations"] = com_mon_seps
+                nmers[key]["average_com_monomer_separation"] = np.average(np.array(com_mon_seps, dtype=np.float64))
                 nmers[key]["nre"] = nre
                 nmers[key]["nambe"] = n_body_energy 
                 nmers[key]["contrib"] = n_body_energy * replicas / number_of_monomers
@@ -385,7 +418,12 @@ def psz_main(verbose=0):
     nmer_keys = list(nmers.keys())
 
     # Sort the list in decreasing priority order.
-    nmer_keys.sort(key = lambda x: -nmers[x]['priority_cutoff'])
+    if kwargs['sort_by_avg_com_dist']:
+        nmer_keys.sort(key = lambda x: nmers[x]['average_com_monomer_separation'])
+    elif kwargs['sort_by_nmer_cutoff']:
+        nmer_keys.sort(key = lambda x: float(nmers[x]['min_monomer_separations'][-1]))
+    else:
+        nmer_keys.sort(key = lambda x: -nmers[x]['priority_cutoff'])
 
     # The next line was replaced to trigger the calculations in order.
     for keynmer in nmer_keys:
@@ -398,11 +436,19 @@ def psz_main(verbose=0):
         rminseps    = ""
         rminsepscsv = ""
         
+        # Same as above but for COM separations
+        comseps    = ""
+        comsepscsv = "" 
+        
         nmer_min_monomer_separations = nmers[keynmer]["min_monomer_separations"] 
         
         for r in nmer_min_monomer_separations:
             rminseps    += "{:6.3f} ".format(float(r))
             rminsepscsv += "{:.3f},".format(float(r))
+
+        for r in nmers[keynmer]["com_monomer_separations"]:
+            comseps    += "{:6.3f} ".format(float(r))
+            comsepscsv += "{:.3f},".format(float(r))
 
         nmer_result = "{:26} | {:>12.8f} | {:>4} | {:>12.8f} | {:>13.8f} | {:12.6e} | {}".format(
                 keynmer,
@@ -411,23 +457,25 @@ def psz_main(verbose=0):
                 nmers[keynmer]["contrib"],
                 partial_crystal_lattice_energy,
                 nmers[keynmer]["priority_cutoff"],
-                rminseps)
+                rminseps if not com_mode else comseps)
         
         results.append(nmer_result)
 
-        nmer_csv = "{:},{:.8f},{:},{:.8f},{:.8f},{:.6e},{}".format(
+        nmer_csv = "{:},{:.8f},{:},{:.8f},{:.8f},{:.6e},{:.4f},{:.4f},{}".format(
                 keynmer,
                 nmers[keynmer]["nambe"],
                 nmers[keynmer]["replicas"],
                 nmers[keynmer]["contrib"],
                 partial_crystal_lattice_energy,
                 nmers[keynmer]["priority_min"],
-                rminsepscsv[:-1])
+                nmers[keynmer]["average_com_monomer_separation"],
+                nmers[keynmer]["average_min_monomer_separation"],
+                rminsepscsv[:-1] if not com_mode else comsepscsv[:-1])
         
         csv_lines.append(nmer_csv)
 
     psz_print_header(verbose)
-    psz_print_results(results, crystal_lattice_energy, verbose)
+    psz_print_results(results, crystal_lattice_energy, com_mode, verbose)
     psz_print_end_msg(start, verbose)
 
     try:
@@ -446,5 +494,47 @@ def psz_main(verbose=0):
 
     return results, crystal_lattice_energy
     
+
+def psz_process_args_and_run():
+    """Process command line arguments and run the script.
+
+    psithonizer.py [--com_mode] [--sort_by_avg_com_dist] [target_directory]
+
+    --com_mode
+        print center of mass separations rather than minimum monomer separations
+        (default False)
+    --sort_by_nmer_cutoff
+        sort by the nmer cutoff (largest of the intermonomer separations)
+    --sort_by_avg_com_dist
+        sort the output lines by the average COM distance
+        (default False)
+    target_directory
+        directory of the output files to analyze (defaults to current working directory)
+    """
+
+    kwargs = {'com_mode': False, 'sort_by_avg_com_dist': False, 'sort_by_nmer_cutoff': False, 'target_directory': ""}
+
+    arglist = sys.argv
+    arglist.pop(0) # delete first argument, that is the name of this script
+
+    for arg in arglist:
+        if (arg == "--com_mode"):
+            kwargs['com_mode'] = True
+        elif (arg == "--sort_by_avg_com_dist"):
+            kwargs['sort_by_avg_com_dist'] = True
+        elif (arg == "--sort_by_nmer_cutoff"):
+            kwargs['sort_by_nmer_cutoff'] = True
+        else: # assume we are giving a directory to some output files
+            kwargs['target_directory'] = arg
+
+    if (kwargs['sort_by_avg_com_dist'] and kwargs['sort_by_nmer_cutoff']):
+        print("Can only sort by one thing at a time!")
+        exit()
+
+    psz_main(1, **kwargs)
+
+
 if __name__ == "__main__":
-    psz_main(1)
+
+    psz_process_args_and_run()
+
