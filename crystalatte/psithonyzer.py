@@ -340,10 +340,10 @@ def psz_main(verbose=0, **kwargs):
     # Start counting execution time.
     start = time.time()
 
-    if kwargs['target_directory'] == "":
+    if kwargs['src_directory'] == "":
         d = os.getcwd()
     else:
-        d = kwargs['target_directory']
+        d = kwargs['src_directory']
     
     com_mode = kwargs['com_mode']
 
@@ -381,16 +381,18 @@ def psz_main(verbose=0, **kwargs):
             
             #print(os.path.join(d, f)) #debug
 
+            filename = os.path.join(d, f)
+
             # Check if Psi4 exited successfully.
             # Why bothering analyzing a file otherwise?
-            success = psz_success_check(f)
+            success = psz_success_check(filename)
             #print(success) #debug
     
             if success:
                 # If the output was ran successufully, get the N-mer name
                 # to create a key for its soon-to-be created dictionary
                 # and get the data to populate such N-mer dictionary.
-                sc_xyz, key, number_of_monomers, replicas, p_cutoff, p_min, p_com, min_mon_seps, com_mon_seps, nre, n_body_energy = psz_get_nmer_data(f)
+                sc_xyz, key, number_of_monomers, replicas, p_cutoff, p_min, p_com, min_mon_seps, com_mon_seps, nre, n_body_energy = psz_get_nmer_data(filename)
 
                 # Create a new dictionary for the current N-mer.
                 nmers[key]= {}
@@ -498,7 +500,7 @@ def psz_main(verbose=0, **kwargs):
 def psz_process_args_and_run():
     """Process command line arguments and run the script.
 
-    psithonizer.py [--com_mode] [--sort_by_avg_com_dist] [target_directory]
+    psithonizer.py [--com_mode] [--sort_by_avg_com_dist] [src_directory]
 
     --com_mode
         print center of mass separations rather than minimum monomer separations
@@ -508,11 +510,11 @@ def psz_process_args_and_run():
     --sort_by_avg_com_dist
         sort the output lines by the average COM distance
         (default False)
-    target_directory
+    src_directory
         directory of the output files to analyze (defaults to current working directory)
     """
 
-    kwargs = {'com_mode': False, 'sort_by_avg_com_dist': False, 'sort_by_nmer_cutoff': False, 'target_directory': ""}
+    kwargs = {'com_mode': False, 'sort_by_avg_com_dist': False, 'sort_by_nmer_cutoff': False, 'src_directory': ""}
 
     arglist = sys.argv
     arglist.pop(0) # delete first argument, that is the name of this script
@@ -525,7 +527,7 @@ def psz_process_args_and_run():
         elif (arg == "--sort_by_nmer_cutoff"):
             kwargs['sort_by_nmer_cutoff'] = True
         else: # assume we are giving a directory to some output files
-            kwargs['target_directory'] = arg
+            kwargs['src_directory'] = arg
 
     if (kwargs['sort_by_avg_com_dist'] and kwargs['sort_by_nmer_cutoff']):
         print("Can only sort by one thing at a time!")

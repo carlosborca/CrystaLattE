@@ -13,11 +13,7 @@ def test_psz_main():
     """Checks that the main function on the psithonyzer script returns
     the correct values for precomputed psithon outputs."""
     
-    root = os.getcwd()
-    d = os.path.join(root, "crystalatte", "data", "out")
-    os.chdir(d)
-
-    kwargs = {'com_mode': False, 'sort_by_avg_com_dist': False, 'sort_by_nmer_cutoff': False, 'target_directory': ""}
+    kwargs = {'com_mode': False, 'sort_by_avg_com_dist': False, 'sort_by_nmer_cutoff': False, 'src_directory': "crystalatte/data/out"}
     results, crystal_lattice_energy = crystalatte.psz_main(2, **kwargs)
 
 
@@ -35,8 +31,5 @@ def test_psz_main():
     assert compare(a[4], results[4])
     assert compare_values(2.56226977, crystal_lattice_energy, atol=1.e-9)
     
-    # Change directory back to root.
-    os.chdir(root)
-
     # Clean-up generated test files.
-    subprocess.call(["rm", "crystalatte/data/out/Ammonia.csv"])
+    subprocess.call(["rm", "Ammonia.csv"])

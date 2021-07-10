@@ -21,9 +21,13 @@ def test_psithonyzer():
     # Execute the psithonyzer script.
     subprocess.call(["./../../psithonyzer.py"])
 
+    # Change directory back to root; do this before test,
+    # or else a failed test may leave us in the wrong directory.
+    os.chdir(root)
+
     csv_lines = []
 
-    with open("Ammonia.csv", 'r') as csv:
+    with open("crystalatte/data/out/Ammonia.csv", 'r') as csv:
 
         for line in csv:
 
@@ -43,8 +47,6 @@ def test_psithonyzer():
 
     assert compare(csv_lines, results)
     
-    # Change directory back to root.
-    os.chdir(root)
 
     # Clean-up generated test files.
     subprocess.call(["rm", "crystalatte/data/out/Ammonia.csv"])
