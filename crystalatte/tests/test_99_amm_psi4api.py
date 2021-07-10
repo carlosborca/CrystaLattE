@@ -119,6 +119,21 @@ def test_psi4api_ammonia():
     assert compare_values(6.459398295191971, min(nmers["4mer-0+1+2+3"]["com_monomer_separations"]),   atol=1.e-8)
     assert compare_values(6.459398295191971, min(nmers["5mer-0+1+2+3+4"]["com_monomer_separations"]), atol=1.e-8)
 
+    # Test the fist eight eigenvalues of the chemical similarity matrix for each N-mer
+    ref_eigenvalues = {
+        "2mer-0+1" :       [61.0577465, 47.27888919,   0.47526893,  0.24647406,  0.19289154,  0.17243445, 0.15959053,  0.1341196],
+        "3mer-0+1+2" :     [68.7489044, 47.64038823,  46.16025,     0.54602448,  0.27553,     0.24654741, 0.19155801,  0.18623255],
+        "3mer-0+1+5" :     [67.98553018, 47.27916218, 47.27916218,  0.56261868,  0.24797375,  0.24797375, 0.21507249, 0.17507582],
+        "4mer-0+1+2+3" :   [76.65031347, 47.80875755, 46.16191286, 46.16191286,  0.59866536,  0.27665228,  0.27665228,  0.25452003],
+        "5mer-0+1+2+3+4" : [81.63568805, 50.70144021, 47.31855835, 46.16210417, 45.17840185,  0.64552605,  0.33151774,  0.28139148],
+    }
+
+    assert compare_values(ref_eigenvalues["2mer-0+1"], nmers["2mer-0+1"]["chsev"][:8], atol=1e-7)
+    assert compare_values(ref_eigenvalues["3mer-0+1+2"], nmers["3mer-0+1+2"]["chsev"][:8], atol=1e-7)
+    assert compare_values(ref_eigenvalues["3mer-0+1+5"], nmers["3mer-0+1+5"]["chsev"][:8], atol=1e-7)
+    assert compare_values(ref_eigenvalues["4mer-0+1+2+3"], nmers["4mer-0+1+2+3"]["chsev"][:8], atol=1e-7)
+    assert compare_values(ref_eigenvalues["5mer-0+1+2+3+4"], nmers["5mer-0+1+2+3+4"]["chsev"][:8], atol=1e-7)
+
     # Test the crystal lattice energy.
     assert compare_values(0.00097592, cle, atol=1.e-8)
 

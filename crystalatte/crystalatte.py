@@ -1319,6 +1319,40 @@ def insert_nmer_nre(sorted_list, new_value):
 
 
 # ======================================================================
+def nmername_to_int(name):
+    """ Calculates a unique integer hash for a given nmer name that
+    can be used to sort nmers into their generation order.
+
+    Arguments:
+    <string> name
+        name of an nmer (2mer-0+1, 3mer-0+40+100, etc.)
+
+    Returns:
+    <int> hash
+        unique number for sorting
+    """
+
+    # assume there are never more than this many monomers in the supercell
+    max_monomers = 10000
+
+    # extract monomer indices from name
+    monomer_inds = name[5:].split('+')
+
+    # first monomer index can be removed, always zero
+    monomer_inds = monomer_inds[1:]
+    monomer_inds = [int(monomer_ind) for monomer_ind in monomer_inds]
+
+    # the first remaining index is the most import, then the second, etc.
+    monomer_weights = range(len(monomer_inds))[::-1]
+    monomer_weights = [max_monomers ** monomer_weight for monomer_weight in monomer_weights]
+
+    nmer_hash = np.sum([monomer_weights[i] * monomer_inds[i] for i in range(len(monomer_inds))])
+
+    return nmer_hash
+# ======================================================================
+
+
+# ======================================================================
 def close_nmers(sorted_list, nre):
     """Finds nmers in the sorted list of tuples "sorted_list" with 
     nuclear repulsion energies within 1e-5 of "nre." The tuples are 
@@ -1371,9 +1405,10 @@ def close_nmers(sorted_list, nre):
     # use min/max bounds to get close nmers
     close_nmers = [tup[1] for tup in sorted_list[min_index:max_index]]
 
-    return close_nmers
-    
+    # sort close nmers by order of creation, exactly consistent w/ previous implementation
+    close_nmers = sorted(close_nmers, key = lambda name : nmername_to_int(name))
 
+    return close_nmers
 # ======================================================================
 
 
@@ -1763,6 +1798,7 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     
     except FileExistsError:
         pass
+
     os.chdir(psithon_folder)
     psithon_filename = keynmer + ".in"
 
