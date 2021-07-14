@@ -1671,14 +1671,13 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     psithon_input += "  freeze_core true\n"
     psithon_input += "}\n"
 
-    # Hartree-Fock is called with the 'scf' string in Psithon mode.
-    if psi4_method.lower().startswith("hf"):
-        psithon_method = "scf" + psi4_method[2:]
+    psithon_method = psi4_method
 
+    # if SAPT, we do not give a bsse_type for Psi4
+    if 'sapt' in psi4_method.lower():
+        psithon_input += "\nenergy('{}')\n".format(psithon_method)
     else:
-        psithon_method = psi4_method
-
-    psithon_input += "\nenergy('{}', bsse_type = '{}')\n".format(psithon_method, psi4_bsse)
+        psithon_input += "\nenergy('{}', bsse_type = '{}')\n".format(psithon_method, psi4_bsse)
     psithon_input += "\n"
 
     owd = os.getcwd()
