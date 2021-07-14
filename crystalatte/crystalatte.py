@@ -158,6 +158,12 @@ def input_parser(in_f_name):
             print("\nERROR: Invalid CIF file name. Check that given file ends with a .cif extension.\n")
             sys.exit()
 
+    # Make sure SAPT only on dimers
+    if 'sapt' in keywords["psi4_method"].lower() and keywords['nmers_up_to'] > 2:
+        print("\nERROR: SAPT computations only supported for dimers (nmers_up_to = 2)\n")
+        sys.exit()
+
+
     # Attempt to create a filename for the supercell XYZ file.
     if "cif_output" not in keywords.keys():
     

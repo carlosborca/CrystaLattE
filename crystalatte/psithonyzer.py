@@ -241,6 +241,12 @@ def psz_get_nmer_data(fname, verbose=0):
                     number_of_monomers = int(lastl[0])
                     n_body_energy = float(lastl[-1]) * 4.184 # Same value as in qcdb.psi_cal2J
 
+            # If it's a SAPT computation, we grab the 2-body energy in
+            # a different output line
+            if "Total SAPT" in line:
+                n_body_energy = float(line.split()[-2])
+                number_of_monomers = 2
+
     # Just in case the COM priority was not defined.
     try:
         priority_com
