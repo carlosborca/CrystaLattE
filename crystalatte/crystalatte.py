@@ -65,13 +65,13 @@ def input_parser(in_f_name):
 
     keywords = {}
     keywords["nmers_up_to"] = 2 
-    keywords["cif_a"] = 5
-    keywords["cif_b"] = 5
-    keywords["cif_c"] = 5
+    keywords["cif_a"] = 0
+    keywords["cif_b"] = 0
+    keywords["cif_c"] = 0
     keywords["bfs_thresh"] = 1.2
     keywords["uniq_filter"] = "ChSEV"
-    keywords["r_cut_com"] = 10.0 
-    keywords["r_cut_monomer"] = 12.0 
+    keywords["r_cut_com"] = 90.0 
+    keywords["r_cut_monomer"] = 0.0 
     keywords["r_cut_dimer"] = 10.0 
     keywords["r_cut_trimer"] = 8.0
     keywords["r_cut_tetramer"] = 6.0 
@@ -130,7 +130,7 @@ def input_parser(in_f_name):
                 try:
                     keyword_value = int(keyword_value)
                     
-                    if (keyword_value%2) == 0:
+                    if keyword_value != 0 and (keyword_value%2) == 0:
                         keyword_value += 1
 
                 except ValueError:
@@ -470,7 +470,7 @@ def read_cif(fNameIn):
 
 
 # ======================================================================
-def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose=1):
+def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, monomer_cutoff, nmer_cutoff, verbose=1):
     """Takes the name of a CIF input file and the name of a .xyz output
     file, as well as the number of replicas of the rectangular cell in
     each direction (A, B, and C). It then calls Read_CIF() and passes
@@ -484,20 +484,31 @@ def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose=1):
         XYZ output filename.
     <int> cif_a
         Number of replicas of the cartesian unit cell in `a` direction.
+        Zero to auto-size.
     <int> cif_b
         Number of replicas of the cartesian unit cell in `b` direction.
+        Zero to auto-size.
     <int> cif_c
         Number of replicas of the cartesian unit cell in `c` direction.
+        Zero to auto-size.
+    <float> monomer_cutoff
+        Cutoff distance used if cif_a, cif_b, or cif_c are zero 
+        (auto-size option).  Otherwise ignored.  Set to zero
+        to auto-size this from nmer_cutoff.
+    <float> nmer_cutoff
+        Largest of the values for dimer cutoff, trimer cutoff, etc.
+        Used if auto-sizing monomer_cutoff (i.e., if monomer_cutoff == 0).
+        Otherwise ignored.
     <int> verbose
         Adjusts the level of detail of the printouts.
     """
 
-    cif_arguments = ["", "-i", cif_input, "-o", cif_output, "-b", cif_a, cif_b, cif_c, "-r"]
+    cif_arguments = ["", "-i", cif_input, "-o", cif_output, "-b", cif_a, cif_b, cif_c, "-r", "-d_mono", monomer_cutoff, "-d_nmer", nmer_cutoff]
 
     if verbose >= 2:
         print("\nGenerating the supercell .xyz file.")
-        print("\nThe following arguments will be passed to the CIF reader script:")
-        print("./Read_CIF.py" + " ".join(str(cif_argument) for cif_argument in cif_arguments) + "\n")
+        print("\nThe following arguments will be passed to the CIF reader:")
+        print("" + " ".join(str(cif_argument) for cif_argument in cif_arguments) + "\n")
 
     return cif_arguments
 # ======================================================================
@@ -505,20 +516,22 @@ def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose=1):
 
 # =============================================================================
 def cif_main(args):
-
+    """Creates a supercell from the CIF file.  If we are determining
+    r_cut_monomer automatically from CIF information and the largest
+    nmer cutoff, that also happens here.  Return r_cut_monomer."""
+    
     # Default settings.
     fNameIn = ''
     fNameOut = ''
-    Nx = 1
-    Ny = 1
-    Nz = 1
+    # zero number of boxes means compute from monomer_cutoff
+    Nx = 0
+    Ny = 0
+    Nz = 0
     make_rect_box = False
-    
-    
-    # Read the arguments. We expect at least 4.
-    if (len(args) <= 4):
-        print_usage()
-    
+   
+    monomer_cutoff = 0.0
+    nmer_cutoff = 0.0
+ 
     i = 1
     while (i < len(args)):
     
@@ -528,6 +541,7 @@ def cif_main(args):
             # Make sure a file name is given.
             if (i+1 == len(args)):
                 print('\nERROR: no input file name given')
+                sys.exit()
             
             fNameIn = args[i+1]
             i = i + 2
@@ -538,6 +552,7 @@ def cif_main(args):
             # Make sure a file name is given.
             if (i+1 == len(args)):
                 print('\nERROR: no output file name given')
+                sys.exit()
     
             # Check we have a valid file extension.
             fNameOut = args[i+1]
@@ -549,6 +564,7 @@ def cif_main(args):
     
             if (unknown):
                 print('\nERROR: unknown file extension of output file')
+                sys.exit()
     
             i = i + 2
     
@@ -558,13 +574,15 @@ def cif_main(args):
             # Make sure 3 integers are given.
             if (i+3 >= len(args)):
                 print('\nERROR: need 3 integers to indicate box size')
+                sys.exit()
     
             Nx = int(args[i+1])
             Ny = int(args[i+2])
             Nz = int(args[i+3])
     
-            if (Nx == 0  or  Ny == 0  or  Nz == 0):
-                print('\nERROR: box size integers need to be larger than zero')
+            if (Nx < 0  or  Ny < 0  or  Nz < 0):
+                print('\nERROR: box size integers must be non-negative')
+                sys.exit()
     
             i = i + 4
     
@@ -576,21 +594,51 @@ def cif_main(args):
             i = i + 1
     
     
+        # Supply a cutoff distance to auto-determine number of boxes
+        elif (args[i] == '-d_mono'):
+
+            # make sure a distance is given 
+            if (i+1 >= len(args)):
+                print('\nERROR: need distance after -d_mono for cutoff distance')
+                sys.exit()
+
+            monomer_cutoff = float(args[i+1])
+            i = i + 2 
+
+        # Supply a cutoff distance to auto-determine number of boxes
+        elif (args[i] == '-d_nmer'):
+
+            # make sure a distance is given 
+            if (i+1 >= len(args)):
+                print('\nERROR: need distance after -d_nmer for cutoff distance')
+                sys.exit()
+
+            nmer_cutoff = float(args[i+1])
+            i = i + 2 
+
         # Anything else is wrong.
         else:
             print('\nERROR: invalid argument "%s"' % args[i])
+            sys.exit()
     
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    # verify that we have the minimal cutoff info we have to have
+    if monomer_cutoff == 0.0 and nmer_cutoff == 0.0:
+        print("\nERROR: need either -d_mono or -d_nmer")
+        sys.exit()    
+
     # Read input file.
     
     # Make sure an input file was given.
     if (fNameIn == ''):
         print('\nERROR: no input file given.  Use:  -i filename')
+        sys.exit()
     
     # Open the CIF file and read the data.
     data = read_cif(fNameIn)
     
-    # Extract lengths and angles from the CIF file.
+    # Extract lengths (Angstroms) and angles from the CIF file.
     La = float(data['_cell_length_a'])
     Lb = float(data['_cell_length_b'])
     Lc = float(data['_cell_length_c'])
@@ -598,7 +646,50 @@ def cif_main(args):
     beta = math.radians(float(data['_cell_angle_beta']))
     gamma = math.radians(float(data['_cell_angle_gamma']))
     volume = float(data['_cell_volume'])
-    
+   
+    print("La, Lb, Lc = ", La, Lb, Lc)
+
+    # compute monomer cutoff automatically from biggest nmer cutoff
+    # if the monomer cutoff was not specified by the user
+    # worst case, monomer_cutoff = nmer_cutoff + the distance from one vertex
+    # to the opposite vertex.  (usually this will be overkill)
+    if monomer_cutoff == 0.0:
+        monomer_cutoff = nmer_cutoff + math.sqrt(La**2 + Lb**2 + Lc**2)
+        print("Auto-computed r_cut_monomer = {:.3f}".format(monomer_cutoff))
+
+    # compute number of boxes automatically if they were not specified by user
+
+    # part of the distance will be taken care of by the central box
+    # however, we can't count on that, b/c some distances might be 
+    # measured from just inside the edge of the box (the central 
+    # reference monomer might actually be on the edge of the central
+    # cell).  So, I tried the following lines initially, but they
+    # didn't add enough boxes to robustly get the symmetry numbers right
+    # around the edges
+    # cdx = monomer_cutoff - La / 2.0
+    # cdy = monomer_cutoff - Lb / 2.0
+    # cdz = monomer_cutoff - Lc / 2.0
+
+    # if cdx < 0.0: cdx = 0.0
+    # if cdy < 0.0: cdy = 0.0
+    # if cdz < 0.0: cdz = 0.0
+
+    cdx = monomer_cutoff
+    cdy = monomer_cutoff
+    cdz = monomer_cutoff
+
+    # How many boxes out from center needed to account for remainder of
+    # distance?  However many that is, need that in *both* directions,
+    # and add that to the central cell (to get an odd number)
+    if (Nx == 0):
+        Nx = 2 * math.ceil(cdx / La) + 1
+    if (Ny == 0):
+        Ny = 2 * math.ceil(cdy / Lb) + 1
+    if (Nz == 0):
+        Nz = 2 * math.ceil(cdz / Lc) + 1
+ 
+    print("Number of cells in (x, y, z) directions: ({}, {}, {})".format(Nx, Ny, Nz))
+
     # Extract the symmetry operations.  This will be a list of strings
     # such as:
     #    ['x,y,z', 'y,x,2/3-z', '-y,x-y,2/3+z', '-x,-x+y,1/3-z', ... ]
@@ -828,6 +919,9 @@ def cif_main(args):
         print('\nERROR: Failed to write to XYZ output file')
 
     fOut.close()
+
+    return(monomer_cutoff)
+
 # ======================================================================
 
 
@@ -2239,9 +2333,20 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
     # Start counting time.
     start = time.time()
 
+    # nmer_cutoff should be the largest of the nmer cutoffs we want
+    # watch out for some of them being set to arbitrarily large values
+    # because we are not actually requesting them in the computation
+    nmer_cutoff = 0.0
+    if (nmers_up_to == 2):
+        nmer_cutoff = r_cut_dimer
+    elif (nmers_up_to == 3):
+        nmer_cutoff = max(r_cut_dimer, r_cut_trimer)
+    elif (nmers_up_to == 4):
+        nmer_cutoff = max(r_cut_dimer, r_cut_trimer, r_cut_tetramer)
+
     # Read a CIF file and generate the unit cell.
-    cif_arguments = cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose)
-    cif_main(cif_arguments)
+    cif_arguments = cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, r_cut_monomer, nmer_cutoff, verbose)
+    r_cut_monomer = cif_main(cif_arguments)
     
     # Read the output of the automatic fragmentation.
     nmers = supercell2monomers(cif_output, r_cut_monomer, bfs_thresh, verbose)
