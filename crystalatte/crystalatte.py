@@ -1455,7 +1455,7 @@ def nmername_to_int(name):
 # ======================================================================
 def close_nmers(sorted_list, nre):
     """Finds nmers in the sorted list of tuples "sorted_list" with 
-    nuclear repulsion energies within 1e-5 of "nre." The tuples are 
+    nuclear repulsion energies within 1e-4 of "nre." The tuples are 
     sorted by their first index, which is the nuclear repulsion energy.
 
     Arguments:
@@ -1467,18 +1467,20 @@ def close_nmers(sorted_list, nre):
     Returns:
     <list of string> close_nmers
         list of nmer names from "sorted_list" for which the nuclear
-        repulsion energy is within 1e-5 of "nre."
+        repulsion energy is within 1e-4 of "nre."
     """
 
-    # binary search for the min nre bound (1e-5 tolerance)
+    tolerance = 1e-4
+
+    # binary search for the min nre bound (1e-4 tolerance)
     left_index, right_index = 0, len(sorted_list)
     while left_index != right_index:
         
         new_index = (left_index + right_index) // 2
 
-        if sorted_list[new_index][0] < (nre - 1e-5):
+        if sorted_list[new_index][0] < (nre - tolerance):
             left_index = new_index + 1
-        elif sorted_list[new_index][0] > (nre - 1e-5):
+        elif sorted_list[new_index][0] > (nre - tolerance):
             right_index = new_index
         else:
             left_index = new_index
@@ -1492,9 +1494,9 @@ def close_nmers(sorted_list, nre):
         
         new_index = (left_index + right_index) // 2
 
-        if sorted_list[new_index][0] < (nre + 1e-5):
+        if sorted_list[new_index][0] < (nre + tolerance):
             left_index = new_index + 1
-        elif sorted_list[new_index][0] > (nre + 1e-5):
+        elif sorted_list[new_index][0] > (nre + tolerance):
             right_index = new_index
         else:
             left_index = new_index
@@ -1654,7 +1656,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     # If NRE difference is large, this is a new N-mer.
                     # Threfore reset posterior filters ran flags, there
                     # is no need to run further filters than NRE.
-                    if nre_diff > 1.e-5:
+                    if nre_diff > 1.e-4:
 
                         chsev_filter_ran = False
                         rmsd_filter_ran = False                        
