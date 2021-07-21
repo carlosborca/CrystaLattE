@@ -926,6 +926,111 @@ def cif_main(args):
 
 
 # ======================================================================
+def bfs(geom, elem, bfs_thresh):
+    """ Linear scaling breadth first search for partitioning a set of atoms into covalently bound molecules"""
+
+    natom = geom.shape[0]
+
+    # van der waals radii of each atom type
+    radii = psi4.driver.qcdb.bfs._get_covalent_radii(elem)
+    max_radius = np.max(radii)
+
+    # this is the max distance between any two covalently bound atoms
+    blocksize = int(math.ceil(2.0 * bfs_thresh * max_radius))
+
+    # map each atom to a "cube" with dimension blocksize ** 3
+    geom_floor = np.floor(geom).astype(int)
+    atomkeys = [(pos[0], pos[1], pos[2]) for pos in geom_floor - (np.mod(geom_floor, blocksize))]
+    atomkey_to_atoms = dict.fromkeys(atomkeys)
+
+    for k, _ in atomkey_to_atoms.items():
+        atomkey_to_atoms[k] = []
+
+    for atomind, atomkey in enumerate(atomkeys):
+        atomkey_to_atoms[atomkey].append(atomind)
+
+    # list of covalently bonded neighbors for each atom
+    neighborlist = [[] for atomind in range(natom)]
+
+    for atomkey, atoms in atomkey_to_atoms.items():
+
+        # within the loop, we'll find neighbors of the atoms in "cube" atomkey
+        # neighbors have to be in the same cube, or one cube over
+        otherkeys = []
+        for keyx in [atomkey[0] - blocksize, atomkey[0], atomkey[0] + blocksize]:
+            for keyy in [atomkey[1] - blocksize, atomkey[1], atomkey[1] + blocksize]:
+                for keyz in [atomkey[2] - blocksize, atomkey[2], atomkey[2] + blocksize]:
+                    otherkey = (keyx, keyy, keyz)
+                    if otherkey in atomkey_to_atoms:
+                        otherkeys.append(otherkey)
+
+        # the atoms in either our cube or the neighboring cube
+        otheratoms = list(itertools.chain(*[atomkey_to_atoms[otherkey] for otherkey in otherkeys]))
+
+        geom_atoms = geom[atoms]
+        geom_others = geom[otheratoms]
+
+        rad_atoms = radii[atoms]
+        rad_others = radii[otheratoms]
+
+        dist, _ = distance_matrix(geom_atoms, geom_others)
+        bound = 1.2 * (rad_atoms.reshape(-1,1) + rad_others.reshape(1,-1))
+
+        # list of all bonds involving atoms from our cube
+        bond_sources, bond_targets = np.where(dist < bound)
+
+        # update the neighbor list with bonds
+        for bond_ind, bond_source in enumerate(bond_sources):
+            bond_target = bond_targets[bond_ind]
+            atomind = atoms[bond_source]
+            otheratomind = otheratoms[bond_target]
+            atomkey = atomkeys[atomind]
+            if otheratomind != atomind:
+                neighborlist[atomind].append(otheratomind)
+
+    # now that we have the neighborlist, we need to perform BFS to get fragments
+
+    # has the atom already been assigned to a fragment?
+    in_fragment = [False] * natom
+
+    # list of complete fragments
+    fragments = []
+
+    # this index traverses all atoms, looking for atoms not in a fragment
+    outerind = 0
+    while outerind < natom:
+      
+        # atom outerind already in a fragment
+        if in_fragment[outerind]:
+            outerind += 1
+            continue
+
+        # make a new fragment, containing outerind 
+        fragment = [outerind]
+
+        # this indexes traverses neighbors of outerind, adding them to this fragment
+        innerind = 0
+
+        while innerind < len(fragment):
+
+            # we've already added the neighbor to this fragment
+            if in_fragment[fragment[innerind]]:
+                innerind += 1
+                continue
+
+            in_fragment[fragment[innerind]] = True
+            fragment.extend(neighborlist[fragment[innerind]])
+            innerind += 1
+
+        fragment = sorted(set(fragment))
+        fragments.append(fragment)
+        outerind += 1
+
+    return fragments
+# ======================================================================
+
+
+# ======================================================================
 def center_supercell(cif_output, verbose=0):
     """Takes the supercell file produced by Read_CIF and computes the
     center of the supercell coordinates to translate the supercell to
@@ -1060,12 +1165,12 @@ def supercell2monomers(cif_output, r_cut_monomer, bfs_thresh, verbose=1):
     
     # Passes the supercell geometry and elements to the breadth-first
     # search algorithm of QCDB to obtain fragments.
-    #fragments = BFS(scell_geom, scell_elem, None, bfs_thresh)
-    fragments = psi4.driver.qcdb.bfs.BFS(scell_geom, scell_elem, None, bfs_thresh)
+    #fragments = psi4.driver.qcdb.bfs.BFS(scell_geom, scell_elem, None, bfs_thresh)
+    fragments = bfs(scell_geom, scell_elem, bfs_thresh)
 
     # Stop the BFS timer.
     bfs_stop_time = time.time() - bfs_start_time
-    
+
     # Two lists containing geometries and elements of a fragment.
     frag_geoms = [scell_geom[fr] for fr in fragments]
     frag_elems = [scell_elem[fr] for fr in fragments]
