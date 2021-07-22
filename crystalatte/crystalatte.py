@@ -330,18 +330,18 @@ def write_xyz(atoms, box, f):
         cy = box[4]
         cz = box[5]
         f.write('Crystal created from CIF file. Box vectors:')
-        f.write(' a= %10.5f %10.5f %10.5f' % (ax, 0.0, 0.0))
-        f.write(' b= %10.5f %10.5f %10.5f' % (bx, by, 0.0))
-        f.write(' c= %10.5f %10.5f %10.5f\n' % (cx, cy, cz))
+        f.write(' a= %20.12f %20.12f %20.12f' % (ax, 0.0, 0.0))
+        f.write(' b= %20.12f %20.12f %20.12f' % (bx, by, 0.0))
+        f.write(' c= %20.12f %20.12f %20.12f\n' % (cx, cy, cz))
     else:
         # box = (ax,by,cz)
         f.write('Crystal created from CIF file. Box size:') 
-        f.write(' %10.5f %10.5f %10.5f\n' % box)
+        f.write(' %20.12f %20.12f %20.12f\n' % box)
 
     # Write atom data (units are Angstroms).
     # The argument "atoms" has format ('Si', x, y, z) for example
     for i in range(N):
-        f.write('%-10s %10.6f %10.6f %10.6f\n' % atoms[i])
+        f.write('%-10s %20.12f %20.12f %20.12f\n' % atoms[i])
 # =============================================================================
 
 
@@ -857,7 +857,7 @@ def cif_main(args):
         print("{}".format("~"*(shutil.get_terminal_size().columns)))
     
     # Check if we have a rectangular box.
-    if (bx < eps  and  cx < eps  and cy < eps):
+    if (abs(bx) < eps  and  abs(cx) < eps  and abs(cy) < eps):
         make_rect_box = True
     
     # Determine the box size.
@@ -1558,24 +1558,25 @@ def nmername_to_int(name):
 
 
 # ======================================================================
-def close_nmers(sorted_list, nre):
+def close_nmers(sorted_list, nre, tolerance=1e-8):
     """Finds nmers in the sorted list of tuples "sorted_list" with 
-    nuclear repulsion energies within 1e-4 of "nre." The tuples are 
+    nuclear repulsion energies within "tolerance" of "nre." The tuples are 
     sorted by their first index, which is the nuclear repulsion energy.
 
     Arguments:
     <list of (float, string)> sorted_list
         sorted list of tuples, each tuple is a (nmer_nre, nmer_name)
-    <float)> nre 
+    <float> nre 
         nuclear repulsion energy of a new nmer
+    <float> tolerance
+       nre tolerance
+
 
     Returns:
     <list of string> close_nmers
         list of nmer names from "sorted_list" for which the nuclear
-        repulsion energy is within 1e-4 of "nre."
+        repulsion energy is within 1e-8 of "nre."
     """
-
-    tolerance = 1e-4
 
     # binary search for the min nre bound (1e-4 tolerance)
     left_index, right_index = 0, len(sorted_list)
@@ -1749,7 +1750,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                 rmsd_filter_ran = False
 
                 # list of existing nmer names with similar nre
-                close_nmer_keys = close_nmers(new_nmers_nre_sorted, new_nmer["nre"])
+                nre_tolerance = 1e-8
+                close_nmer_keys = close_nmers(new_nmers_nre_sorted, new_nmer["nre"], nre_tolerance)
 
                 for kexisting in close_nmer_keys:
                     existing = new_nmers[kexisting]
@@ -1761,7 +1763,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     # If NRE difference is large, this is a new N-mer.
                     # Threfore reset posterior filters ran flags, there
                     # is no need to run further filters than NRE.
-                    if nre_diff > 1.e-4:
+                    if nre_diff > nre_tolerance:
 
                         chsev_filter_ran = False
                         rmsd_filter_ran = False                        
@@ -1774,7 +1776,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                             chsev_diff = np.linalg.norm(existing["chsev"] - new_nmer["chsev"])
                             chsev_filter_ran = True
 
-                            if chsev_diff < 1.e-3:
+                            if chsev_diff < 1.e-8:
                                 found_duplicate = True
 
                                 if verbose >= 2:
