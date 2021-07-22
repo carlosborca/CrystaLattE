@@ -1212,12 +1212,8 @@ def distance_matrix(a, b):
     """
 
     assert(a.shape[1] == b.shape[1])
-    distm = np.zeros([a.shape[0], b.shape[0]])
-    
-    for i in range(a.shape[0]):
-    
-        for j in range(b.shape[0]):
-            distm[i, j] = np.linalg.norm(a[i] - b[j])
+
+    distm = np.sqrt(np.sum((a[:, np.newaxis, :] - b[np.newaxis, :, :]) ** 2, axis=2))
 
     r_min = np.min(distm)
 
@@ -1232,12 +1228,11 @@ def nre(elem, geom):
     computed nuclear repulsion energy.
     """
     
-    nre = 0.
-    for at1 in range(geom.shape[0]):
-
-        for at2 in range(at1):
-            dist = np.linalg.norm(geom[at1] - geom[at2])
-            nre += qcel.periodictable.to_Z(elem[at1]) * qcel.periodictable.to_Z(elem[at2]) / dist
+    Z = np.array([qcel.periodictable.to_Z(e) for e in elem])
+    dist = np.sqrt(np.sum((geom[:, np.newaxis, :] - geom[np.newaxis, :, :]) ** 2, axis=2))
+    np.fill_diagonal(dist, np.inf)
+    oodist = np.reciprocal(dist)
+    nre = np.einsum('x,xy,y', Z, oodist, Z, optimize=True) / 2.0
 
     return nre
 # ======================================================================
@@ -1262,36 +1257,16 @@ def chemical_space(elem, geom):
         system, where x is the number of atoms in the system.
     """
 
-    # Get the number of atoms in the N-mer
-    natoms = geom.shape[0]
-    
-    # Create a NumPy matrix
-    M = np.zeros((natoms,natoms))
+    Z = np.array([qcel.periodictable.to_Z(e) for e in elem])
+    dist = np.sqrt(np.sum((geom[:, np.newaxis, :] - geom[np.newaxis, :, :]) ** 2, axis=2))
 
-    # Iterate over atoms
-    for i in range(natoms):
-   
-        # Get the charge of atom i
-        charge_i = qcel.periodictable.to_Z(elem[i])
-        
-        # Fill the diagonal with the special polynomial from of:
-        # DOI: 10.1103/PhysRevLett.108.058301     
-        M[i,i] = 0.5 * np.power(charge_i, 2.4)
-    
-        for j in range(i):
-            
-            # Get the charge of atom j
-            charge_j = qcel.periodictable.to_Z(elem[j])
-            
-            # Compute distance between i and j
-            dist = np.linalg.norm(geom[i] - geom[j])
-            
-            # Compute Coulomb interaction between i and j
-            ij_elem = charge_i * charge_j / dist
+    np.fill_diagonal(dist, np.inf)
+    oodist = np.reciprocal(dist)
 
-            M[i,j] = ij_elem
-            # Symmetric Matrix 
-            M[j,i] = ij_elem
+    # Fill the diagonal with the special polynomial from:
+    # DOI: 10.1103/PhysRevLett.108.058301     
+    M = np.einsum('x,xy,y->xy', Z, oodist, Z, optimize=True)
+    np.fill_diagonal(M, (Z ** 2.4) / 2.0)
 
     # Solve the eigenvalue problem
     eigenvalues, eigenvectors = np.linalg.eig(M)
@@ -1309,6 +1284,131 @@ def chemical_space(elem, geom):
     chem_spc_eigen_values = np.array(sorted_eigenvalues)
 
     return chem_spc_eigen_values
+# ======================================================================
+
+
+# ======================================================================
+def insert_nmer_nre(sorted_list, new_value):
+    """Inserts the tuple "new_value" into the sorted list of tuples
+    "sorted_list." The tuples are sorted by their first index, which is 
+    the nuclear repulsion energy.
+
+    Arguments:
+    <list of (float, string)> sorted_list
+        sorted list of tuples, each tuple is a (nmer_nre, nmer_name)
+    <(float, string)> new_value
+        new tuple to be inserted into the list of tuples
+    """
+
+    # use binary search to find insert location
+    left_index, right_index = 0, len(sorted_list)
+    while left_index != right_index:
+        
+        new_index = (left_index + right_index) // 2
+
+        if sorted_list[new_index][0] < new_value[0]:
+            left_index = new_index + 1
+        elif sorted_list[new_index][0] > new_value[0]:
+            right_index = new_index
+        else:
+            left_index = new_index
+            right_index = new_index
+
+    sorted_list.insert(left_index, new_value)
+# ======================================================================
+
+
+# ======================================================================
+def nmername_to_int(name):
+    """ Calculates a unique integer hash for a given nmer name that
+    can be used to sort nmers into their generation order.
+
+    Arguments:
+    <string> name
+        name of an nmer (2mer-0+1, 3mer-0+40+100, etc.)
+
+    Returns:
+    <int> hash
+        unique number for sorting
+    """
+
+    # assume there are never more than this many monomers in the supercell
+    max_monomers = 10000
+
+    # extract monomer indices from name
+    monomer_inds = name[5:].split('+')
+
+    # first monomer index can be removed, always zero
+    monomer_inds = monomer_inds[1:]
+    monomer_inds = [int(monomer_ind) for monomer_ind in monomer_inds]
+
+    # the first remaining index is the most import, then the second, etc.
+    monomer_weights = range(len(monomer_inds))[::-1]
+    monomer_weights = [max_monomers ** monomer_weight for monomer_weight in monomer_weights]
+
+    nmer_hash = np.sum([monomer_weights[i] * monomer_inds[i] for i in range(len(monomer_inds))])
+
+    return nmer_hash
+# ======================================================================
+
+
+# ======================================================================
+def close_nmers(sorted_list, nre):
+    """Finds nmers in the sorted list of tuples "sorted_list" with 
+    nuclear repulsion energies within 1e-5 of "nre." The tuples are 
+    sorted by their first index, which is the nuclear repulsion energy.
+
+    Arguments:
+    <list of (float, string)> sorted_list
+        sorted list of tuples, each tuple is a (nmer_nre, nmer_name)
+    <float)> nre 
+        nuclear repulsion energy of a new nmer
+
+    Returns:
+    <list of string> close_nmers
+        list of nmer names from "sorted_list" for which the nuclear
+        repulsion energy is within 1e-5 of "nre."
+    """
+
+    # binary search for the min nre bound (1e-5 tolerance)
+    left_index, right_index = 0, len(sorted_list)
+    while left_index != right_index:
+        
+        new_index = (left_index + right_index) // 2
+
+        if sorted_list[new_index][0] < (nre - 1e-5):
+            left_index = new_index + 1
+        elif sorted_list[new_index][0] > (nre - 1e-5):
+            right_index = new_index
+        else:
+            left_index = new_index
+            right_index = new_index
+
+    min_index = max(0, left_index-1)
+
+    # binary search for the maxnre bound (1e-5 tolerance)
+    left_index, right_index = 0, len(sorted_list)
+    while left_index != right_index:
+        
+        new_index = (left_index + right_index) // 2
+
+        if sorted_list[new_index][0] < (nre + 1e-5):
+            left_index = new_index + 1
+        elif sorted_list[new_index][0] > (nre + 1e-5):
+            right_index = new_index
+        else:
+            left_index = new_index
+            right_index = new_index
+
+    max_index = min(len(sorted_list), left_index+1)
+
+    # use min/max bounds to get close nmers
+    close_nmers = [tup[1] for tup in sorted_list[min_index:max_index]]
+
+    # sort close nmers by order of creation, exactly consistent w/ previous implementation
+    close_nmers = sorted(close_nmers, key = lambda name : nmername_to_int(name))
+
+    return close_nmers
 # ======================================================================
 
 
@@ -1374,6 +1474,10 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
 
     new_nmers = {}
 
+    # List of (nre, nmer_name) tuples sorted by nre
+    # Allows for easy lookup of new nmers with similar nre
+    new_nmers_nre_sorted = []
+
     # TODO: Support for crystals with more than one molecule in the
     #       primitive unit cell.
     num_ref_monomers = 1
@@ -1437,7 +1541,11 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                 chsev_filter_ran = False
                 rmsd_filter_ran = False
 
-                for kexisting, existing in new_nmers.items():
+                # list of existing nmer names with similar nre
+                close_nmer_keys = close_nmers(new_nmers_nre_sorted, new_nmer["nre"])
+
+                for kexisting in close_nmer_keys:
+                    existing = new_nmers[kexisting]
 
                     # Fourth, the nuclear repulsion energy filter.
                     nre_diff = abs(existing["nre"] - new_nmer["nre"])
@@ -1507,6 +1615,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                 # If the structure was not filtered out, then store the new N-mer.
                 if not found_duplicate:
                     new_nmers[new_nmer_name] = new_nmer
+                    insert_nmer_nre(new_nmers_nre_sorted, (new_nmer["nre"], new_nmer_name))
 
                     if verbose >= 2:
 
@@ -1695,8 +1804,7 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
 
     with open(psithon_filename, "w") as psithon_f:
         
-        for line in psithon_input:
-            psithon_f.write(line)
+       psithon_f.write(psithon_input)
 
     os.chdir(owd)
 # ======================================================================
