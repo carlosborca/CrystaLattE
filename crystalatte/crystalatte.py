@@ -158,6 +158,12 @@ def input_parser(in_f_name):
             print("\nERROR: Invalid CIF file name. Check that given file ends with a .cif extension.\n")
             sys.exit()
 
+    # Make sure SAPT only on dimers
+    if 'sapt' in keywords["psi4_method"].lower() and keywords['nmers_up_to'] > 2:
+        print("\nERROR: SAPT computations only supported for dimers (nmers_up_to = 2)\n")
+        sys.exit()
+
+
     # Attempt to create a filename for the supercell XYZ file.
     if "cif_output" not in keywords.keys():
     
@@ -1780,14 +1786,13 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     psithon_input += "  freeze_core true\n"
     psithon_input += "}\n"
 
-    # Hartree-Fock is called with the 'scf' string in Psithon mode.
-    if psi4_method.lower().startswith("hf"):
-        psithon_method = "scf" + psi4_method[2:]
+    psithon_method = psi4_method
 
+    # if SAPT, we do not give a bsse_type for Psi4
+    if 'sapt' in psi4_method.lower():
+        psithon_input += "\nenergy('{}')\n".format(psithon_method)
     else:
-        psithon_method = psi4_method
-
-    psithon_input += "\nenergy('{}', bsse_type = '{}')\n".format(psithon_method, psi4_bsse)
+        psithon_input += "\nenergy('{}', bsse_type = '{}')\n".format(psithon_method, psi4_bsse)
     psithon_input += "\n"
 
     owd = os.getcwd()
