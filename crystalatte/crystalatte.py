@@ -515,126 +515,69 @@ def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, monomer_cutoff, nmer_
 
 
 # =============================================================================
-def cif_main(args):
-    """Creates a supercell from the CIF file.  If we are determining
-    r_cut_monomer automatically from CIF information and the largest
-    nmer cutoff, that also happens here.  Return r_cut_monomer."""
-    
-    # Default settings.
-    fNameIn = ''
-    fNameOut = ''
-    # zero number of boxes means compute from monomer_cutoff
-    Nx = 0
-    Ny = 0
-    Nz = 0
-    make_rect_box = False
-   
-    monomer_cutoff = 0.0
-    nmer_cutoff = 0.0
+def cif_main(fNameIn, fNameOut, Na, Nb, Nc, monomer_cutoff, nmer_cutoff, make_rect_box):
+    """Takes the name of a CIF input file and the name of a .xyz output
+    file, and optionally the number of replicas of the rectangular cell in
+    each direction (A, B, and C) --- if those are not given, then it 
+    tries to deduce them from the monomer_cutoff.  If the monomer_cutoff
+    is not given, then the program automatically picks what should be a 
+    safe value, based on the largest nmer_cutoff and the unit cell
+    dimensions.  The given or auto-computed monomer_cutoff is returned
+    by the function.  The function calls Read_CIF() and passes
+    the relevant information as arguments to generate an .xyz file of the
+    supercell.
+
+    Arguments:
+    <str> fNameIn
+        CIF input filename
+    <str> fNameOut
+        XYZ output filename
+    <int> Na
+        Number of replicas of the cartesian unit cell in `a` direction.
+        Zero to auto-size.
+    <int> Nb
+        Number of replicas of the cartesian unit cell in `b` direction.
+        Zero to auto-size.
+    <int> Nc
+        Number of replicas of the cartesian unit cell in `c` direction.
+        Zero to auto-size.
+    <float> monomer_cutoff
+        Cutoff distance used if Na, Nb, or Nc are zero 
+        (auto-size option).  Otherwise ignored.  Set to zero
+        to auto-size this from nmer_cutoff.
+    <float> nmer_cutoff
+        Largest of the values for dimer cutoff, trimer cutoff, etc.
+        Used if auto-sizing monomer_cutoff (i.e., if monomer_cutoff == 0).
+        Otherwise ignored.
+    <bool> make_rect_box
+        Set to TRUE if the final configuration should be in a rectangular
+        shape, or in the same shape as the unit cell.  We have been always
+        using TRUE for this so far.
+    """
  
-    i = 1
-    while (i < len(args)):
-    
-        # Check if the name of the input file was given.
-        if (args[i] == '-i'):
-            
-            # Make sure a file name is given.
-            if (i+1 == len(args)):
-                print('\nERROR: no input file name given')
-                sys.exit()
-            
-            fNameIn = args[i+1]
-            i = i + 2
-    
-        # Check if the name of the output file was given.
-        elif (args[i] == '-o'):
-    
-            # Make sure a file name is given.
-            if (i+1 == len(args)):
-                print('\nERROR: no output file name given')
-                sys.exit()
-    
-            # Check we have a valid file extension.
-            fNameOut = args[i+1]
-            unknown = True
-    
-            for ext in ['.xyz', '.lammpstrj', '.gro', '.cif']:
-                if (fNameOut.endswith(ext)):
-                    unknown = False
-    
-            if (unknown):
-                print('\nERROR: unknown file extension of output file')
-                sys.exit()
-    
-            i = i + 2
-    
-        # Check if the box size was given.
-        elif (args[i] == '-b'):
-    
-            # Make sure 3 integers are given.
-            if (i+3 >= len(args)):
-                print('\nERROR: need 3 integers to indicate box size')
-                sys.exit()
-    
-            Nx = int(args[i+1])
-            Ny = int(args[i+2])
-            Nz = int(args[i+3])
-    
-            if (Nx < 0  or  Ny < 0  or  Nz < 0):
-                print('\nERROR: box size integers must be non-negative')
-                sys.exit()
-    
-            i = i + 4
-    
-        # Check if the final configuration should be in a rectangular
-        # shape, or in the same shape as the unit cell.
-        elif (args[i] == '-r'):
-    
-            make_rect_box = True
-            i = i + 1
-    
-    
-        # Supply a cutoff distance to auto-determine number of boxes
-        elif (args[i] == '-d_mono'):
-
-            # make sure a distance is given 
-            if (i+1 >= len(args)):
-                print('\nERROR: need distance after -d_mono for cutoff distance')
-                sys.exit()
-
-            monomer_cutoff = float(args[i+1])
-            i = i + 2 
-
-        # Supply a cutoff distance to auto-determine number of boxes
-        elif (args[i] == '-d_nmer'):
-
-            # make sure a distance is given 
-            if (i+1 >= len(args)):
-                print('\nERROR: need distance after -d_nmer for cutoff distance')
-                sys.exit()
-
-            nmer_cutoff = float(args[i+1])
-            i = i + 2 
-
-        # Anything else is wrong.
-        else:
-            print('\nERROR: invalid argument "%s"' % args[i])
-            sys.exit()
-    
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    # verify that we have the minimal cutoff info we have to have
-    if monomer_cutoff == 0.0 and nmer_cutoff == 0.0:
-        print("\nERROR: need either -d_mono or -d_nmer")
-        sys.exit()    
-
-    # Read input file.
-    
     # Make sure an input file was given.
     if (fNameIn == ''):
-        print('\nERROR: no input file given.  Use:  -i filename')
+        print('\nERROR: no input file given.')
         sys.exit()
+
+    # Make sure an input file was given.
+    if (fNameOut == ''):
+        print('\nERROR: no output file given.')
+        sys.exit()
+
+    unknown = True
+    for ext in ['.xyz', '.lammpstrj', '.gro', '.cif']:
+        if (fNameOut.endswith(ext)):
+            unknown = False
     
+    if (unknown):
+        print('\nERROR: unknown file extension of output file')
+        sys.exit()
+
+    if (Na < 0  or  Nb < 0  or  Nc < 0):
+        print('\nERROR: box size integers must be non-negative')
+        sys.exit()
+
     # Open the CIF file and read the data.
     data = read_cif(fNameIn)
     
@@ -642,13 +585,67 @@ def cif_main(args):
     La = float(data['_cell_length_a'])
     Lb = float(data['_cell_length_b'])
     Lc = float(data['_cell_length_c'])
-    alpha = math.radians(float(data['_cell_angle_alpha']))
-    beta = math.radians(float(data['_cell_angle_beta']))
-    gamma = math.radians(float(data['_cell_angle_gamma']))
+    alpha = float(data['_cell_angle_alpha'])
+    beta = float(data['_cell_angle_beta'])
+    gamma = float(data['_cell_angle_gamma'])
+
+    print("alpha, beta, gamma = {:.3f}, {:.3f}, {:.3f}".format(alpha, beta, gamma))
+    alpha = math.radians(alpha)
+    beta = math.radians(beta)
+    gamma = math.radians(gamma)
     volume = float(data['_cell_volume'])
    
-    print("La, Lb, Lc = ", La, Lb, Lc)
+    print("La, Lb, Lc = {:.4f}, {:.4f}, {:.4f}".format(La, Lb, Lc))
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Convert the fractional coordinates into real coordinates.
+    # The primitive vectors a,b,c are such that 
+    #
+    #   cos(alpha) = b.c / |b||c|
+    #   cos(beta)  = a.c / |a||c|
+    #   cos(gamma) = a.b / |a||b|
+    #
+    # with the convention
+    #
+    #   a = La*xhat
+    #   b = bx*xhat + by*yhat
+    #   c = cx*xhat + cy*yhat + cz*zhat
+    #
+    cosa = math.cos(alpha)
+    #sina = math.sin(alpha)
+    cosb = math.cos(beta)
+    #sinb = math.sin(beta)
+    cosg = math.cos(gamma)
+    sing = math.sin(gamma)
+    
+    cosa2 = cosa * cosa
+    cosb2 = cosb * cosb
+    sing2 = sing * sing
+    
+    ax = La
+    
+    bx = Lb * cosg
+    by = Lb * sing
+    
+    cx = Lc * cosb
+    cy = Lc * (cosa - cosg*cosb) / sing
+    cz = Lc * math.sqrt( 1 - (cosa2 + cosb2 - 2*cosg*cosb*cosa) / sing2 )
+    
+    # Use the volume to check if we did the vectors right.
+    V = ax*by*cz
+    
+    if ( abs(V - volume) > 0.1):
+        print("{}".format("~"*(shutil.get_terminal_size().columns)))
+        print('WARNING: Volume of the unit cell declared in CIF ({:.2f} A^3) is different than the calculated from primitive vectors ({:.2f} A^3).\n'.format(volume, V))
+        print("{}".format("~"*(shutil.get_terminal_size().columns)))
+    
+    # Two atoms are on top of each other if they are less than "eps" away.
+    eps = 0.01  # in Angstrom
+
+    # Check if we have a rectangular box.
+    if (bx < eps  and  cx < eps  and cy < eps):
+        make_rect_box = True
+    
     # compute monomer cutoff automatically from biggest nmer cutoff
     # if the monomer cutoff was not specified by the user
     # worst case, monomer_cutoff = nmer_cutoff + the distance from one vertex
@@ -663,33 +660,47 @@ def cif_main(args):
     # however, we can't count on that, b/c some distances might be 
     # measured from just inside the edge of the box (the central 
     # reference monomer might actually be on the edge of the central
-    # cell).  So, I tried the following lines initially, but they
-    # didn't add enough boxes to robustly get the symmetry numbers right
-    # around the edges
-    # cdx = monomer_cutoff - La / 2.0
-    # cdy = monomer_cutoff - Lb / 2.0
-    # cdz = monomer_cutoff - Lc / 2.0
+    # cell).
 
-    # if cdx < 0.0: cdx = 0.0
-    # if cdy < 0.0: cdy = 0.0
-    # if cdz < 0.0: cdz = 0.0
+    r_x = monomer_cutoff
+    r_y = monomer_cutoff
+    r_z = monomer_cutoff
 
-    cdx = monomer_cutoff
-    cdy = monomer_cutoff
-    cdz = monomer_cutoff
+    # if the unit cell is not rectangular, account for any "overhang"
+    # into the x direction from the b and c unit vectors, and overhang
+    # from the c unit vector onto the y direction.  We don't want to count
+    # on using any non-cubic parts of the final (edge) unit cell, because
+    # the overhang region will contain a space with no atoms.
+    # Subtracting the overhang from the final edge cell is equivalent
+    # to adding the overhang to the distance we need to cover by
+    # replicating boxes.
+    r_x = r_x + max(abs(bx), abs(cx))
+    r_y = r_y + abs(cy)
+
+    # For a normal (non-terminal) unit cell, how much distance
+    # can we count on it covering in the x, y, and z dimensions?
+    unit_cell_x = La 
+    unit_cell_y = by
+    unit_cell_z = cz
 
     # How many boxes out from center needed to account for remainder of
     # distance?  However many that is, need that in *both* directions,
     # and add that to the central cell (to get an odd number)
-    if (Nx == 0):
-        Nx = 2 * math.ceil(cdx / La) + 1
-    if (Ny == 0):
-        Ny = 2 * math.ceil(cdy / Lb) + 1
-    if (Nz == 0):
-        Nz = 2 * math.ceil(cdz / Lc) + 1
+    if (Na == 0):
+        Na = 2 * math.ceil(r_x / unit_cell_x) + 1
+    if (Nb == 0):
+        Nb = 2 * math.ceil(r_y / unit_cell_y) + 1
+    if (Nc == 0):
+        Nc = 2 * math.ceil(r_z / unit_cell_z) + 1
  
-    print("Number of cells in (x, y, z) directions: ({}, {}, {})".format(Nx, Ny, Nz))
+    print("Number of cells in (a, b, c) directions: ({}, {}, {})".format(Na, Nb, Nc))
 
+    # Determine the supercell box size in (a,b,c) frame
+    BoxLenA = Na * La
+    BoxLenB = Nb * Lb
+    BoxLenC = Nc * Lc
+    print("BoxLenA, BoxLenB, BoxLenC = {:.4f}, {:.4f}, {:.4f}".format(BoxLenA, BoxLenB, BoxLenC))
+    
     # Extract the symmetry operations.  This will be a list of strings
     # such as:
     #    ['x,y,z', 'y,x,2/3-z', '-y,x-y,2/3+z', '-x,-x+y,1/3-z', ... ]
@@ -738,8 +749,6 @@ def cif_main(args):
     # using these operations, create copies of the atoms until no new copies can be
     # made.
     
-    # Two atoms are on top of each other if they are less than "eps" away.
-    eps = 0.01  # in Angstrom
     
     # For each atom, apply each symmetry operation to create a new atom.
     imax = len(atoms)
@@ -792,13 +801,13 @@ def cif_main(args):
         # Get label and fractional coordinates.
         label,xf,yf,zf = atom
     
-        for i in range(Nx):
+        for i in range(Na):
                 x = i+xf
     
-                for j in range(Ny):
+                for j in range(Nb):
                     y = j+yf
     
-                    for k in range(Nz):
+                    for k in range(Nc):
                         z = k+zf
                         atomlist.append( (label,x,y,z) ) # add 4-tuple
     
@@ -888,18 +897,18 @@ def cif_main(args):
         zn = zc
     
         if (make_rect_box):
-            xn = (xn + Lx) % Lx
-            yn = (yn + Ly) % Ly
-            zn = (zn + Lz) % Lz
+            xn = (xn + BoxLenA) % BoxLenA
+            yn = (yn + BoxLenB) % BoxLenB
+            zn = (zn + BoxLenC) % BoxLenC
     
         atoms[i] = (label, xn, yn, zn)
     
     # Determine the box-vector.
     if (make_rect_box):
-        box = (Lx, Ly, Lz)
+        box = (BoxLenA, BoxLenB, BoxLenC)
     
     else:
-        box = (Lx, Ly, Lz, Nx*cx, Ny*cy, Nz*cz)
+        box = (BoxLenA, BoxLenB, BoxLenC, Na*cx, Nb*cy, Nc*cz)
     
     try:
         fOut = open(fNameOut, 'w')
@@ -2398,7 +2407,7 @@ def print_results(results, crystal_lattice_energy, verbose=0):
     """
 
     if verbose >= 1:
-        print("Summary of results:")
+        print("\nSummary of results:")
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(shutil.get_terminal_size().columns - 112)))
         print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
         print("N-mer Name                 |    MB Energy | Rep. | Contribution | Lattice Ener. |     Priority | Separations")
@@ -2453,9 +2462,9 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
     elif (nmers_up_to == 4):
         nmer_cutoff = max(r_cut_dimer, r_cut_trimer, r_cut_tetramer)
 
-    # Read a CIF file and generate the unit cell.
-    cif_arguments = cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, r_cut_monomer, nmer_cutoff, verbose)
-    r_cut_monomer = cif_main(cif_arguments)
+    # Read a CIF file and generate the unit cell
+    # assume we want rectilinear output XYZ
+    r_cut_monomer = cif_main(cif_input, cif_output, cif_a, cif_b, cif_c, r_cut_monomer, nmer_cutoff, True)
     
     # Read the output of the automatic fragmentation.
     nmers = supercell2monomers(cif_output, r_cut_monomer, bfs_thresh, verbose)
