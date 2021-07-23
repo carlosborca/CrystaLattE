@@ -643,7 +643,7 @@ def cif_main(fNameIn, fNameOut, Na, Nb, Nc, monomer_cutoff, nmer_cutoff, make_re
     eps = 0.01  # in Angstrom
 
     # Check if we have a rectangular box.
-    if (bx < eps  and  cx < eps  and cy < eps):
+    if (abs(bx) < eps  and  abs(cx) < eps  and abs(cy) < eps):
         make_rect_box = True
     
     # compute monomer cutoff automatically from biggest nmer cutoff
@@ -699,7 +699,13 @@ def cif_main(fNameIn, fNameOut, Na, Nb, Nc, monomer_cutoff, nmer_cutoff, make_re
     BoxLenA = Na * La
     BoxLenB = Nb * Lb
     BoxLenC = Nc * Lc
+
+    # Determine the supercell box size in (x,y,z) frame
+    BoxLenX = Na * unit_cell_x
+    BoxLenY = Nb * unit_cell_y
+    BoxLenZ = Nc * unit_cell_z
     print("BoxLenA, BoxLenB, BoxLenC = {:.4f}, {:.4f}, {:.4f}".format(BoxLenA, BoxLenB, BoxLenC))
+    print("BoxLenX, BoxLenY, BoxLenZ = {:.4f}, {:.4f}, {:.4f}".format(BoxLenX, BoxLenY, BoxLenZ))
     
     # Extract the symmetry operations.  This will be a list of strings
     # such as:
@@ -897,18 +903,18 @@ def cif_main(fNameIn, fNameOut, Na, Nb, Nc, monomer_cutoff, nmer_cutoff, make_re
         zn = zc
     
         if (make_rect_box):
-            xn = (xn + BoxLenA) % BoxLenA
-            yn = (yn + BoxLenB) % BoxLenB
-            zn = (zn + BoxLenC) % BoxLenC
+            xn = (xn + BoxLenX) % BoxLenX
+            yn = (yn + BoxLenY) % BoxLenY
+            zn = (zn + BoxLenZ) % BoxLenZ
     
         atoms[i] = (label, xn, yn, zn)
     
     # Determine the box-vector.
     if (make_rect_box):
-        box = (BoxLenA, BoxLenB, BoxLenC)
+        box = (BoxLenX, BoxLenY, BoxLenZ)
     
     else:
-        box = (BoxLenA, BoxLenB, BoxLenC, Na*cx, Nb*cy, Nc*cz)
+        box = (BoxLenX, BoxLenY, BoxLenZ, Na*cx, Nb*cy, Nc*cz)
     
     try:
         fOut = open(fNameOut, 'w')
