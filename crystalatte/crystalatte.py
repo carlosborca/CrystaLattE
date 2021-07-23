@@ -666,17 +666,6 @@ def cif_main(fNameIn, fNameOut, Na, Nb, Nc, monomer_cutoff, nmer_cutoff, make_re
     r_y = monomer_cutoff
     r_z = monomer_cutoff
 
-    # if the unit cell is not rectangular, account for any "overhang"
-    # into the x direction from the b and c unit vectors, and overhang
-    # from the c unit vector onto the y direction.  We don't want to count
-    # on using any non-cubic parts of the final (edge) unit cell, because
-    # the overhang region will contain a space with no atoms.
-    # Subtracting the overhang from the final edge cell is equivalent
-    # to adding the overhang to the distance we need to cover by
-    # replicating boxes.
-    r_x = r_x + max(abs(bx), abs(cx))
-    r_y = r_y + abs(cy)
-
     # For a normal (non-terminal) unit cell, how much distance
     # can we count on it covering in the x, y, and z dimensions?
     unit_cell_x = La 
