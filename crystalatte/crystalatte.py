@@ -1694,13 +1694,66 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     #       primitive unit cell.
     num_ref_monomers = 1
 
+    nmer_monomer_list = {}
+    # Prescreen N-mer separation cutoff using dimer distances
+    if num_monomers > 2:
+        for ref_monomer_idx in range(num_ref_monomers):
+            nmer_monomer_list[ref_monomer_idx] = []
+            monomer_key = "1mer-" + str(ref_monomer_idx)
+            ref_monomer = nmers[monomer_key]
+
+            for other_monomers in range(ref_monomer_idx+1, total_monomers):
+            
+                # Start N-mer building timer.
+                nmer_start_time = time.time()
+
+                # Combine reference monomer with other monomers to create a new N-mer.
+                new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, (other_monomers,), verbose)
+
+                # Start applying N-mer filters to weed out unnecessary calculations.
+                # First, use the corresponding N-mer cutoff (dimer cutoff, trimer cutoff, ...)
+                if new_nmer["max_mon_sep"] > (nmer_separation_cutoff / qcel.constants.bohr2angstroms):
+                    
+                    if verbose >= 2:
+                        
+                        # Stop N-mer building timer.
+                        nmer_stop_time = time.time() - nmer_start_time
+
+                        print(
+                            "Monomer {} discarded from {} list in {:.2f} s: Maximum separation between closest atoms of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
+                                other_monomers, nmer_type, nmer_stop_time, new_nmer["max_mon_sep"]*qcel.constants.bohr2angstroms, nmer_separation_cutoff))
+                            
+                        #counter_dscrd_sep += 1
+                
+                # Second, use the global COM cutoff. Same distance applies to all N-mer orders.
+                elif new_nmer["max_com_sep"] > (coms_separation_cutoff / qcel.constants.bohr2angstroms):
+                    
+                    if verbose >= 2:
+                        
+                        # Stop N-mer building timer.
+                        nmer_stop_time = time.time() - nmer_start_time
+                        print(
+                            "{} discarded in {:.2f} s: Maximum separation between closest COMs of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
+                                new_nmer_name, nmer_stop_time, new_nmer["max_com_sep"]*qcel.constants.bohr2angstroms, coms_separation_cutoff))
+
+                        #counter_dscrd_com += 1
+
+                # if not prescreened, add to monomer list for N-mer generation
+                else:
+                    nmer_monomer_list[ref_monomer_idx].append(other_monomers)           
+    else:
+        for ref_monomer_idx in range(num_ref_monomers):
+            nmer_monomer_list[ref_monomer_idx] = range(ref_monomer_idx+1, total_monomers)
+
+
+
     # Take the first monomer as the reference, aka 1mer-0.
     for ref_monomer_idx in range(num_ref_monomers):
         monomer_key = "1mer-" + str(ref_monomer_idx)
         ref_monomer = nmers[monomer_key]
 
         # Iterate over combinations that include all other monomers in unrepeated fashion.
-        for other_monomers in itertools.combinations(range(ref_monomer_idx+1, total_monomers), num_monomers-1):
+        for other_monomers in itertools.combinations(nmer_monomer_list[ref_monomer_idx], num_monomers-1):
 
             # Start N-mer building timer.
             nmer_start_time = time.time()
