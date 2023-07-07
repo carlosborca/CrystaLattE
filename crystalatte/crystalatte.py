@@ -2281,12 +2281,12 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
 
         # Get the non-additive n-body contribution, exclusive of all
         # previous-body interactions.
-        varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
+        varstring = "{}-CORRECTED INTERACTION ENERGY THROUGH {}-BODY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
     
         n_body_energy = psi4.core.variable(varstring)
     
         if len(nmer["monomers"]) > 2:
-            varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
+            varstring = "{}-CORRECTED INTERACTION ENERGY THROUGH {}-BODY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
             n_minus_1_body_energy = psi4.core.variable(varstring)
             nmer["nambe"] = n_body_energy - n_minus_1_body_energy
         

@@ -8,11 +8,12 @@ import crystalatte
 import pytest
 import subprocess
 
-def test_testmode_benzene():
+@pytest.mark.parametrize("filter_type", ["ChSEV", "Dreamaligner"])
+def test_testmode_benzene(filter_type):
     """Checks that the program is able to reproduce the generation of
     the structures communicated in A. L. Ringer and C. D. Sherrill,
-    Chem. Eur. J., 2008, 14, pp 2542–2547, using the chemical space
-    eigenvalues filter in test mode."""
+    Chem. Eur. J., 2008, 14, pp 2542–2547, using either the chemical space
+    eigenvalues or B787 Dreamaligner filters in test mode."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
     nmers, cle = crystalatte.main(
@@ -20,6 +21,7 @@ def test_testmode_benzene():
             cif_a=5, 
             cif_b=5, 
             cif_c=5, 
+            uniq_filter=filter_type,
             nmers_up_to=2, 
             r_cut_com=9.5, 
             r_cut_monomer=11.4, 

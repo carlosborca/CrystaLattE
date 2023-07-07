@@ -14,8 +14,14 @@ def test_center_supercell():
     Numpy arrays from it containing the center of the supercell, its
     coordinates and elements."""
 
-    args = ['', '-i', 'crystalatte/data/cif/Ammonia.cif', '-o', 'sc.xyz', '-b', '1', '1', '1', '-r']
-    crystalatte.cif_main(args)
+    crystalatte.cif_main(fNameIn="crystalatte/data/cif/Ammonia.cif",
+                         fNameOut="sc.xyz",
+                         Na=1,
+                         Nb=1,
+                         Nc=1,
+                         monomer_cutoff=0.0,
+                         nmer_cutoff=0.0,
+                         make_rect_box=True)
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
     scell_geom_max_coords, scell_geom, scell_elem = crystalatte.center_supercell("sc.xyz", 2)

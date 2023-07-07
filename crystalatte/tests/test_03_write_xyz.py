@@ -24,46 +24,18 @@ def test_cle_write_xyz():
     with open("sc.xyz", "w") as f:
         crystalatte.write_xyz(atoms, box, f)
 
-    l0 = None 
-    l1 = None 
-    l2 = None 
-    l3 = None 
-    l4 = None 
-    l5 = None 
-    l6 = None
+    ref = """5
+        Crystal created from CIF file. Box size:       1.000000000000       1.000000000000       1.000000000000
+        C                0.000000000000       0.000000000000       0.000000000000
+        H                0.640512800000      -0.640512800000       0.640512800000
+        H                0.640512800000       0.640512800000      -0.640512800000
+        H               -0.640512800000       0.640512800000       0.640512800000
+        H               -0.640512800000      -0.640512800000      -0.640512800000
+        """.splitlines()
 
     with open("sc.xyz", "r") as xyz:
-        
-        for l in xyz:
-            
-            if "5" in l:
-                l0 = True
-
-            if "Crystal created from CIF file. Box size:    1.00000    1.00000    1.00000" in l:
-                l1 = True
-            
-            if "C            0.000000   0.000000   0.000000" in l:
-                l2 = True
-
-            if "H            0.640513  -0.640513   0.640513" in l:
-                l3 = True
-
-            if "H            0.640513   0.640513  -0.640513" in l:
-                l4 = True
-
-            if "H           -0.640513   0.640513   0.640513" in l:
-                l5 = True
-
-            if "H           -0.640513  -0.640513  -0.640513" in l:
-                l6 = True
-
-    assert compare(True, l0)
-    assert compare(True, l1)
-    assert compare(True, l2)
-    assert compare(True, l3)
-    assert compare(True, l4)
-    assert compare(True, l5)
-    assert compare(True, l6)
+        for i, line in enumerate(xyz):
+            assert line.strip() == ref[i].strip()
 
     # Clean-up generated test files.
     subprocess.call(["rm", "sc.xyz"])

@@ -8,7 +8,8 @@ import crystalatte
 import pytest
 import subprocess
 
-def test_psi4api_ammonia():
+@pytest.mark.skip(reason="This error was downgraded to a warning.")
+def test_monomer_cutoff_co2():
     """Checks that the program prints an error message when an invalid
     monomer cutoff, that is loger than half the smallest dimension of
     the supercell has been chosen."""
