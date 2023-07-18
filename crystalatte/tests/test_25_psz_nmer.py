@@ -8,7 +8,8 @@ import crystalatte
 import pytest
 import subprocess
 
-def test_psz_psz_get_nmer_data():
+@pytest.mark.parametrize("psi4_version", ["old", "new"])
+def test_psz_psz_get_nmer_data(psi4_version):
     """Checks that the returns of the psithonyzer function to retrieve
     information from the N-mer output work correctly."""
 
@@ -29,10 +30,17 @@ def test_psz_psz_get_nmer_data():
         f1.write("\n")
         f1.write("   ==> N-Body: Non-Counterpoise Corrected (NoCP) energies <==\n")
         f1.write("\n")
-        f1.write("      n-Body     Total Energy [Eh]       I.E. [kcal/mol]      Delta [kcal/mol]\n")
-        f1.write("           1     -166.349896077773        0.000000000000        0.000000000000\n")
-        f1.write("           2     -166.352512228082       -1.641659103685       -1.641659103685\n")
-        f1.write("           3     -166.352498548533       -1.633075056645        0.008584047040\n")
+        if psi4_version == "old":
+            f1.write("      n-Body     Total Energy [Eh]       I.E. [kcal/mol]      Delta [kcal/mol]\n")
+            f1.write("           1     -166.349896077773        0.000000000000        0.000000000000\n")
+            f1.write("           2     -166.352512228082       -1.641659103685       -1.641659103685\n")
+            f1.write("           3     -166.352498548533       -1.633075056645        0.008584047040\n")
+        elif psi4_version == "new":
+            f1.write("      n-Body     Total Energy            Interaction Energy                          N-body Contribution to Interaction Energy\n")
+            f1.write("                 [Eh]                    [Eh]                  [kcal/mol]            [Eh]                  [kcal/mol]\n")
+            f1.write("           1  N/A                         0.000000000000        0.000000000000        0.000000000000        0.000000000000\n")
+            f1.write("           2  N/A                         0.000000000000       -1.641659103685        0.000000000000       -1.641659103685\n")
+            f1.write("FULL/RTN   3  N/A                         0.000000000000       -1.633075056645        0.000000000000        0.008584047040\n")
         f1.write("\n")
         f1.write("Psi4 exiting successfully. Buy a developer a beer!")
 
@@ -63,10 +71,17 @@ def test_psz_psz_get_nmer_data():
         f2.write("\n")
         f2.write("   ==> N-Body: Non-Counterpoise Corrected (NoCP) energies <==\n")
         f2.write("\n")
-        f2.write("   n-Body     Total Energy [Eh]       I.E. [kcal/mol]      Delta [kcal/mol]\n")
-        f2.write("        1     -166.349896077479        0.000000000000        0.000000000000\n")
-        f2.write("        2     -166.348893763567        0.628961475807        0.628961475807\n")
-        f2.write("        3     -166.348934255125        0.603552639217       -0.025408836590\n")
+        if psi4_version == "old":
+            f2.write("   n-Body     Total Energy [Eh]       I.E. [kcal/mol]      Delta [kcal/mol]\n")
+            f2.write("        1     -166.349896077479        0.000000000000        0.000000000000\n")
+            f2.write("        2     -166.348893763567        0.628961475807        0.628961475807\n")
+            f2.write("        3     -166.348934255125        0.603552639217       -0.025408836590\n")
+        elif psi4_version == "new":
+            f2.write("      n-Body     Total Energy            Interaction Energy                          N-body Contribution to Interaction Energy\n")
+            f2.write("                 [Eh]                    [Eh]                  [kcal/mol]            [Eh]                  [kcal/mol]\n")
+            f2.write("           1  N/A                         0.000000000000        0.000000000000        0.000000000000        0.000000000000\n")
+            f2.write("           2  N/A                         0.000000000000        0.628961475807        0.000000000000        0.628961475807\n")
+            f2.write("FULL/RTN   3  N/A                         0.000000000000        0.603552639217        0.000000000000       -0.025408836590\n")
         f2.write("\n")
         f2.write("Psi4 exiting successfully. Buy a developer a beer!")
 

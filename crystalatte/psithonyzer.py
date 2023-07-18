@@ -236,11 +236,15 @@ def psz_get_nmer_data(fname, verbose=0):
                 # Take the N-Body energy and the number of monomers in
                 # the N-mer from the last line of the N-Body block. This
                 # number is in kcal/mol and is now converted to kJ/mol
+                # This output block was changed in psi4 version 1.6,
+                # but the code can handle both versions.
+                # Note that the nbini+1 in the index checking works since we
+                # never have a monomer.
                 elif not nbend and i > nbini + 1:
                     lastl = line.strip().split()
-                    if lastl[0] != "FULL/RTN":
-                        continue
-                    number_of_monomers = int(lastl[1])
+                    if lastl[0] == "FULL/RTN":
+                        lastl = lastl[1:]
+                    number_of_monomers = int(lastl[0])
                     n_body_energy = float(lastl[-1]) * 4.184 # Same value as in qcdb.psi_cal2J
 
             # If it's a SAPT computation, we grab the 2-body energy in
