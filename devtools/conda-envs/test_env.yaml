@@ -1,19 +1,19 @@
 name: test
 channels: 
-  - psi4/label/dev
   - conda-forge
+  - conda-forge/label/libint_dev
 dependencies:
     # Base depends
   - python
   - pip
   - psi4
-    #  - psi4-rt
   - pycifrw
+  - pydantic < 2.0
 
     # Testing
   - pytest
   - pytest-cov
 
     # Pip-only installs
-  - pip:
-    - codecov
+  #- pip:
+  #  - codecov
