@@ -36,6 +36,7 @@
 import os, sys
 import time
 import shutil
+import re
 import numpy as np
 
 # ======================================================================
@@ -56,13 +57,11 @@ def psz_success_check(fname, verbose=0):
 
     beer = False
     with open(fname, 'r') as outf:
-        for line in outf:
-            if "Psi4 exiting successfully. Buy a developer a beer!" in line:
-                beer = True
-                break
-            
-            else:
-                continue
+        txt = outf.read()
+        match  = re.search("Buy a developer a beer!", txt)
+        if match:
+            beer = True
+
     return beer
 # ======================================================================
 
@@ -102,156 +101,126 @@ def psz_get_nmer_data(fname, verbose=0):
         nre = None
         n_body_energy = None
 
-        for line in outf:
+        lines = outf.readlines()
+        txt = ''.join(lines[:250])
 
-            # Increment the line counter by 1.
-            i += 1
+        if (match := re.search(r"^.*# Psithon input for N-mer:.*$", txt, re.MULTILINE)):
+            splt = match.group().split(":")
+            key = splt[-1].strip()
 
-            # Find the name of the N-mer, and use it to create
-            # the key for its entry in the nmers dictionary.
-            if "Psithon input for N-mer:".lower() in line.lower():
-                splt = line[:-1].split(":")
-                key = splt[-1].strip()
+        if (match := re.search(r"^.*# Generated from:.*$", txt, re.MULTILINE)):
+            splt = match.group().split(":")
+            xyz_path = splt[-1].strip()
+            tree = xyz_path.split("/")
+            sc = tree[-1].strip()
+            # Remove .xyz extension in case it has it.
+            if sc.endswith(".xyz"):
+                sc_xyz = sc[:-4]
+            else:
+                sc_xyz = sc
+                   
+        # Find the number of replicas of the N-mer.
+        if (match := re.search(r"^.*# Number of replicas:.*$", txt, re.MULTILINE)):
+            splt = match.group().split(":")
+            replicas = int(splt[-1].strip())
 
-            # NOTE: This only works on Linux and MacOS.
-            # Find the name of the XYZ from which this file generated.
-            if "Generated from:".lower() in line.lower():
-                splt = line[:-1].split(":")
-                xyz_path = splt[-1].strip()
-                tree = xyz_path.split("/")
-                sc = tree[-1].strip()
+        # Find the list of minimum monomer separations of the N-mer.
+        if (match := re.search(r"^.*# Minimum monomer separations:.*$", txt, re.MULTILINE)):
+            splt = match.group().split(":")
+            msps = splt[-1].strip()
+            min_monomer_separations = msps.split()
 
-                # Remove .xyz extension in case it has it.
-                if sc.endswith(".xyz"):
-                    sc_xyz = sc[:-4]
+            # NOTE: Because the cutoff priority was not originally
+            # implemented in CrystaLattE, if it is not found in the
+            # psithon output, it will be approximated from the list
+            # of minimum monomer separations.
+            max_sep = float(max(min_monomer_separations))
 
-                else:
-                    sc_xyz = sc
+            if len(min_monomer_separations) == 1:
+                num_mon = 2.0
 
-            # Find the number of replicas of the N-mer.
-            if "Number of replicas:".lower() in line.lower():
-                splt = line[:-1].split(":")
-                replicas = int(splt[-1].strip())
+            if len(min_monomer_separations) == 3:
+                num_mon = 3.0
 
-            # Find the list of minimum monomer separations of the N-mer.
-            if "# Minimum monomer separations:".lower() in line.lower():
-                splt = line[:-1].split(":")
-                msps = splt[-1].strip()
-                min_monomer_separations = msps.split()
+            if len(min_monomer_separations) == 6:
+                num_mon = 4.0
 
-                # NOTE: Because the cutoff priority was not originally
-                # implemented in CrystaLattE, if it is not found in the
-                # psithon output, it will be approximated from the list
-                # of minimum monomer separations.
-                max_sep = float(max(min_monomer_separations))
+            if len(min_monomer_separations) == 10:
+                num_mon = 5.0
 
-                if len(min_monomer_separations) == 1:
-                    num_mon = 2.0
+            main_contrib = 1.0/(max_sep**(num_mon**2.0))
 
-                if len(min_monomer_separations) == 3:
-                    num_mon = 3.0
+            idx = 0
+            add = 0.0
+            for rmin in min_monomer_separations:
 
-                if len(min_monomer_separations) == 6:
-                    num_mon = 4.0
+                if idx != 0:
+                    one_over_rmin3 = 1.0e-10/(float(rmin)**(num_mon**2.0))
+                    add += one_over_rmin3
 
-                if len(min_monomer_separations) == 10:
-                    num_mon = 5.0
+                idx += 1
 
-                main_contrib = 1.0/(max_sep**(num_mon**2.0))
+            priority_cutoff = main_contrib + add
 
-                idx = 0
-                add = 0.0
-                for rmin in min_monomer_separations:
+        # Find the list of COM monomer separations of the N-mer.
+        if (match := re.search(r"^.*# Minimum COM separations:.*$", txt, re.MULTILINE)):
+            splt = match.group().split(":")
+            csps = splt[-1].strip()
+            com_monomer_separations = csps.split()
 
-                    if idx != 0:
-                        one_over_rmin3 = 1.0e-10/(float(rmin)**(num_mon**2.0))
-                        add += one_over_rmin3
+        # NOTE: Strings deprecated in nmer2psithon() function.
+        # These chunks are kept here for backward compatibility.
+        if (match := re.search(r"^.*# COM Priority index for input:.*$", txt, re.MULTILINE)):
+            splt = match.group().split(":")
+            priority_com = float(splt[-1].strip())
 
-                    idx += 1
+        if (match := re.search(r"^.*# Priority index for input:.*$", txt, re.MULTILINE)):
+            splt = match.group().split(":")
+            priority_min = float(splt[-1].strip())
 
-                priority_cutoff = main_contrib + add
+        # Get the cutoff-based priority of the N-mer.
+        if (match := re.search(r"^.*# Cutoff priority:.*$",txt, re.MULTILINE)):
+            splt = match.group().split(":")
+            priority_cutoff = float(splt[-1].strip())
 
-            # Find the list of COM monomer separations of the N-mer.
-            if "# Minimum COM separations:".lower() in line.lower():
-                splt = line[:-1].split(":")
-                csps = splt[-1].strip()
-                com_monomer_separations = csps.split()
+        # Get the atomic-separation-based priority of the N-mer.
+        if (match := re.search(r"^.*# Separation priority:.*$", txt, re.MULTILINE)):
+            splt = match.group().split(":")
+            priority_min = float(splt[-1].strip())
 
-            # NOTE: Strings deprecated in nmer2psithon() function.
-            # These chunks are kept here for backward compatibility.
-            if "# COM Priority index for input:".lower() in line.lower():
-                splt = line[:-1].split(":")
-                priority_com = float(splt[-1].strip())
+        # Get the COM-separation-based priority of the N-mer.
+        if (match := re.search(r"^.*# COM priority:.*$", txt, re.MULTILINE)):
+            splt = match.group().split(":")
+            priority_com = float(splt[-1].strip())
 
-            if "# Priority index for input:".lower() in line.lower():
-                splt = line[:-1].split(":")
-                priority_min = float(splt[-1].strip())
+        # Find the nuclear repulsion energy of the N-mer.
+        if (match := re.search(r"^.*# Nuclear repulsion energy:.*^", txt, re.MULTILINE)):
 
-            # Get the cutoff-based priority of the N-mer.
-            if "# Cutoff priority".lower() in line.lower():
-                splt = line[:-1].split(":")
-                priority_cutoff = float(splt[-1].strip())
+            # Remove units if present.
+            if "a.u." in match.group().lower():
+                text = match.group()[:-5]
 
-            # Get the atomic-separation-based priority of the N-mer.
-            if "# Separation priority".lower() in line.lower():
-                splt = line[:-1].split(":")
-                priority_min = float(splt[-1].strip())
+            else:
+                text = match.group()
 
-            # Get the COM-separation-based priority of the N-mer.
-            if "# COM priority".lower() in line.lower():
-                splt = line[:-1].split(":")
-                priority_com = float(splt[-1].strip())
+            splt = text.split(":")
+            nre = float(splt[-1].strip())
 
-            # Find the nuclear repulsion energy of the N-mer.
-            if "# Nuclear repulsion energy:".lower() in line.lower():
+        txt = ''.join(lines[-250:])
 
-                # Remove units if present.
-                if "a.u." in line.lower():
-                    text = line[:-5]
+        if (match := re.search(r"n-Body.*?\n{2,}?", txt, re.S)):
+            lastl = match.group().strip().split('\n')[-1]
+            lastl = lastl.split()
+            if lastl[0] == "FULL/RTN":
+                lastl = lastl[1:]
+            number_of_monomers = int(lastl[0])
+            n_body_energy = float(lastl[-1]) * 4.184 # Same value as in qcdb.psi_cal2J
 
-                else:
-                    text = line
-
-                splt = text[:-1].split(":")
-                nre = float(splt[-1].strip())
-
-            # Find where the start of the N-Body decomposition 
-            # information is.
-            if "n-Body" in line:
-                nbini = i
-
-            # Find where the end of the N-Body decomposition 
-            # information is.
-            if nbini:
-
-                # If the line is blank, record the line number as the
-                # end of the N-Body decomposition block, unless it has
-                # been recorded alredy.
-                if not line.strip():
-                    if nbend:
-                        continue
-                    else:
-                        nbend = i
-
-                # Take the N-Body energy and the number of monomers in
-                # the N-mer from the last line of the N-Body block. This
-                # number is in kcal/mol and is now converted to kJ/mol
-                # This output block was changed in psi4 version 1.6,
-                # but the code can handle both versions.
-                # Note that the nbini+1 in the index checking works since we
-                # never have a monomer.
-                elif not nbend and i > nbini + 1:
-                    lastl = line.strip().split()
-                    if lastl[0] == "FULL/RTN":
-                        lastl = lastl[1:]
-                    number_of_monomers = int(lastl[0])
-                    n_body_energy = float(lastl[-1]) * 4.184 # Same value as in qcdb.psi_cal2J
-
-            # If it's a SAPT computation, we grab the 2-body energy in
-            # a different output line
-            if "Total SAPT" in line:
-                n_body_energy = float(line.split()[-2])
-                number_of_monomers = 2
+        # If it's a SAPT computation, we grab the 2-body energy in
+        # a different output line
+        if (match := re.search(r"^.*Total SAPT.*$", txt, re.MULTILINE)):
+            n_body_energy = float(match.group().split()[-2])
+            number_of_monomers = 2
 
     # Just in case the COM priority was not defined.
     try:
