@@ -88,13 +88,9 @@ def input_parser(in_f_name):
 
         for line_inp_f in input_file:
 
-            if line_inp_f == "\n":
-                continue
-
-            elif line_inp_f.startswith("#"):
-                continue
+            line_inp_f = line_inp_f.split("#")[0] #strip comments
             
-            else:
+            if line_inp_f not in ["", "\n"]:
                 non_blank_lines.append(line_inp_f)
 
         for non_blank_line in non_blank_lines:
