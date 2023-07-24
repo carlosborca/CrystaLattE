@@ -170,7 +170,7 @@ def psz_get_nmer_data(fname, verbose=0):
 
         # NOTE: Strings deprecated in nmer2psithon() function.
         # These chunks are kept here for backward compatibility.
-        if (match := re.search(r"^.*# COM Priority index for input:.*$", txt, re.MULTILINE)):
+        if (match := re.search(r"^.*# COM priority index for input:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
             priority_com = float(splt[-1].strip())
 
@@ -194,7 +194,7 @@ def psz_get_nmer_data(fname, verbose=0):
             priority_com = float(splt[-1].strip())
 
         # Find the nuclear repulsion energy of the N-mer.
-        if (match := re.search(r"^.*# Nuclear repulsion energy:.*^", txt, re.MULTILINE)):
+        if (match := re.search(r"^.*# Nuclear repulsion energy:.*$", txt, re.MULTILINE)):
 
             # Remove units if present.
             if "a.u." in match.group().lower():
