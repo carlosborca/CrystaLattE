@@ -77,36 +77,34 @@ def psz_get_nmer_data(fname, verbose=0):
         Adjusts the level of detail of the printouts.
     
     Returns:
-    <str> key
-        The key to create a new N-mer dictionary in the dictionary
-        containing all N-mers.
-    .
-    .
-    .
-
+    <dict> ret
+        Dictionary of return values.
+    
     """
 
     with open(fname, 'r') as outf:
         
-        # Start a line counter
-        i = 0
-        
-        # Index to indicate where the N-body decomposition
-        # information starts and ends in the Psi4 output file.
-        nbini = None
-        nbend = None
-
         # Initialize the value of required variables.
-        sc_xyz = None
-        nre = None
-        n_body_energy = None
+        ret = {
+            "sc_xyz": None,
+            "key": None,
+            "number_of_monomers": None,
+            "replicas": None,
+            "priority_cutoff": None,
+            "priority_min": None,
+            "priority_com": None,
+            "min_monomer_separations": None,
+            "com_monomer_separations": None,
+            "nre": None,
+            "nambe": None #n-body energy
+        }
 
         lines = outf.readlines()
         txt = ''.join(lines[:250])
 
         if (match := re.search(r"^.*# Psithon input for N-mer:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
-            key = splt[-1].strip()
+            ret["key"] = splt[-1].strip()
 
         if (match := re.search(r"^.*# Generated from:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
@@ -114,21 +112,23 @@ def psz_get_nmer_data(fname, verbose=0):
             tree = xyz_path.split("/")
             sc = tree[-1].strip()
             # Remove .xyz extension in case it has it.
+            print(sc)
             if sc.endswith(".xyz"):
-                sc_xyz = sc[:-4]
+                ret["sc_xyz"] = sc[:-4]
             else:
-                sc_xyz = sc
+                ret["sc_xyz"] = sc
                    
         # Find the number of replicas of the N-mer.
         if (match := re.search(r"^.*# Number of replicas:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
-            replicas = int(splt[-1].strip())
+            ret["replicas"] = int(splt[-1].strip())
 
         # Find the list of minimum monomer separations of the N-mer.
         if (match := re.search(r"^.*# Minimum monomer separations:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
             msps = splt[-1].strip()
             min_monomer_separations = msps.split()
+            ret["min_monomer_separations"] = min_monomer_separations
 
             # NOTE: Because the cutoff priority was not originally
             # implemented in CrystaLattE, if it is not found in the
@@ -136,75 +136,58 @@ def psz_get_nmer_data(fname, verbose=0):
             # of minimum monomer separations.
             max_sep = float(max(min_monomer_separations))
 
-            if len(min_monomer_separations) == 1:
-                num_mon = 2.0
-
-            if len(min_monomer_separations) == 3:
-                num_mon = 3.0
-
-            if len(min_monomer_separations) == 6:
-                num_mon = 4.0
-
-            if len(min_monomer_separations) == 10:
-                num_mon = 5.0
+            len_to_monomers_map = {
+                1: 2.0,
+                3: 3.0,
+                6: 4.0,
+                10: 5.0}
+            num_mon = len_to_monomers_map.get(len(min_monomer_separations))
 
             main_contrib = 1.0/(max_sep**(num_mon**2.0))
 
-            idx = 0
             add = 0.0
-            for rmin in min_monomer_separations:
+            for rmin in min_monomer_separations[1:]:
+                add += 1.0e-10/(float(rmin)**(num_mon**2.0))
 
-                if idx != 0:
-                    one_over_rmin3 = 1.0e-10/(float(rmin)**(num_mon**2.0))
-                    add += one_over_rmin3
-
-                idx += 1
-
-            priority_cutoff = main_contrib + add
+            ret["priority_cutoff"] = main_contrib + add
 
         # Find the list of COM monomer separations of the N-mer.
         if (match := re.search(r"^.*# Minimum COM separations:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
             csps = splt[-1].strip()
-            com_monomer_separations = csps.split()
+            ret["com_monomer_separations"] = csps.split()
 
         # NOTE: Strings deprecated in nmer2psithon() function.
         # These chunks are kept here for backward compatibility.
         if (match := re.search(r"^.*# COM priority index for input:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
-            priority_com = float(splt[-1].strip())
+            ret["priority_com"] = float(splt[-1].strip())
 
+        # Also deprecated.
         if (match := re.search(r"^.*# Priority index for input:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
-            priority_min = float(splt[-1].strip())
+            ret["priority_min"] = float(splt[-1].strip())
 
         # Get the cutoff-based priority of the N-mer.
         if (match := re.search(r"^.*# Cutoff priority:.*$",txt, re.MULTILINE)):
             splt = match.group().split(":")
-            priority_cutoff = float(splt[-1].strip())
+            ret["priority_cutoff"] = float(splt[-1].strip())
 
         # Get the atomic-separation-based priority of the N-mer.
         if (match := re.search(r"^.*# Separation priority:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
-            priority_min = float(splt[-1].strip())
+            ret["priority_min"] = float(splt[-1].strip())
 
         # Get the COM-separation-based priority of the N-mer.
         if (match := re.search(r"^.*# COM priority:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
-            priority_com = float(splt[-1].strip())
+            ret["priority_com"] = float(splt[-1].strip())
 
         # Find the nuclear repulsion energy of the N-mer.
         if (match := re.search(r"^.*# Nuclear repulsion energy:.*$", txt, re.MULTILINE)):
-
-            # Remove units if present.
-            if "a.u." in match.group().lower():
-                text = match.group()[:-5]
-
-            else:
-                text = match.group()
-
+            text = match.group().replace("a.u.","")
             splt = text.split(":")
-            nre = float(splt[-1].strip())
+            ret["nre"] = float(splt[-1].strip())
 
         txt = ''.join(lines[-250:])
 
@@ -213,23 +196,28 @@ def psz_get_nmer_data(fname, verbose=0):
             lastl = lastl.split()
             if lastl[0] == "FULL/RTN":
                 lastl = lastl[1:]
-            number_of_monomers = int(lastl[0])
-            n_body_energy = float(lastl[-1]) * 4.184 # Same value as in qcdb.psi_cal2J
+            ret["number_of_monomers"] = int(lastl[0])
+            ret["nambe"] = float(lastl[-1]) * 4.184 # Same value as in qcdb.psi_cal2J
 
         # If it's a SAPT computation, we grab the 2-body energy in
         # a different output line
         if (match := re.search(r"^.*Total SAPT.*$", txt, re.MULTILINE)):
-            n_body_energy = float(match.group().split()[-2])
-            number_of_monomers = 2
+            ret["nambe"] = float(match.group().split()[-2])
+            ret["number_of_monomers"] = 2
 
     # Just in case the COM priority was not defined.
-    try:
-        priority_com
+    if ret["priority_com"] is None:
+        ret["priority_com"] = ret["priority_min"]
 
-    except UnboundLocalError:
-        priority_com = priority_min
+    unfilled_keys = [k for k,v in ret.items() if v is None]
+    if len(unfilled_keys) > 0:
+        raise Exception(f"Error reading output file {fname}: {unfilled_keys} not found.")
 
-    return sc_xyz, key, number_of_monomers, replicas, priority_cutoff, priority_min, priority_com, min_monomer_separations, com_monomer_separations, nre, n_body_energy
+    ret["average_min_monomer_separation"] = np.average(np.array(ret["min_monomer_separations"], dtype=np.float64))
+    ret["average_com_monomer_separation"] = np.average(np.array(ret["com_monomer_separations"], dtype=np.float64))
+    ret["contrib"] = ret["nambe"] * ret["replicas"] / ret["number_of_monomers"]
+    
+    return ret
 
 # ======================================================================
 
@@ -373,25 +361,10 @@ def psz_main(verbose=0, **kwargs):
                 # If the output was ran successufully, get the N-mer name
                 # to create a key for its soon-to-be created dictionary
                 # and get the data to populate such N-mer dictionary.
-                sc_xyz, key, number_of_monomers, replicas, p_cutoff, p_min, p_com, min_mon_seps, com_mon_seps, nre, n_body_energy = psz_get_nmer_data(filename)
-
-                # Create a new dictionary for the current N-mer.
-                nmers[key]= {}
-
-                # Populate the current N-mer dictionary with the data
-                # from the Psi4 output file.
-                nmers[key]["replicas"] = replicas
-                nmers[key]["priority_cutoff"] = p_cutoff
-                nmers[key]["priority_min"] = p_min
-                nmers[key]["priority_com"] = p_com
-                nmers[key]["min_monomer_separations"] = min_mon_seps
-                nmers[key]["average_min_monomer_separation"] = np.average(np.array(min_mon_seps, dtype=np.float64))
-                nmers[key]["com_monomer_separations"] = com_mon_seps
-                nmers[key]["average_com_monomer_separation"] = np.average(np.array(com_mon_seps, dtype=np.float64))
-                nmers[key]["nre"] = nre
-                nmers[key]["nambe"] = n_body_energy 
-                nmers[key]["contrib"] = n_body_energy * replicas / number_of_monomers
-                
+                ret = psz_get_nmer_data(filename)
+                key = ret.pop("key")
+                sc_xyz = ret.pop("sc_xyz")
+                nmers[key] = ret
                 crystal_lattice_energy += nmers[key]["contrib"]
 
         else:

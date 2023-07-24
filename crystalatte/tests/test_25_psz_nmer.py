@@ -44,20 +44,27 @@ def test_psz_psz_get_nmer_data(psi4_version):
         f1.write("\n")
         f1.write("Psi4 exiting successfully. Buy a developer a beer!")
 
-    sc_xyz, key, number_of_monomers, replicas, p_cutoff, p_min, p_com, min_mon_seps, com_mon_seps, nre, n_body_energy = crystalatte.psz_get_nmer_data("3mer-0+1+2.out", 2)
+    ret = crystalatte.psz_get_nmer_data("3mer-0+1+2.out", 2)
 
-    assert compare("Ammonia", sc_xyz)
-    assert compare("3mer-0+1+2", key)
-    assert compare(3, number_of_monomers)
-    assert compare(3, replicas)
-    assert compare(6.255109050478e-07, p_cutoff)
-    assert compare(7.570854620128e-07, p_min)
-    assert compare(2.378218916793e-08, p_com)
-    assert compare(['2.428', '2.588', '2.588'], min_mon_seps)
-    assert compare(['3.418', '3.883', '3.883'], com_mon_seps)
-    assert compare(79.5638545934053, nre)
-    assert compare(0.03591565281536, n_body_energy)
+    assert compare("Ammonia", ret["sc_xyz"])
+    assert compare("3mer-0+1+2", ret["key"])
+    assert compare(3, ret["number_of_monomers"])
+    assert compare(3, ret["replicas"])
+    assert compare(6.255109050478e-07, ret["priority_cutoff"])
+    assert compare(7.570854620128e-07, ret["priority_min"])
+    assert compare(2.378218916793e-08, ret["priority_com"])
+    assert compare(['2.428', '2.588', '2.588'], ret["min_monomer_separations"])
+    assert compare(['3.418', '3.883', '3.883'], ret["com_monomer_separations"])
+    assert compare(79.5638545934053, ret["nre"])
+    assert compare(0.03591565281536, ret["nambe"])
 
+    # Clean-up generated test files.
+    subprocess.call(["rm", "3mer-0+1+2.out"])
+    subprocess.call(["rm", "3mer-0+1+5.out"])
+
+@pytest.mark.skip(reason="Legacy output format no longer supported.")
+@pytest.mark.parametrize("psi4_version", ["old", "new"])
+def test_psz_psz_get_nmer_data_legacy(psi4_version):
     # Legacy psithon format test.
     with open("3mer-0+1+5.out", "w") as f2:
 
@@ -85,19 +92,19 @@ def test_psz_psz_get_nmer_data(psi4_version):
         f2.write("\n")
         f2.write("Psi4 exiting successfully. Buy a developer a beer!")
 
-    sc_xyz, key, number_of_monomers, replicas, p_cutoff, p_min, p_com, min_mon_seps, com_mon_seps, nre, n_body_energy = crystalatte.psz_get_nmer_data("3mer-0+1+5.out", 2)
+    ret = crystalatte.psz_get_nmer_data("3mer-0+1+5.out", 2)
 
-    assert compare(None, sc_xyz)
-    assert compare("3mer-0+1+5", key)
-    assert compare(3, number_of_monomers)
-    assert compare(3, replicas)
-    assert compare(6.25510905e-07, p_min)
-    assert compare(1.62271419e-08, p_com)
-    assert compare(['2.588', '2.588', '2.588'], min_mon_seps)
-    assert compare(['3.883', '3.883', '3.883'], com_mon_seps)
-    assert compare(None, nre)
-    assert compare(-0.10631057229256001, n_body_energy)
-    assert compare_values(1.920089851168e-04, p_cutoff,  atol=1.e-15)
+    assert compare(None, ret["sc_xyz"])
+    assert compare("3mer-0+1+5", ret["key"])
+    assert compare(3, ret["number_of_monomers"])
+    assert compare(3, ret["replicas"])
+    assert compare(6.25510905e-07, ret["priority_min"])
+    assert compare(1.62271419e-08, ret["priority_com"])
+    assert compare(['2.588', '2.588', '2.588'], ret["min_monomer_separations"])
+    assert compare(['3.883', '3.883', '3.883'], ret["com_monomer_separations"])
+    assert compare(None, ret["nre"])
+    assert compare(-0.10631057229256001, ret["nambe"])
+    assert compare_values(1.920089851168e-04, ret["p_cutoff"],  atol=1.e-15)
 
     # Clean-up generated test files.
     subprocess.call(["rm", "3mer-0+1+2.out"])
