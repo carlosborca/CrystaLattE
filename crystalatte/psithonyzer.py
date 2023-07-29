@@ -112,7 +112,6 @@ def psz_get_nmer_data(fname, verbose=0):
             tree = xyz_path.split("/")
             sc = tree[-1].strip()
             # Remove .xyz extension in case it has it.
-            print(sc)
             if sc.endswith(".xyz"):
                 ret["sc_xyz"] = sc[:-4]
             else:
