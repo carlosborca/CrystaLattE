@@ -100,7 +100,7 @@ def psz_get_nmer_data(fname, verbose=0):
         }
 
         lines = outf.readlines()
-        txt = ''.join(lines[:250])
+        txt = ''.join(lines[:2500])
 
         if (match := re.search(r"^.*# Psithon input for N-mer:.*$", txt, re.MULTILINE)):
             splt = match.group().split(":")
