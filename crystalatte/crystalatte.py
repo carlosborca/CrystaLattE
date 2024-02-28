@@ -2595,6 +2595,9 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
 
 # ======================================================================
 
+def cli():
+    input_parser(sys.argv[-1])
+
 
 if __name__ == "__main__":
 
