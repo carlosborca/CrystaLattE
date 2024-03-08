@@ -1,0 +1,17 @@
+cif_input       = cif/acetic_acid.cif
+cif_output      = hf_sto3g_cp_10/acetic_acid.xyz
+nmers_up_to     = 3 
+r_cut_com       = 1000
+#r_cut_monomer   = 120
+#r_cut_dimer     = 20
+#r_cut_trimer    = 20
+r_cut_monomer   = 120
+r_cut_dimer     = 10
+r_cut_trimer    = 10
+#cle_run_type    = psithon
+cle_run_type    = qcmanybody
+psi4_method     = hf/sto-3g
+psi4_bsse       = cp
+psi4_memory     = 32 GB
+verbose         = 2
+

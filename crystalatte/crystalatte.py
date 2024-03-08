@@ -2072,6 +2072,119 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
 
 
 # ======================================================================
+def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+    """.
+    """
+
+    # This strings are used by the psithonyzer script. Any changes
+    # applied to them here must be synchronized there The order in
+    # which they are printed is also important, especially for the
+    # different types of priorities.
+    psithon_input =  "# PSI4 file produced by CrystaLattE\n\n"
+    psithon_input += "# Generated from:               {}\n".format(cif_output)
+    psithon_input += "# Psithon input for N-mer:      {}\n".format(keynmer)
+    psithon_input += "# Number of atoms per monomer:  {}\n".format(nmer["atoms_per_monomer"])
+    psithon_input += "# Number of replicas:           {}\n".format(nmer["replicas"])
+    psithon_input += "# COM priority:                 {:12.12e}\n".format(nmer["priority_com"])
+    psithon_input += "# Minimum COM separations:      {}\n".format(rcomseps.lstrip(" "))
+    psithon_input += "# Separation priority:          {:12.12e}\n".format(nmer["priority_min"])
+    psithon_input += "# Minimum monomer separations:  {}\n".format(rminseps.lstrip(" "))
+    psithon_input += "# Cutoff priority:              {:12.12e}\n".format(nmer["priority_cutoff"])
+    psithon_input += "# Nuclear repulsion energy:     {}\n".format(nmer["nre"])
+    # TODO this psithon_input needs to make it into the output somehow. I'm not sure through qcmb
+
+    # psi4_memory unused
+
+    mymol = keynmer.replace("2mer", "Dimer").replace("3mer", "Trimer").replace("4mer", "Tetramer").replace("5mer", "Pentamer").replace("-", "_").replace("+", "_")
+
+    nat = nmer["coords"].shape[0]
+    fidx = np.split(np.arange(nat), nmer["delimiters"])
+    fragments = [fr.tolist() for fr in fidx if len(fr)]
+
+    qcskmol = qcel.models.Molecule(
+        symbols=nmer["elem"],
+        geometry=nmer["coords"],
+        fragments=fragments,
+        fix_com=True,
+        fix_orientation=True,
+    )
+
+    from qcmanybody.models import BsseEnum
+    from qcmanybody.qcengine import run_qcengine
+    from qcmanybody.manybody import Molecule  # = qcel.models.Molecule
+
+    psithon_method = psi4_method
+
+    # if SAPT, we do not give a bsse_type for Psi4
+    if 'sapt' in psi4_method.lower():
+        print("\nERROR: qcmanybody mode cannot be run with a SAPT method at present.\n")
+        sys.exit()
+    elif (':' in psi4_method) or ('[' in psi4_method) or (']' in psi4_method):
+        print("\nERROR: qcmanybody mode cannot be run with a composite method at present. Stick with mtd/bas .\n")
+        sys.exit()
+    else:
+        mtd, bas = psi4_method.split("/")
+
+    specifications = {
+        "ene": {
+            "program": "psi4",
+            "specification": {
+                "driver": "energy",
+                "model": {"method": mtd.strip(), "basis": bas.strip()},
+                "keywords": {
+                    "e_convergence": 10,
+                    "d_convergence": 10,
+                    "scf_type": "df",
+                    "mp2_type": "df",
+                    "cc_type": "df",
+                    "freeze_core": "true",
+                },
+            },
+        },
+        "grad": {
+            "program": "psi4",
+            "specification": {
+                "driver": "gradient",
+                "model": {"method": mtd.strip(), "basis": bas.strip()},
+                "keywords": {
+                    "e_convergence": 10,
+                    "d_convergence": 10,
+                    "scf_type": "df",
+                    "mp2_type": "df",
+                    "cc_type": "df",
+                    "freeze_core": "true",
+                },
+            },
+        },
+    }
+
+    levels = {1: "ene", 2: "ene", 3: "ene"}
+    # should be using psi4_bsse
+
+    # comment this out first run to get json files anyway
+    run_qcengine(qcskmol, levels, specifications, [BsseEnum.cp], True)
+
+    owd = os.getcwd()
+    psithon_folder = cif_output[:-4]
+
+    try:
+        os.mkdir(psithon_folder)
+
+    except FileExistsError:
+        pass
+
+    os.chdir(psithon_folder)
+    psithon_filename = keynmer + ".json"
+
+    with open(psithon_filename, "w") as psithon_f:
+       psithon_f.write(qcskmol.json())
+
+    os.chdir(owd)
+
+# ======================================================================
+
+
+# ======================================================================
 def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose=0):
     """This function will write to disk a LibEFP input for the passed
     N-mer. To be able to compute the non-additive many-body energy, a
@@ -2375,6 +2488,10 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         # Produce LibEFP inputs with non-embedded N-mers as fragments.
         elif "libefpmbe" in cle_run_type:
             nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose)
+
+        # Submit to QCFractal with QCManyBody.
+        elif "qcmanybody" in cle_run_type:
+            nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose)
 
         # Run energies in PSI4 API.
         else:

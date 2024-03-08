@@ -50,7 +50,7 @@ conda config --set auto_activate_base false
 CrystaLattE requires PSI4 and PyCIFRW. Conda offers the possibility of creating an _environment_ that contains all the dependencies required by CrystaLattE. To download and install PSI4 and other related software tools in a new _cle_ environment execute the command below and follow the on-screen instructions:
 
 ```
-conda create -n cle python=3.7 psi4 pycifrw -c psi4/label/dev -c psi4 -c conda-forge
+conda create -n cle python psi4 pycifrw -c conda-forge
 ```
 
 #### 3. Activate the _cle_ environment
