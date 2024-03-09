@@ -2072,7 +2072,7 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
 
 
 # ======================================================================
-def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
     """.
     """
 
@@ -2158,11 +2158,14 @@ def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_m
         },
     }
 
-    levels = {1: "ene", 2: "ene", 3: "ene"}
-    # should be using psi4_bsse
-
-    # comment this out first run to get json files anyway
-    run_qcengine(qcskmol, levels, specifications, [BsseEnum.cp], True)
+    levels = {ifr+1: "ene" for ifr in range(len(fragments))}
+    qcmb_bsse_type = {
+        "nocp": BsseEnum.nocp,
+        "cp": BsseEnum.cp,
+        "vmfc": BsseEnum.vmfc,
+    }[psi4_bsse]
+    # if this throws KeyError, that's fine for now
+    print(f"{psi4_bsse=}, {qcmb_bsse_type=}")
 
     owd = os.getcwd()
     psithon_folder = cif_output[:-4]
@@ -2180,6 +2183,23 @@ def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_m
        psithon_f.write(qcskmol.json())
 
     os.chdir(owd)
+
+    if "test" not in cle_run_type:
+        ans = run_qcengine(qcskmol, levels, specifications, [qcmb_bsse_type], True)
+
+        # Get the non-additive n-body contribution, exclusive of all
+        # previous-body interactions.
+        varstring = "{}-CORRECTED INTERACTION ENERGY THROUGH {}-BODY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
+
+        n_body_energy = ans["results"][varstring]
+
+        if len(nmer["monomers"]) > 2:
+            varstring = "{}-CORRECTED INTERACTION ENERGY THROUGH {}-BODY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
+            n_minus_1_body_energy = ans["results"][varstring]
+            nmer["nambe"] = n_body_energy - n_minus_1_body_energy
+
+        else:
+            nmer["nambe"] = n_body_energy
 
 # ======================================================================
 
@@ -2491,7 +2511,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
 
         # Submit to QCFractal with QCManyBody.
         elif "qcmanybody" in cle_run_type:
-            nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose)
+            nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
 
         # Run energies in PSI4 API.
         else:
