@@ -917,8 +917,7 @@ def cif_main(fNameIn, fNameOut, Na, Nb, Nc, monomer_cutoff, nmer_cutoff, make_re
 
     except:
         print('\nERROR: Failed to write to XYZ output file')
-
-    fOut.close()
+        sys.exit()
 
     return(monomer_cutoff)
 
