@@ -65,13 +65,13 @@ def input_parser(in_f_name):
 
     keywords = {}
     keywords["nmers_up_to"] = 2 
-    keywords["cif_a"] = 5
-    keywords["cif_b"] = 5
-    keywords["cif_c"] = 5
+    keywords["cif_a"] = 0
+    keywords["cif_b"] = 0
+    keywords["cif_c"] = 0
     keywords["bfs_thresh"] = 1.2
     keywords["uniq_filter"] = "ChSEV"
-    keywords["r_cut_com"] = 10.0 
-    keywords["r_cut_monomer"] = 12.0 
+    keywords["r_cut_com"] = 90.0 
+    keywords["r_cut_monomer"] = 0.0 
     keywords["r_cut_dimer"] = 10.0 
     keywords["r_cut_trimer"] = 8.0
     keywords["r_cut_tetramer"] = 6.0 
@@ -88,13 +88,9 @@ def input_parser(in_f_name):
 
         for line_inp_f in input_file:
 
-            if line_inp_f == "\n":
-                continue
-
-            elif line_inp_f.startswith("#"):
-                continue
+            line_inp_f = line_inp_f.split("#")[0] #strip comments
             
-            else:
+            if line_inp_f not in ["", "\n"]:
                 non_blank_lines.append(line_inp_f)
 
         for non_blank_line in non_blank_lines:
@@ -130,7 +126,7 @@ def input_parser(in_f_name):
                 try:
                     keyword_value = int(keyword_value)
                     
-                    if (keyword_value%2) == 0:
+                    if keyword_value != 0 and (keyword_value%2) == 0:
                         keyword_value += 1
 
                 except ValueError:
@@ -330,18 +326,18 @@ def write_xyz(atoms, box, f):
         cy = box[4]
         cz = box[5]
         f.write('Crystal created from CIF file. Box vectors:')
-        f.write(' a= %10.5f %10.5f %10.5f' % (ax, 0.0, 0.0))
-        f.write(' b= %10.5f %10.5f %10.5f' % (bx, by, 0.0))
-        f.write(' c= %10.5f %10.5f %10.5f\n' % (cx, cy, cz))
+        f.write(' a= %20.12f %20.12f %20.12f' % (ax, 0.0, 0.0))
+        f.write(' b= %20.12f %20.12f %20.12f' % (bx, by, 0.0))
+        f.write(' c= %20.12f %20.12f %20.12f\n' % (cx, cy, cz))
     else:
         # box = (ax,by,cz)
         f.write('Crystal created from CIF file. Box size:') 
-        f.write(' %10.5f %10.5f %10.5f\n' % box)
+        f.write(' %20.12f %20.12f %20.12f\n' % box)
 
     # Write atom data (units are Angstroms).
     # The argument "atoms" has format ('Si', x, y, z) for example
     for i in range(N):
-        f.write('%-10s %10.6f %10.6f %10.6f\n' % atoms[i])
+        f.write('%-10s %20.12f %20.12f %20.12f\n' % atoms[i])
 # =============================================================================
 
 
@@ -470,7 +466,7 @@ def read_cif(fNameIn):
 
 
 # ======================================================================
-def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose=1):
+def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, monomer_cutoff, nmer_cutoff, verbose=1):
     """Takes the name of a CIF input file and the name of a .xyz output
     file, as well as the number of replicas of the rectangular cell in
     each direction (A, B, and C). It then calls Read_CIF() and passes
@@ -484,120 +480,217 @@ def cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose=1):
         XYZ output filename.
     <int> cif_a
         Number of replicas of the cartesian unit cell in `a` direction.
+        Zero to auto-size.
     <int> cif_b
         Number of replicas of the cartesian unit cell in `b` direction.
+        Zero to auto-size.
     <int> cif_c
         Number of replicas of the cartesian unit cell in `c` direction.
+        Zero to auto-size.
+    <float> monomer_cutoff
+        Cutoff distance used if cif_a, cif_b, or cif_c are zero 
+        (auto-size option).  Otherwise ignored.  Set to zero
+        to auto-size this from nmer_cutoff.
+    <float> nmer_cutoff
+        Largest of the values for dimer cutoff, trimer cutoff, etc.
+        Used if auto-sizing monomer_cutoff (i.e., if monomer_cutoff == 0).
+        Otherwise ignored.
     <int> verbose
         Adjusts the level of detail of the printouts.
     """
 
-    cif_arguments = ["", "-i", cif_input, "-o", cif_output, "-b", cif_a, cif_b, cif_c, "-r"]
+    cif_arguments = ["", "-i", cif_input, "-o", cif_output, "-b", cif_a, cif_b, cif_c, "-r", "-d_mono", monomer_cutoff, "-d_nmer", nmer_cutoff]
 
     if verbose >= 2:
         print("\nGenerating the supercell .xyz file.")
-        print("\nThe following arguments will be passed to the CIF reader script:")
-        print("./Read_CIF.py" + " ".join(str(cif_argument) for cif_argument in cif_arguments) + "\n")
+        print("\nThe following arguments will be passed to the CIF reader:")
+        print("" + " ".join(str(cif_argument) for cif_argument in cif_arguments) + "\n")
 
     return cif_arguments
 # ======================================================================
 
 
 # =============================================================================
-def cif_main(args):
+def cif_main(fNameIn, fNameOut, Na, Nb, Nc, monomer_cutoff, nmer_cutoff, make_rect_box):
+    """Takes the name of a CIF input file and the name of a .xyz output
+    file, and optionally the number of replicas of the rectangular cell in
+    each direction (A, B, and C) --- if those are not given, then it 
+    tries to deduce them from the monomer_cutoff.  If the monomer_cutoff
+    is not given, then the program automatically picks what should be a 
+    safe value, based on the largest nmer_cutoff and the unit cell
+    dimensions.  The given or auto-computed monomer_cutoff is returned
+    by the function.  The function calls Read_CIF() and passes
+    the relevant information as arguments to generate an .xyz file of the
+    supercell.
 
-    # Default settings.
-    fNameIn = ''
-    fNameOut = ''
-    Nx = 1
-    Ny = 1
-    Nz = 1
-    make_rect_box = False
-    
-    
-    # Read the arguments. We expect at least 4.
-    if (len(args) <= 4):
-        print_usage()
-    
-    i = 1
-    while (i < len(args)):
-    
-        # Check if the name of the input file was given.
-        if (args[i] == '-i'):
-            
-            # Make sure a file name is given.
-            if (i+1 == len(args)):
-                print('\nERROR: no input file name given')
-            
-            fNameIn = args[i+1]
-            i = i + 2
-    
-        # Check if the name of the output file was given.
-        elif (args[i] == '-o'):
-    
-            # Make sure a file name is given.
-            if (i+1 == len(args)):
-                print('\nERROR: no output file name given')
-    
-            # Check we have a valid file extension.
-            fNameOut = args[i+1]
-            unknown = True
-    
-            for ext in ['.xyz', '.lammpstrj', '.gro', '.cif']:
-                if (fNameOut.endswith(ext)):
-                    unknown = False
-    
-            if (unknown):
-                print('\nERROR: unknown file extension of output file')
-    
-            i = i + 2
-    
-        # Check if the box size was given.
-        elif (args[i] == '-b'):
-    
-            # Make sure 3 integers are given.
-            if (i+3 >= len(args)):
-                print('\nERROR: need 3 integers to indicate box size')
-    
-            Nx = int(args[i+1])
-            Ny = int(args[i+2])
-            Nz = int(args[i+3])
-    
-            if (Nx == 0  or  Ny == 0  or  Nz == 0):
-                print('\nERROR: box size integers need to be larger than zero')
-    
-            i = i + 4
-    
-        # Check if the final configuration should be in a rectangular
-        # shape, or in the same shape as the unit cell.
-        elif (args[i] == '-r'):
-    
-            make_rect_box = True
-            i = i + 1
-    
-    
-        # Anything else is wrong.
-        else:
-            print('\nERROR: invalid argument "%s"' % args[i])
-    
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Read input file.
-    
+    Arguments:
+    <str> fNameIn
+        CIF input filename
+    <str> fNameOut
+        XYZ output filename
+    <int> Na
+        Number of replicas of the cartesian unit cell in `a` direction.
+        Zero to auto-size.
+    <int> Nb
+        Number of replicas of the cartesian unit cell in `b` direction.
+        Zero to auto-size.
+    <int> Nc
+        Number of replicas of the cartesian unit cell in `c` direction.
+        Zero to auto-size.
+    <float> monomer_cutoff
+        Cutoff distance used if Na, Nb, or Nc are zero 
+        (auto-size option).  Otherwise ignored.  Set to zero
+        to auto-size this from nmer_cutoff.
+    <float> nmer_cutoff
+        Largest of the values for dimer cutoff, trimer cutoff, etc.
+        Used if auto-sizing monomer_cutoff (i.e., if monomer_cutoff == 0).
+        Otherwise ignored.
+    <bool> make_rect_box
+        Set to TRUE if the final configuration should be in a rectangular
+        shape, or in the same shape as the unit cell.  We have been always
+        using TRUE for this so far.
+    """
+ 
     # Make sure an input file was given.
     if (fNameIn == ''):
-        print('\nERROR: no input file given.  Use:  -i filename')
+        print('\nERROR: no input file given.')
+        sys.exit()
+
+    # Make sure an input file was given.
+    if (fNameOut == ''):
+        print('\nERROR: no output file given.')
+        sys.exit()
+
+    unknown = True
+    for ext in ['.xyz', '.lammpstrj', '.gro', '.cif']:
+        if (fNameOut.endswith(ext)):
+            unknown = False
     
+    if (unknown):
+        print('\nERROR: unknown file extension of output file')
+        sys.exit()
+
+    if (Na < 0  or  Nb < 0  or  Nc < 0):
+        print('\nERROR: box size integers must be non-negative')
+        sys.exit()
+
     # Open the CIF file and read the data.
     data = read_cif(fNameIn)
     
-    # Extract lengths and angles from the CIF file.
+    # Extract lengths (Angstroms) and angles from the CIF file.
     La = float(data['_cell_length_a'])
     Lb = float(data['_cell_length_b'])
     Lc = float(data['_cell_length_c'])
-    alpha = math.radians(float(data['_cell_angle_alpha']))
-    beta = math.radians(float(data['_cell_angle_beta']))
-    gamma = math.radians(float(data['_cell_angle_gamma']))
+    alpha = float(data['_cell_angle_alpha'])
+    beta = float(data['_cell_angle_beta'])
+    gamma = float(data['_cell_angle_gamma'])
+
+    print("alpha, beta, gamma = {:.3f}, {:.3f}, {:.3f}".format(alpha, beta, gamma))
+    alpha = math.radians(alpha)
+    beta = math.radians(beta)
+    gamma = math.radians(gamma)
     volume = float(data['_cell_volume'])
+   
+    print("La, Lb, Lc = {:.4f}, {:.4f}, {:.4f}".format(La, Lb, Lc))
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Convert the fractional coordinates into real coordinates.
+    # The primitive vectors a,b,c are such that 
+    #
+    #   cos(alpha) = b.c / |b||c|
+    #   cos(beta)  = a.c / |a||c|
+    #   cos(gamma) = a.b / |a||b|
+    #
+    # with the convention
+    #
+    #   a = La*xhat
+    #   b = bx*xhat + by*yhat
+    #   c = cx*xhat + cy*yhat + cz*zhat
+    #
+    cosa = math.cos(alpha)
+    #sina = math.sin(alpha)
+    cosb = math.cos(beta)
+    #sinb = math.sin(beta)
+    cosg = math.cos(gamma)
+    sing = math.sin(gamma)
+    
+    cosa2 = cosa * cosa
+    cosb2 = cosb * cosb
+    sing2 = sing * sing
+    
+    ax = La
+    
+    bx = Lb * cosg
+    by = Lb * sing
+    
+    cx = Lc * cosb
+    cy = Lc * (cosa - cosg*cosb) / sing
+    cz = Lc * math.sqrt( 1 - (cosa2 + cosb2 - 2*cosg*cosb*cosa) / sing2 )
+    
+    # Use the volume to check if we did the vectors right.
+    V = ax*by*cz
+    
+    if ( abs(V - volume) > 0.1):
+        print("{}".format("~"*(shutil.get_terminal_size().columns)))
+        print('WARNING: Volume of the unit cell declared in CIF ({:.2f} A^3) is different than the calculated from primitive vectors ({:.2f} A^3).\n'.format(volume, V))
+        print("{}".format("~"*(shutil.get_terminal_size().columns)))
+    
+    # Two atoms are on top of each other if they are less than "eps" away.
+    eps = 0.01  # in Angstrom
+
+    # Check if we have a rectangular box.
+    if (abs(bx) < eps  and  abs(cx) < eps  and abs(cy) < eps):
+        make_rect_box = True
+    
+    # compute monomer cutoff automatically from biggest nmer cutoff
+    # if the monomer cutoff was not specified by the user
+    # worst case, monomer_cutoff = nmer_cutoff + the distance from one vertex
+    # to the opposite vertex.  (usually this will be overkill)
+    if monomer_cutoff == 0.0:
+        monomer_cutoff = nmer_cutoff + math.sqrt(La**2 + Lb**2 + Lc**2)
+        print("Auto-computed r_cut_monomer = {:.3f}".format(monomer_cutoff))
+
+    # compute number of boxes automatically if they were not specified by user
+
+    # part of the distance will be taken care of by the central box
+    # however, we can't count on that, b/c some distances might be 
+    # measured from just inside the edge of the box (the central 
+    # reference monomer might actually be on the edge of the central
+    # cell).
+
+    r_x = monomer_cutoff
+    r_y = monomer_cutoff
+    r_z = monomer_cutoff
+
+    # For a normal (non-terminal) unit cell, how much distance
+    # can we count on it covering in the x, y, and z dimensions?
+    unit_cell_x = La 
+    unit_cell_y = by
+    unit_cell_z = cz
+
+    # How many boxes out from center needed to account for remainder of
+    # distance?  However many that is, need that in *both* directions,
+    # and add that to the central cell (to get an odd number)
+    if (Na == 0):
+        Na = 2 * math.ceil(r_x / unit_cell_x) + 1
+    if (Nb == 0):
+        Nb = 2 * math.ceil(r_y / unit_cell_y) + 1
+    if (Nc == 0):
+        Nc = 2 * math.ceil(r_z / unit_cell_z) + 1
+ 
+    print("Number of cells in (a, b, c) directions: ({}, {}, {})".format(Na, Nb, Nc))
+
+    # Determine the supercell box size in (a,b,c) frame
+    BoxLenA = Na * La
+    BoxLenB = Nb * Lb
+    BoxLenC = Nc * Lc
+
+    # Determine the supercell box size in (x,y,z) frame
+    BoxLenX = Na * unit_cell_x
+    BoxLenY = Nb * unit_cell_y
+    BoxLenZ = Nc * unit_cell_z
+    print("BoxLenA, BoxLenB, BoxLenC = {:.4f}, {:.4f}, {:.4f}".format(BoxLenA, BoxLenB, BoxLenC))
+    print("BoxLenX, BoxLenY, BoxLenZ = {:.4f}, {:.4f}, {:.4f}".format(BoxLenX, BoxLenY, BoxLenZ))
     
     # Extract the symmetry operations.  This will be a list of strings
     # such as:
@@ -647,8 +740,6 @@ def cif_main(args):
     # using these operations, create copies of the atoms until no new copies can be
     # made.
     
-    # Two atoms are on top of each other if they are less than "eps" away.
-    eps = 0.01  # in Angstrom
     
     # For each atom, apply each symmetry operation to create a new atom.
     imax = len(atoms)
@@ -701,13 +792,13 @@ def cif_main(args):
         # Get label and fractional coordinates.
         label,xf,yf,zf = atom
     
-        for i in range(Nx):
+        for i in range(Na):
                 x = i+xf
     
-                for j in range(Ny):
+                for j in range(Nb):
                     y = j+yf
     
-                    for k in range(Nz):
+                    for k in range(Nc):
                         z = k+zf
                         atomlist.append( (label,x,y,z) ) # add 4-tuple
     
@@ -766,7 +857,7 @@ def cif_main(args):
         print("{}".format("~"*(shutil.get_terminal_size().columns)))
     
     # Check if we have a rectangular box.
-    if (bx < eps  and  cx < eps  and cy < eps):
+    if (abs(bx) < eps  and  abs(cx) < eps  and abs(cy) < eps):
         make_rect_box = True
     
     # Determine the box size.
@@ -797,18 +888,18 @@ def cif_main(args):
         zn = zc
     
         if (make_rect_box):
-            xn = (xn + Lx) % Lx
-            yn = (yn + Ly) % Ly
-            zn = (zn + Lz) % Lz
+            xn = (xn + BoxLenX) % BoxLenX
+            yn = (yn + BoxLenY) % BoxLenY
+            zn = (zn + BoxLenZ) % BoxLenZ
     
         atoms[i] = (label, xn, yn, zn)
     
     # Determine the box-vector.
     if (make_rect_box):
-        box = (Lx, Ly, Lz)
+        box = (BoxLenX, BoxLenY, BoxLenZ)
     
     else:
-        box = (Lx, Ly, Lz, Nx*cx, Ny*cy, Nz*cz)
+        box = (BoxLenX, BoxLenY, BoxLenZ, Na*cx, Nb*cy, Nc*cz)
     
     try:
         fOut = open(fNameOut, 'w')
@@ -826,8 +917,115 @@ def cif_main(args):
 
     except:
         print('\nERROR: Failed to write to XYZ output file')
+        sys.exit()
 
-    fOut.close()
+    return(monomer_cutoff)
+
+# ======================================================================
+
+
+# ======================================================================
+def bfs(geom, elem, bfs_thresh):
+    """ Linear scaling breadth first search for partitioning a set of atoms into covalently bound molecules"""
+
+    natom = geom.shape[0]
+
+    # van der waals radii of each atom type
+    radii = psi4.driver.qcdb.bfs._get_covalent_radii(elem)
+    max_radius = np.max(radii)
+
+    # this is the max distance between any two covalently bound atoms
+    blocksize = int(math.ceil(2.0 * bfs_thresh * max_radius))
+
+    # map each atom to a "cube" with dimension blocksize ** 3
+    geom_floor = np.floor(geom).astype(int)
+    atomkeys = [(pos[0], pos[1], pos[2]) for pos in geom_floor - (np.mod(geom_floor, blocksize))]
+    atomkey_to_atoms = dict.fromkeys(atomkeys)
+
+    for k, _ in atomkey_to_atoms.items():
+        atomkey_to_atoms[k] = []
+
+    for atomind, atomkey in enumerate(atomkeys):
+        atomkey_to_atoms[atomkey].append(atomind)
+
+    # list of covalently bonded neighbors for each atom
+    neighborlist = [[] for atomind in range(natom)]
+
+    for atomkey, atoms in atomkey_to_atoms.items():
+
+        # within the loop, we'll find neighbors of the atoms in "cube" atomkey
+        # neighbors have to be in the same cube, or one cube over
+        otherkeys = []
+        for keyx in [atomkey[0] - blocksize, atomkey[0], atomkey[0] + blocksize]:
+            for keyy in [atomkey[1] - blocksize, atomkey[1], atomkey[1] + blocksize]:
+                for keyz in [atomkey[2] - blocksize, atomkey[2], atomkey[2] + blocksize]:
+                    otherkey = (keyx, keyy, keyz)
+                    if otherkey in atomkey_to_atoms:
+                        otherkeys.append(otherkey)
+
+        # the atoms in either our cube or the neighboring cube
+        otheratoms = list(itertools.chain(*[atomkey_to_atoms[otherkey] for otherkey in otherkeys]))
+
+        geom_atoms = geom[atoms]
+        geom_others = geom[otheratoms]
+
+        rad_atoms = radii[atoms]
+        rad_others = radii[otheratoms]
+
+        dist, _ = distance_matrix(geom_atoms, geom_others)
+        bound = 1.2 * (rad_atoms.reshape(-1,1) + rad_others.reshape(1,-1))
+
+        # list of all bonds involving atoms from our cube
+        bond_sources, bond_targets = np.where(dist < bound)
+
+        # update the neighbor list with bonds
+        for bond_ind, bond_source in enumerate(bond_sources):
+            bond_target = bond_targets[bond_ind]
+            atomind = atoms[bond_source]
+            otheratomind = otheratoms[bond_target]
+            atomkey = atomkeys[atomind]
+            if otheratomind != atomind:
+                neighborlist[atomind].append(otheratomind)
+
+    # now that we have the neighborlist, we need to perform BFS to get fragments
+
+    # has the atom already been assigned to a fragment?
+    in_fragment = [False] * natom
+
+    # list of complete fragments
+    fragments = []
+
+    # this index traverses all atoms, looking for atoms not in a fragment
+    outerind = 0
+    while outerind < natom:
+      
+        # atom outerind already in a fragment
+        if in_fragment[outerind]:
+            outerind += 1
+            continue
+
+        # make a new fragment, containing outerind 
+        fragment = [outerind]
+
+        # this indexes traverses neighbors of outerind, adding them to this fragment
+        innerind = 0
+
+        while innerind < len(fragment):
+
+            # we've already added the neighbor to this fragment
+            if in_fragment[fragment[innerind]]:
+                innerind += 1
+                continue
+
+            in_fragment[fragment[innerind]] = True
+            fragment.extend(neighborlist[fragment[innerind]])
+            innerind += 1
+
+        fragment = sorted(set(fragment))
+        fragments.append(fragment)
+        outerind += 1
+
+    return fragments
 # ======================================================================
 
 
@@ -956,22 +1154,22 @@ def supercell2monomers(cif_output, r_cut_monomer, bfs_thresh, verbose=1):
     # filtering out fragments that contain incomplete molecules located
     # at the edges of the supercell.
     if (r_cut_monomer / qcel.constants.bohr2angstroms) > np.min(scell_geom_max_coords):
-        print("\nERROR: Cutoff (%3.2f A) longer than half the smallest dimension of the supercell (%3.2f A)." \
+        print("\nWARNING: Cutoff (%3.2f A) longer than half the smallest dimension of the supercell (%3.2f A)." \
               % (r_cut_monomer, np.min(scell_geom_max_coords)*qcel.constants.bohr2angstroms))
         print("       Please increase the dimensions of the supercell to at least twice r_cut_monomer or reduce the lenght of the cutoff.\n")
-        sys.exit()
+        #sys.exit()
 
     # Start the BFS timer.
     bfs_start_time = time.time()
     
     # Passes the supercell geometry and elements to the breadth-first
     # search algorithm of QCDB to obtain fragments.
-    #fragments = BFS(scell_geom, scell_elem, None, bfs_thresh)
-    fragments = psi4.driver.qcdb.bfs.BFS(scell_geom, scell_elem, None, bfs_thresh)
+    #fragments = psi4.driver.qcdb.bfs.BFS(scell_geom, scell_elem, None, bfs_thresh)
+    fragments = bfs(scell_geom, scell_elem, bfs_thresh)
 
     # Stop the BFS timer.
     bfs_stop_time = time.time() - bfs_start_time
-    
+
     # Two lists containing geometries and elements of a fragment.
     frag_geoms = [scell_geom[fr] for fr in fragments]
     frag_elems = [scell_elem[fr] for fr in fragments]
@@ -1359,32 +1557,35 @@ def nmername_to_int(name):
 
 
 # ======================================================================
-def close_nmers(sorted_list, nre):
+def close_nmers(sorted_list, nre, tolerance=1e-8):
     """Finds nmers in the sorted list of tuples "sorted_list" with 
-    nuclear repulsion energies within 1e-5 of "nre." The tuples are 
+    nuclear repulsion energies within "tolerance" of "nre." The tuples are 
     sorted by their first index, which is the nuclear repulsion energy.
 
     Arguments:
     <list of (float, string)> sorted_list
         sorted list of tuples, each tuple is a (nmer_nre, nmer_name)
-    <float)> nre 
+    <float> nre 
         nuclear repulsion energy of a new nmer
+    <float> tolerance
+       nre tolerance
+
 
     Returns:
     <list of string> close_nmers
         list of nmer names from "sorted_list" for which the nuclear
-        repulsion energy is within 1e-5 of "nre."
+        repulsion energy is within 1e-8 of "nre."
     """
 
-    # binary search for the min nre bound (1e-5 tolerance)
+    # binary search for the min nre bound (1e-4 tolerance)
     left_index, right_index = 0, len(sorted_list)
     while left_index != right_index:
         
         new_index = (left_index + right_index) // 2
 
-        if sorted_list[new_index][0] < (nre - 1e-5):
+        if sorted_list[new_index][0] < (nre - tolerance):
             left_index = new_index + 1
-        elif sorted_list[new_index][0] > (nre - 1e-5):
+        elif sorted_list[new_index][0] > (nre - tolerance):
             right_index = new_index
         else:
             left_index = new_index
@@ -1398,9 +1599,9 @@ def close_nmers(sorted_list, nre):
         
         new_index = (left_index + right_index) // 2
 
-        if sorted_list[new_index][0] < (nre + 1e-5):
+        if sorted_list[new_index][0] < (nre + tolerance):
             left_index = new_index + 1
-        elif sorted_list[new_index][0] > (nre + 1e-5):
+        elif sorted_list[new_index][0] > (nre + tolerance):
             right_index = new_index
         else:
             left_index = new_index
@@ -1488,13 +1689,66 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
     #       primitive unit cell.
     num_ref_monomers = 1
 
+    nmer_monomer_list = {}
+    # Prescreen N-mer separation cutoff using dimer distances
+    if num_monomers > 2:
+        for ref_monomer_idx in range(num_ref_monomers):
+            nmer_monomer_list[ref_monomer_idx] = []
+            monomer_key = "1mer-" + str(ref_monomer_idx)
+            ref_monomer = nmers[monomer_key]
+
+            for other_monomers in range(ref_monomer_idx+1, total_monomers):
+            
+                # Start N-mer building timer.
+                nmer_start_time = time.time()
+
+                # Combine reference monomer with other monomers to create a new N-mer.
+                new_nmer_name, new_nmer = create_nmer(nmers, ref_monomer, (other_monomers,), verbose)
+
+                # Start applying N-mer filters to weed out unnecessary calculations.
+                # First, use the corresponding N-mer cutoff (dimer cutoff, trimer cutoff, ...)
+                if new_nmer["max_mon_sep"] > (nmer_separation_cutoff / qcel.constants.bohr2angstroms):
+                    
+                    if verbose >= 2:
+                        
+                        # Stop N-mer building timer.
+                        nmer_stop_time = time.time() - nmer_start_time
+
+                        print(
+                            "Monomer {} discarded from {} list in {:.2f} s: Maximum separation between closest atoms of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
+                                other_monomers, nmer_type, nmer_stop_time, new_nmer["max_mon_sep"]*qcel.constants.bohr2angstroms, nmer_separation_cutoff))
+                            
+                        #counter_dscrd_sep += 1
+                
+                # Second, use the global COM cutoff. Same distance applies to all N-mer orders.
+                elif new_nmer["max_com_sep"] > (coms_separation_cutoff / qcel.constants.bohr2angstroms):
+                    
+                    if verbose >= 2:
+                        
+                        # Stop N-mer building timer.
+                        nmer_stop_time = time.time() - nmer_start_time
+                        print(
+                            "{} discarded in {:.2f} s: Maximum separation between closest COMs of different monomers is {:3.2f} A, longer than cutoff {:3.2f} A.".format(
+                                new_nmer_name, nmer_stop_time, new_nmer["max_com_sep"]*qcel.constants.bohr2angstroms, coms_separation_cutoff))
+
+                        #counter_dscrd_com += 1
+
+                # if not prescreened, add to monomer list for N-mer generation
+                else:
+                    nmer_monomer_list[ref_monomer_idx].append(other_monomers)           
+    else:
+        for ref_monomer_idx in range(num_ref_monomers):
+            nmer_monomer_list[ref_monomer_idx] = range(ref_monomer_idx+1, total_monomers)
+
+
+
     # Take the first monomer as the reference, aka 1mer-0.
     for ref_monomer_idx in range(num_ref_monomers):
         monomer_key = "1mer-" + str(ref_monomer_idx)
         ref_monomer = nmers[monomer_key]
 
         # Iterate over combinations that include all other monomers in unrepeated fashion.
-        for other_monomers in itertools.combinations(range(ref_monomer_idx+1, total_monomers), num_monomers-1):
+        for other_monomers in itertools.combinations(nmer_monomer_list[ref_monomer_idx], num_monomers-1):
 
             # Start N-mer building timer.
             nmer_start_time = time.time()
@@ -1548,7 +1802,8 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                 rmsd_filter_ran = False
 
                 # list of existing nmer names with similar nre
-                close_nmer_keys = close_nmers(new_nmers_nre_sorted, new_nmer["nre"])
+                nre_tolerance = 1e-8
+                close_nmer_keys = close_nmers(new_nmers_nre_sorted, new_nmer["nre"], nre_tolerance)
 
                 for kexisting in close_nmer_keys:
                     existing = new_nmers[kexisting]
@@ -1560,7 +1815,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                     # If NRE difference is large, this is a new N-mer.
                     # Threfore reset posterior filters ran flags, there
                     # is no need to run further filters than NRE.
-                    if nre_diff > 1.e-5:
+                    if nre_diff > nre_tolerance:
 
                         chsev_filter_ran = False
                         rmsd_filter_ran = False                        
@@ -1573,7 +1828,7 @@ def build_nmer(nmers, total_monomers, nmer_type, nmer_separation_cutoff, coms_se
                             chsev_diff = np.linalg.norm(existing["chsev"] - new_nmer["chsev"])
                             chsev_filter_ran = True
 
-                            if chsev_diff < 1.e-3:
+                            if chsev_diff < 1.e-8:
                                 found_duplicate = True
 
                                 if verbose >= 2:
@@ -1816,6 +2071,139 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
 
 
 # ======================================================================
+def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+    """.
+    """
+
+    # This strings are used by the psithonyzer script. Any changes
+    # applied to them here must be synchronized there The order in
+    # which they are printed is also important, especially for the
+    # different types of priorities.
+    psithon_input =  "# PSI4 file produced by CrystaLattE\n\n"
+    psithon_input += "# Generated from:               {}\n".format(cif_output)
+    psithon_input += "# Psithon input for N-mer:      {}\n".format(keynmer)
+    psithon_input += "# Number of atoms per monomer:  {}\n".format(nmer["atoms_per_monomer"])
+    psithon_input += "# Number of replicas:           {}\n".format(nmer["replicas"])
+    psithon_input += "# COM priority:                 {:12.12e}\n".format(nmer["priority_com"])
+    psithon_input += "# Minimum COM separations:      {}\n".format(rcomseps.lstrip(" "))
+    psithon_input += "# Separation priority:          {:12.12e}\n".format(nmer["priority_min"])
+    psithon_input += "# Minimum monomer separations:  {}\n".format(rminseps.lstrip(" "))
+    psithon_input += "# Cutoff priority:              {:12.12e}\n".format(nmer["priority_cutoff"])
+    psithon_input += "# Nuclear repulsion energy:     {}\n".format(nmer["nre"])
+    # TODO this psithon_input needs to make it into the output somehow. I'm not sure through qcmb
+
+    # psi4_memory unused
+
+    mymol = keynmer.replace("2mer", "Dimer").replace("3mer", "Trimer").replace("4mer", "Tetramer").replace("5mer", "Pentamer").replace("-", "_").replace("+", "_")
+
+    nat = nmer["coords"].shape[0]
+    fidx = np.split(np.arange(nat), nmer["delimiters"])
+    fragments = [fr.tolist() for fr in fidx if len(fr)]
+
+    qcskmol = qcel.models.Molecule(
+        symbols=nmer["elem"],
+        geometry=nmer["coords"],
+        fragments=fragments,
+        fix_com=True,
+        fix_orientation=True,
+    )
+
+    from qcmanybody.models import BsseEnum
+    from qcmanybody.qcengine import run_qcengine
+    from qcmanybody.manybody import Molecule  # = qcel.models.Molecule
+
+    psithon_method = psi4_method
+
+    # if SAPT, we do not give a bsse_type for Psi4
+    if 'sapt' in psi4_method.lower():
+        print("\nERROR: qcmanybody mode cannot be run with a SAPT method at present.\n")
+        sys.exit()
+    elif (':' in psi4_method) or ('[' in psi4_method) or (']' in psi4_method):
+        print("\nERROR: qcmanybody mode cannot be run with a composite method at present. Stick with mtd/bas .\n")
+        sys.exit()
+    else:
+        mtd, bas = psi4_method.split("/")
+
+    specifications = {
+        "ene": {
+            "program": "psi4",
+            "specification": {
+                "driver": "energy",
+                "model": {"method": mtd.strip(), "basis": bas.strip()},
+                "keywords": {
+                    "e_convergence": 10,
+                    "d_convergence": 10,
+                    "scf_type": "df",
+                    "mp2_type": "df",
+                    "cc_type": "df",
+                    "freeze_core": "true",
+                },
+            },
+        },
+        "grad": {
+            "program": "psi4",
+            "specification": {
+                "driver": "gradient",
+                "model": {"method": mtd.strip(), "basis": bas.strip()},
+                "keywords": {
+                    "e_convergence": 10,
+                    "d_convergence": 10,
+                    "scf_type": "df",
+                    "mp2_type": "df",
+                    "cc_type": "df",
+                    "freeze_core": "true",
+                },
+            },
+        },
+    }
+
+    levels = {ifr+1: "ene" for ifr in range(len(fragments))}
+    qcmb_bsse_type = {
+        "nocp": BsseEnum.nocp,
+        "cp": BsseEnum.cp,
+        "vmfc": BsseEnum.vmfc,
+    }[psi4_bsse]
+    # if this throws KeyError, that's fine for now
+    print(f"{psi4_bsse=}, {qcmb_bsse_type=}")
+
+    owd = os.getcwd()
+    psithon_folder = cif_output[:-4]
+
+    try:
+        os.mkdir(psithon_folder)
+
+    except FileExistsError:
+        pass
+
+    os.chdir(psithon_folder)
+    psithon_filename = keynmer + ".json"
+
+    with open(psithon_filename, "w") as psithon_f:
+       psithon_f.write(qcskmol.json())
+
+    os.chdir(owd)
+
+    if "test" not in cle_run_type:
+        ans = run_qcengine(qcskmol, levels, specifications, [qcmb_bsse_type], True)
+
+        # Get the non-additive n-body contribution, exclusive of all
+        # previous-body interactions.
+        varstring = "{}-CORRECTED INTERACTION ENERGY THROUGH {}-BODY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
+
+        n_body_energy = ans["results"][varstring]
+
+        if len(nmer["monomers"]) > 2:
+            varstring = "{}-CORRECTED INTERACTION ENERGY THROUGH {}-BODY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
+            n_minus_1_body_energy = ans["results"][varstring]
+            nmer["nambe"] = n_body_energy - n_minus_1_body_energy
+
+        else:
+            nmer["nambe"] = n_body_energy
+
+# ======================================================================
+
+
+# ======================================================================
 def nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose=0):
     """This function will write to disk a LibEFP input for the passed
     N-mer. To be able to compute the non-additive many-body energy, a
@@ -2021,12 +2409,12 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
 
         # Get the non-additive n-body contribution, exclusive of all
         # previous-body interactions.
-        varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
+        varstring = "{}-CORRECTED INTERACTION ENERGY THROUGH {}-BODY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
     
         n_body_energy = psi4.core.variable(varstring)
     
         if len(nmer["monomers"]) > 2:
-            varstring = "{}-CORRECTED {}-BODY INTERACTION ENERGY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
+            varstring = "{}-CORRECTED INTERACTION ENERGY THROUGH {}-BODY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
             n_minus_1_body_energy = psi4.core.variable(varstring)
             nmer["nambe"] = n_body_energy - n_minus_1_body_energy
         
@@ -2120,6 +2508,10 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
         elif "libefpmbe" in cle_run_type:
             nmer2libefpmbe(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, verbose)
 
+        # Submit to QCFractal with QCManyBody.
+        elif "qcmanybody" in cle_run_type:
+            nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
+
         # Run energies in PSI4 API.
         else:
             psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
@@ -2195,7 +2587,7 @@ def print_results(results, crystal_lattice_energy, verbose=0):
     """
 
     if verbose >= 1:
-        print("Summary of results:")
+        print("\nSummary of results:")
         print("---------------------------+--------------+------+--------------+---------------+--------------+----------------{}".format("-"*(shutil.get_terminal_size().columns - 112)))
         print("                           | Non-Additive | Num. |        N-mer | Partial Crys. |  Calculation | Minimum Monomer")
         print("N-mer Name                 |    MB Energy | Rep. | Contribution | Lattice Ener. |     Priority | Separations")
@@ -2239,9 +2631,20 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
     # Start counting time.
     start = time.time()
 
-    # Read a CIF file and generate the unit cell.
-    cif_arguments = cif_driver(cif_input, cif_output, cif_a, cif_b, cif_c, verbose)
-    cif_main(cif_arguments)
+    # nmer_cutoff should be the largest of the nmer cutoffs we want
+    # watch out for some of them being set to arbitrarily large values
+    # because we are not actually requesting them in the computation
+    nmer_cutoff = 0.0
+    if (nmers_up_to == 2):
+        nmer_cutoff = r_cut_dimer
+    elif (nmers_up_to == 3):
+        nmer_cutoff = max(r_cut_dimer, r_cut_trimer)
+    elif (nmers_up_to == 4):
+        nmer_cutoff = max(r_cut_dimer, r_cut_trimer, r_cut_tetramer)
+
+    # Read a CIF file and generate the unit cell
+    # assume we want rectilinear output XYZ
+    r_cut_monomer = cif_main(cif_input, cif_output, cif_a, cif_b, cif_c, r_cut_monomer, nmer_cutoff, True)
     
     # Read the output of the automatic fragmentation.
     nmers = supercell2monomers(cif_output, r_cut_monomer, bfs_thresh, verbose)
@@ -2327,6 +2730,9 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
     return nmers, crystal_lattice_energy
 
 # ======================================================================
+
+def cli():
+    input_parser(sys.argv[-1])
 
 
 if __name__ == "__main__":

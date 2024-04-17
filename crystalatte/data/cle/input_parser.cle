@@ -6,7 +6,7 @@
 cif_input       = crystalatte/data/cif/Ammonia.cif
 cif_output      = crystalatte/data/Ammonia.xyz
 cif_a           = 2
-cif_b           = 3
+cif_b           = 3 #This is a comment
 cif_c           = 3
 nmers_up_to     = 2
 r_cut_com       = 6.5
