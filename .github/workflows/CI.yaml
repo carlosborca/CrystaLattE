@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, "3.11"]
+        python-version: [3.8, "3.12"]
 
     steps:
     - uses: actions/checkout@v3
@@ -30,7 +30,7 @@ jobs:
         ulimit -a
 
     - name: Create Environment
-      uses: mamba-org/provision-with-micromamba@main
+      uses: mamba-org/setup-micromamba@v1
       with:
         extra-specs: python=${{ matrix.python-version }}
         environment-file: devtools/conda-envs/test_env.yaml
