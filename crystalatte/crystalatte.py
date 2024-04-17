@@ -861,9 +861,9 @@ def cif_main(fNameIn, fNameOut, Na, Nb, Nc, monomer_cutoff, nmer_cutoff, make_re
         make_rect_box = True
     
     # Determine the box size.
-    Lx = Nx * La
-    Ly = Ny * Lb
-    Lz = Nz * Lc
+    Lx = Na * La
+    Ly = Nb * Lb
+    Lz = Nc * Lc
     
     for i in range(len(atoms)):
     
