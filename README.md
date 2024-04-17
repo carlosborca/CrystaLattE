@@ -4,7 +4,7 @@ Automated calculation of crystal lattice energies with the many-body expansion.
 
 | Category | Badges |
 |-------------|-------------|
-| **Status** | [![Travis Build Status](https://travis-ci.com/carlosborca/CrystaLattE.svg?branch=master)](https://travis-ci.org/carlosborca/CrystaLattE) [![codecov](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master/graph/badge.svg)](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master) [![Total alerts](https://img.shields.io/lgtm/alerts/g/carlosborca/CrystaLattE.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/carlosborca/CrystaLattE/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/carlosborca/CrystaLattE.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/carlosborca/CrystaLattE/context:python) |
+| **Status** | [![GitHub Actitus](https://img.shields.io/github/actions/workflow/status/carlosborca/CrystaLattE/CI.yaml?logo=github)](https://github.com/carlosborca/CrystaLattE/actions?query=workflow%3ACI) [![codecov](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master/graph/badge.svg)](https://codecov.io/gh/carlosborca/CrystaLattE/branch/master) ![python](https://img.shields.io/badge/python-3.8+-blue.svg) |
 | **Foundation** | [![License](https://img.shields.io/github/license/carlosborca/CrystaLattE.svg)](https://opensource.org/licenses/LGPL-3.0) [![GitHub Top Languages](https://img.shields.io/github/languages/top/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) |
 | **GitHub Info** | [![GitHub Code Size](https://img.shields.io/github/languages/code-size/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) [![GitHub Commits per Month](https://img.shields.io/github/commit-activity/m/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) [![GitHub Last Commit](https://img.shields.io/github/last-commit/carlosborca/CrystaLattE)](https://github.com/carlosborca/CrystaLattE/) |
 | **Citation** | [![doi](https://img.shields.io/badge/DOI-10.1063%2F1.5120520-blue)](http://dx.doi.org/10.1063/1.5120520) |
@@ -15,7 +15,7 @@ CrystaLattE is a software that automates the computation of crystal lattice ener
 
 ## General Information
 
-CrystaLattE has an interface with the quantum chemistry package PSI4. To run, the code requires a crystallographic information file containing structural information of the crystal and an input file specifying execution details. Work continues in the creation of a CrystaLattE `pip` package. So, for the moment, the instructions to download and install CrystaLattE and to create a _conda environment_ that includes PSI4 are presented below. 
+CrystaLattE has an interface with the quantum chemistry package Psi4. To run, the code requires a crystallographic information file containing structural information of the crystal and an input file specifying execution details. Work continues in the creation of a CrystaLattE `pip` package. So, for the moment, the instructions to download and install CrystaLattE and to create a _conda environment_ that includes Psi4 are presented below. 
 
 ### Installation
 
@@ -47,7 +47,7 @@ conda config --set auto_activate_base false
 
 #### 2. Create a _Conda Environment_ for CrystaLattE
 
-CrystaLattE requires PSI4 and PyCIFRW. Conda offers the possibility of creating an _environment_ that contains all the dependencies required by CrystaLattE. To download and install PSI4 and other related software tools in a new _cle_ environment execute the command below and follow the on-screen instructions:
+CrystaLattE requires Psi4 and PyCIFRW. Conda offers the possibility of creating an _environment_ that contains all the dependencies required by CrystaLattE. To download and install PSI4 and other related software tools in a new _cle_ environment execute the command below and follow the on-screen instructions:
 
 ```
 conda create -n cle python psi4 pycifrw -c conda-forge
@@ -102,9 +102,6 @@ Example of an options input file for CrystaLattE.
 
 cif_input       =  ../MyCrystals/OneCrystal.cif
 cif_output      =  ../MyCrystals/SuperCell.xyz
-cif_a           =  5
-cif_b           =  5
-cif_c           =  5
 bfs_thresh      =  1.2
 uniq_filter     =  ChSEV
 nmers_up_to     =  3
