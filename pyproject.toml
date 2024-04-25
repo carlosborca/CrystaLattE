@@ -33,8 +33,8 @@ crystalatte = "crystalatte:cli"
 psithonyzer = "psithonyzer:psz_process_args_and_run"
 
 [project.urls]
-"Homepage" = "https://github.com/carlosborca/CrystaLatte"
-"Bug Tracker" = "https://github.com/carlosborca/CrystaLatte/issues"
+"Homepage" = "https://github.com/carlosborca/CrystaLattE"
+"Bug Tracker" = "https://github.com/carlosborca/CrystaLattE/issues"
 
 [tool.setuptools.packages]
 find = {}
