@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-git-versioning"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crystalatte"
+dynamic = ["version"]
+dependencies = [
+    "pycifrw",
+]
+requires-python = ">=3.8"
+authors = [
+    {name = "Carlos Borca", email = "carlosborca@gmail.com"},
+]
+description = "Automated calculation of crystal lattice energies with the many-body expansion"
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+]
+
+[project.scripts]
+crystalatte = "crystalatte:cli"
+psithonyzer = "psithonyzer:psz_process_args_and_run"
+
+[project.urls]
+"Homepage" = "https://github.com/carlosborca/CrystaLatte"
+"Bug Tracker" = "https://github.com/carlosborca/CrystaLatte/issues"
+
+[tool.setuptools.packages]
+find = {}
+
+[tool.coverage.run]
+omit = ["*/tests/*"]
+
+[tool.setuptools-git-versioning]
+enabled = true
+dev_template = "{tag}.{ccount}+git.{sha}"
+dirty_template = "{tag}.{ccount}+git.{sha}.dirty"
