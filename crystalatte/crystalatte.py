@@ -2110,7 +2110,7 @@ def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_ru
 
     from qcmanybody.models import BsseEnum
     from qcmanybody.qcengine import run_qcengine
-    from qcmanybody.manybody import Molecule  # = qcel.models.Molecule
+    from qcelemental.models import Molecule
 
     psithon_method = psi4_method
 
@@ -2188,12 +2188,12 @@ def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_ru
 
         # Get the non-additive n-body contribution, exclusive of all
         # previous-body interactions.
-        varstring = "{}-CORRECTED INTERACTION ENERGY THROUGH {}-BODY".format(psi4_bsse.upper(), str(len(nmer["monomers"])))
+        varstring = "{}-corrected interaction energy through {}-body".format(psi4_bsse.lower(), str(len(nmer["monomers"])))
 
         n_body_energy = ans["results"][varstring]
 
         if len(nmer["monomers"]) > 2:
-            varstring = "{}-CORRECTED INTERACTION ENERGY THROUGH {}-BODY".format(psi4_bsse.upper(), str(len(nmer["monomers"]) - 1))
+            varstring = "{}-corrected interaction energy through {}-body".format(psi4_bsse.lower(), str(len(nmer["monomers"]) - 1))
             n_minus_1_body_energy = ans["results"][varstring]
             nmer["nambe"] = n_body_energy - n_minus_1_body_energy
 
