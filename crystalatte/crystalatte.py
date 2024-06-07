@@ -2109,7 +2109,7 @@ def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_ru
     )
 
     from qcmanybody.models import BsseEnum
-    from qcmanybody.qcengine import run_qcengine
+    from qcmanybody.tests.utils import run_qcengine
     from qcelemental.models import Molecule
 
     psithon_method = psi4_method
@@ -2184,7 +2184,7 @@ def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_ru
     os.chdir(owd)
 
     if "test" not in cle_run_type:
-        ans = run_qcengine(qcskmol, levels, specifications, [qcmb_bsse_type], True)
+        ans = run_qcengine(specifications, qcskmol, [qcmb_bsse_type], levels, True, False, None)
 
         # Get the non-additive n-body contribution, exclusive of all
         # previous-body interactions.
