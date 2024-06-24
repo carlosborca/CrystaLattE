@@ -8,14 +8,19 @@ import crystalatte
 import pytest
 import subprocess
 
+from .addons import using_qcmanybody
+
 @pytest.mark.parametrize("run_type,ref_cle",
                          [
                              pytest.param(["test", "timings"], 0.0, id="timings"),
                              pytest.param(["psithon"], 0.0, id="psithon"),
-                             pytest.param(["psi4api"], 0.0009759168, id="psi4api")
+                             pytest.param(["psi4api"], 0.0009759168, id="psi4api"),
+                             pytest.param(["qcmanybody"], 0.0009759168, id="qcmanybody", marks=using_qcmanybody),
                          ])
 def test_timings_ammonia(run_type, ref_cle):
     """Checks the ammonia crystal results in various run modes."""
+
+    # NOTE: if this test is failing, you may be omitting envvar `QCMANYBODY_MAX_NBODY=6 pytest ...`
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
     nmers, cle = crystalatte.main(
