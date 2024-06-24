@@ -49,4 +49,4 @@ jobs:
       shell: bash -l {0}
 
       run: |
-        pytest -v --color=yes crystalatte/tests/
+        QCMANYBODY_MAX_NBODY=6 pytest -v --color=yes crystalatte/tests/

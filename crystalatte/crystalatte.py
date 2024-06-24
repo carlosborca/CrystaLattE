@@ -2184,16 +2184,17 @@ def nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_ru
     os.chdir(owd)
 
     if "test" not in cle_run_type:
-        ans = run_qcengine(specifications, qcskmol, [qcmb_bsse_type], levels, True, False, None)
+        mbc, component_results = run_qcengine(specifications, qcskmol, [qcmb_bsse_type], levels, True, False, None)
+        ans = mbc.analyze(component_results)
 
         # Get the non-additive n-body contribution, exclusive of all
         # previous-body interactions.
-        varstring = "{}-corrected interaction energy through {}-body".format(psi4_bsse.lower(), str(len(nmer["monomers"])))
+        varstring = "{}_corrected_interaction_energy_through_{}_body".format(psi4_bsse.lower(), str(len(nmer["monomers"])))
 
         n_body_energy = ans["results"][varstring]
 
         if len(nmer["monomers"]) > 2:
-            varstring = "{}-corrected interaction energy through {}-body".format(psi4_bsse.lower(), str(len(nmer["monomers"]) - 1))
+            varstring = "{}_corrected_interaction_energy_through_{}_body".format(psi4_bsse.lower(), str(len(nmer["monomers"]) - 1))
             n_minus_1_body_energy = ans["results"][varstring]
             nmer["nambe"] = n_body_energy - n_minus_1_body_energy
 
