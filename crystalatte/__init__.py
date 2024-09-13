@@ -8,3 +8,5 @@ from .crystalatte import input_parser, extract_element, write_xyz, read_cif, cif
 
 # Psithonyzer imports
 from .psithonyzer import psz_success_check, psz_get_nmer_data, psz_print_header, psz_print_results, psz_print_end_msg, psz_main
+
+from . import plugins

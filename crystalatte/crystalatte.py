@@ -1994,7 +1994,7 @@ def monomer2makefp(cif_output, nmer, verbose=0):
 
 
 # ======================================================================
-def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, method, bsse_type, job_memory, verbose=0):
     """.
     """
 
@@ -2014,7 +2014,7 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     psithon_input += "# Cutoff priority:              {:12.12e}\n".format(nmer["priority_cutoff"])
     psithon_input += "# Nuclear repulsion energy:     {}\n".format(nmer["nre"])
     
-    psithon_input += "\nmemory {}\n".format(psi4_memory)
+    psithon_input += "\nmemory {}\n".format(job_memory)
     
     mymol = keynmer.replace("2mer", "Dimer").replace("3mer", "Trimer").replace("4mer", "Tetramer").replace("5mer", "Pentamer").replace("-", "_").replace("+", "_")
     psithon_input += "\nmolecule {} {{\n".format(mymol)
@@ -2041,13 +2041,13 @@ def nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_meth
     psithon_input += "  freeze_core true\n"
     psithon_input += "}\n"
 
-    psithon_method = psi4_method
+    psithon_method = method
 
     # if SAPT, we do not give a bsse_type for Psi4
-    if 'sapt' in psi4_method.lower():
+    if 'sapt' in method.lower():
         psithon_input += "\nenergy('{}')\n".format(psithon_method)
     else:
-        psithon_input += "\nenergy('{}', bsse_type = '{}')\n".format(psithon_method, psi4_bsse)
+        psithon_input += "\nenergy('{}', bsse_type = '{}')\n".format(psithon_method, bsse_type)
     psithon_input += "\n"
 
     owd = os.getcwd()
@@ -2424,7 +2424,7 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
 
 
 # ======================================================================
-def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose=0):
+def cle_manager(cif_output, nmers, cle_run_type, method, bsse_type, job_memory, verbose=0, custom_function=None):
     """Manages which mode of CrystaLattE calculation will be employed.
     
     Arguments:
@@ -2434,13 +2434,13 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
     <list> cle_run_type
         List of keywords indicating the modes in which CrystaLattE is
         going to be run.
-    <str> psi4_method
+    <str> method
         Method and basis set for the energy calculation, separated by a
         slash.
-    <str> psi4_bsse
+    <str> bsse_type
         Method for correction of the basis set superposition error.
-    <str> psi4_memory
-        Memory allocation for PSI4, written as `500 MB`, or `60 GB`.
+    <str> job_memory
+        Memory allocation for PSI4 or other software (written as `500 MB`, or `60 GB` for PSI4)
     <int> verbose
         Adjusts the level of detail of the printouts.
 
@@ -2502,7 +2502,7 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
 
         # Produce Psithon inputs.
         if "psithon" in cle_run_type:
-            nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, psi4_method, psi4_bsse, psi4_memory, verbose)
+            nmer2psithon(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, method, bsse_type, job_memory, verbose)
 
         # Produce LibEFP inputs with non-embedded N-mers as fragments.
         elif "libefpmbe" in cle_run_type:
@@ -2510,11 +2510,16 @@ def cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_me
 
         # Submit to QCFractal with QCManyBody.
         elif "qcmanybody" in cle_run_type:
-            nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
-
+            nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_run_type, method, bsse_type, job_memory, verbose)
+        elif "custom" in cle_run_type:
+            custom_function(
+                cif_output, nmers, keynmer, nmer, rminseps, rcomseps,
+                cle_run_type, method, bsse_type, job_memory, verbose,
+            )
+            pass
         # Run energies in PSI4 API.
         else:
-            psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
+            psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, method, bsse_type, job_memory, verbose)
 
         nmer["contrib"] = nmer["nambe"] * nmer["replicas"] / float(len(nmer["monomers"]))
         crystal_lattice_energy += nmer["contrib"]
@@ -2623,7 +2628,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1.2, uniq_filter="ChSEV", nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["test"], psi4_method="HF/STO-3G", psi4_bsse="cp", psi4_memory="500 MB", verbose=1):
+def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1.2, uniq_filter="ChSEV", nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["test"], method="HF/STO-3G", bsse_type="cp", job_memory="500 MB", verbose=1, custom_function=None):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -2710,8 +2715,10 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
 
         if "libefpmbe" in cle_run_type:
             print ("\nWriting N-mers coordinates as a non-embedded framgents into LibEFP input files:")
+        if "custom" in cle_run_type:
+            print ("\nRunning custom mode:")
 
-    crystal_lattice_energy, results = cle_manager(cif_output, nmers, cle_run_type, psi4_method, psi4_bsse, psi4_memory, verbose)
+    crystal_lattice_energy, results = cle_manager(cif_output, nmers, cle_run_type, method, bsse_type, job_memory, verbose, custom_function=custom_function)
     # ------------------------------------------------------------------
 
     if verbose >= 2:
@@ -2757,9 +2764,9 @@ if __name__ == "__main__":
                 r_cut_tetramer=3.7,
                 r_cut_pentamer=6.1,
                 cle_run_type=["psi4api", "quiet"],
-                psi4_method="HF/STO-3G",
-                psi4_bsse="nocp",
-                psi4_memory="500 MB",
+                method="HF/STO-3G",
+                bsse_type="nocp",
+                job_memory="500 MB",
                 verbose=2)
 
         print("{}".format("~"*(shutil.get_terminal_size().columns)))
