@@ -2,10 +2,10 @@ import crystalatte
 from crystalatte import plugins
 
 
-def func():
-    crystalatte.main(
-        cif_input="./Tests/Ammonia/Ammonia.cif",
-        cif_output="./Tests/Ammonia/Ammonia.xyz",
+def main():
+    _, _, df = crystalatte.main(
+        cif_input="../Tests/Ammonia/Ammonia.cif",
+        cif_output="./ammonia.xyz",
         cif_a=3,
         cif_b=3,
         cif_c=3,
@@ -23,13 +23,10 @@ def func():
         bsse_type=None,
         job_memory=None,
         verbose=2,
-        custom_function=plugins.force_fields.example_energy_function
+        custom_function=plugins.force_fields.example_energy_function,
     )
-    return
-
-
-def main():
-    func()
+    print(df)
+    df.to_csv("./ammonia_results.csv", index=False)
     return
 
 
