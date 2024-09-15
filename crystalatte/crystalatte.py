@@ -2423,9 +2423,21 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
             nmer["nambe"] = n_body_energy
 # ======================================================================
 
+def nmers_to_qcel_mol(nmer):
+    str_geom = ""
+    for at in range(nmer["coords"].shape[0]):
+        if at in nmer["delimiters"]:
+            str_geom += "--\n"
+        
+        str_geom += "  {:6} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
+    str_geom += "units = au\n"
+    str_geom += "no_com\n"
+    str_geom += "no_reorient\n"
+    return qcel.models.Molecule.from_data(str_geom, dtype="psi4")
+
 
 # ======================================================================
-def cle_manager(cif_output, nmers, cle_run_type, method, bsse_type, job_memory, verbose=0, custom_function=None):
+def cle_manager(cif_output, nmers, cle_run_type, method, bsse_type, job_memory, verbose=0, custom_function=None, **kwargs):
     """Manages which mode of CrystaLattE calculation will be employed.
     
     Arguments:
@@ -2522,9 +2534,10 @@ def cle_manager(cif_output, nmers, cle_run_type, method, bsse_type, job_memory, 
         elif "qcmanybody" in cle_run_type:
             nmer2qcmanybody(cif_output, nmers, keynmer, nmer, rminseps, rcomseps, cle_run_type, method, bsse_type, job_memory, verbose)
         elif "custom" in cle_run_type:
+            qcel_mol = nmers_to_qcel_mol(nmer)
             custom_function(
-                cif_output, nmers, keynmer, nmer, rminseps, rcomseps,
-                cle_run_type, method, bsse_type, job_memory, verbose,
+                qcel_mol, cif_output, nmers, keynmer, nmer, rminseps, rcomseps,
+                cle_run_type, method, bsse_type, job_memory, verbose, **kwargs
             )
             pass
         # Run energies in PSI4 API.
@@ -2647,7 +2660,7 @@ def print_end_msg(start, verbose=0):
 
 
 # ======================================================================
-def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1.2, uniq_filter="ChSEV", nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["test"], method="HF/STO-3G", bsse_type="cp", job_memory="500 MB", verbose=1, custom_function=None):
+def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1.2, uniq_filter="ChSEV", nmers_up_to=2, r_cut_com=10.0, r_cut_monomer=12.0, r_cut_dimer=10.0, r_cut_trimer=8.0, r_cut_tetramer=6.0, r_cut_pentamer=4.0, cle_run_type=["test"], method="HF/STO-3G", bsse_type="cp", job_memory="500 MB", verbose=1, custom_function=None, **kwargs):
     """Takes a CIF file and computes the crystal lattice energy using a
     many-body expansion approach.
     """
@@ -2737,7 +2750,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
         if "custom" in cle_run_type:
             print ("\nRunning custom mode:")
 
-    crystal_lattice_energy, results, df = cle_manager(cif_output, nmers, cle_run_type, method, bsse_type, job_memory, verbose, custom_function=custom_function)
+    crystal_lattice_energy, results, df = cle_manager(cif_output, nmers, cle_run_type, method, bsse_type, job_memory, verbose, custom_function=custom_function, **kwargs)
     # ------------------------------------------------------------------
 
     if verbose >= 2:
