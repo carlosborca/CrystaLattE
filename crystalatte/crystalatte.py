@@ -49,7 +49,6 @@ import psi4
 
 # Import QCEelemental
 import qcelemental as qcel
-import pandas as pd
 
 # Import parts of PyCIFRW
 from CifFile import CifFile
@@ -2423,17 +2422,18 @@ def psi4api_energies(cif_output, nmers, keynmer, nmer, cpus, cle_run_type, psi4_
             nmer["nambe"] = n_body_energy
 # ======================================================================
 
+
 def nmers_to_qcel_mol(nmer):
-    str_geom = ""
-    for at in range(nmer["coords"].shape[0]):
-        if at in nmer["delimiters"]:
-            str_geom += "--\n"
-        
-        str_geom += "  {:6} {:16.8f} {:16.8f} {:16.8f} \n".format(nmer["elem"][at], nmer["coords"][at][0], nmer["coords"][at][1], nmer["coords"][at][2])
-    str_geom += "units = au\n"
-    str_geom += "no_com\n"
-    str_geom += "no_reorient\n"
-    return qcel.models.Molecule.from_data(str_geom, dtype="psi4")
+    nat = nmer["coords"].shape[0]
+    fidx = np.split(np.arange(nat), nmer["delimiters"])
+    fragments = [fr.tolist() for fr in fidx if len(fr)]
+    return qcel.models.Molecule(
+        symbols=nmer["elem"],
+        geometry=nmer["coords"],
+        fragments=fragments,
+        fix_com=True,
+        fix_orientation=True,
+    )
 
 
 # ======================================================================
@@ -2594,9 +2594,7 @@ def cle_manager(cif_output, nmers, cle_run_type, method, bsse_type, job_memory, 
             if ("psithon" in cle_run_type) or ("libefpmbe" in cle_run_type):
                 print("{} written.".format(keynmer))
 
-    df = pd.DataFrame(output_data)
-        
-    return crystal_lattice_energy, results, df
+    return crystal_lattice_energy, results, output_data
 # ======================================================================
 
 
@@ -2750,7 +2748,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
         if "custom" in cle_run_type:
             print ("\nRunning custom mode:")
 
-    crystal_lattice_energy, results, df = cle_manager(cif_output, nmers, cle_run_type, method, bsse_type, job_memory, verbose, custom_function=custom_function, **kwargs)
+    crystal_lattice_energy, results, output_data = cle_manager(cif_output, nmers, cle_run_type, method, bsse_type, job_memory, verbose, custom_function=custom_function, **kwargs)
     # ------------------------------------------------------------------
 
     if verbose >= 2:
@@ -2766,7 +2764,7 @@ def main(cif_input, cif_output="sc.xyz", cif_a=5, cif_b=5, cif_c=5, bfs_thresh=1
     #import pprint
     #pprint.pprint(nmers)
 
-    return nmers, crystal_lattice_energy, df
+    return nmers, crystal_lattice_energy, output_data
 
 # ======================================================================
 

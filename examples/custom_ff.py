@@ -3,7 +3,7 @@ from crystalatte import plugins
 
 
 def main():
-    _, _, df = crystalatte.main(
+    _, _, output_data = crystalatte.main(
         cif_input="../Tests/Ammonia/Ammonia.cif",
         cif_output="./ammonia.xyz",
         cif_a=3,
@@ -25,8 +25,14 @@ def main():
         verbose=2,
         custom_function=plugins.force_fields.example_energy_function,
     )
-    print(df)
-    df.to_csv("./ammonia_results.csv", index=False)
+    try:
+        import pandas as pd
+        df = pd.DataFrame(output_data)
+        print(df)
+        df.to_csv("./ammonia_results.csv", index=False)
+    except (ImportError):
+        print("Pandas not installed, printing dictionary")
+        print(output_data)
     return
 
 
