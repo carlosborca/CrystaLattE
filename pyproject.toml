@@ -7,6 +7,7 @@ name = "crystalatte"
 dynamic = ["version"]
 dependencies = [
     "pycifrw",
+    "numpy",
 ]
 requires-python = ">=3.8"
 authors = [

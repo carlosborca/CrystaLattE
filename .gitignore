@@ -103,3 +103,5 @@ ENV/
 
 # psi4 files
 timer.dat
+main.py
+examples/ammonia_results.csv
