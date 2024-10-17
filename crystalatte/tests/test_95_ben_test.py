@@ -16,7 +16,7 @@ def test_testmode_benzene(filter_type):
     eigenvalues or B787 Dreamaligner filters in test mode."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers, cle = crystalatte.main(
+    nmers, cle, output_data = crystalatte.main(
             cif_input="crystalatte/data/cif/Benzene.cif", 
             cif_a=5, 
             cif_b=5, 
