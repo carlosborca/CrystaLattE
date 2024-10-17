@@ -15,7 +15,7 @@ def test_supercell_triazine():
     in the supercell."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers, cle = crystalatte.main(
+    nmers, cle, output_data = crystalatte.main(
             cif_input="crystalatte/data/cif/Triazine.cif", 
             cif_a=3, 
             cif_b=3, 

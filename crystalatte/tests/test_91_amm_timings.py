@@ -18,7 +18,7 @@ def test_timings_ammonia(run_type, ref_cle):
     """Checks the ammonia crystal results in various run modes."""
 
     # Execute the main function of crystalatte and retrieve the N-mers dictionary.
-    nmers, cle = crystalatte.main(
+    nmers, cle, output_data = crystalatte.main(
             cif_input="crystalatte/data/cif/Ammonia.cif", 
             cif_output="crystalatte/data/cif/Ammonia.xyz", 
             cif_a=3, 
