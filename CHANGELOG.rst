@@ -25,7 +25,7 @@ Changelog
 .. WIP (Unmerged)
 .. ++++++++++++++
 
-v0.0.4 / 2024-10-17 (Unreleased)
+v0.4.0 / 2024-10-17 (Unreleased)
 --------------------
 
 Breaking Changes
