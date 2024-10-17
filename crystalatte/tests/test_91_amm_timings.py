@@ -32,9 +32,9 @@ def test_timings_ammonia(run_type, ref_cle):
             r_cut_tetramer=3.7, 
             r_cut_pentamer=6.1, 
             cle_run_type=run_type, 
-            psi4_method="HF/STO-3G", 
-            psi4_bsse="nocp", 
-            psi4_memory="500 MB", 
+            method="HF/STO-3G", 
+            bsse_type="nocp", 
+            job_memory="500 MB", 
             verbose=2
             )
 
