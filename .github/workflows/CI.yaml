@@ -3,13 +3,12 @@ name: CI
 on:
   push:
     branches:
-      - "master"
+      - master
   pull_request:
     branches:
-      - "master"
+      - master
   schedule:
-    # Tests run every Monday
-   - cron: "0 0 * * 1"
+    - cron: "0 1 * * 1"
 
 jobs:
   test:
@@ -20,7 +19,7 @@ jobs:
         python-version: [3.8, "3.12"]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Additional Build Info
       shell: bash
@@ -30,12 +29,13 @@ jobs:
         ulimit -a
 
     - name: Create Environment
-      uses: mamba-org/setup-micromamba@v1
+      uses: conda-incubator/setup-miniconda@v3
       with:
-        extra-specs: python=${{ matrix.python-version }}
+        python-version: ${{ matrix.python-version }}
         environment-file: devtools/conda-envs/test_env.yaml
-        environment-name: test
-        channel-priority: flexible
+        activate-environment: test
+        auto-activate-base: false
+        show-channel-urls: true
 
     - name: Install crystalatte
       # conda setup requires this special shell
